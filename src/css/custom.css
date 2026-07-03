@@ -1,0 +1,8 @@
+/**
+ * Site-specific overrides for the CryptOS docs.
+ *
+ * Brand tokens, fonts, navbar/footer borders, the version banner/chip, and the
+ * TOC toggle all come from @the-rabbit-hole-tech/docs-theme (loaded first in
+ * theme.customCss). Add only CryptOS-specific tweaks here, and stay within the
+ * brand palette documented in the theme README.
+ */

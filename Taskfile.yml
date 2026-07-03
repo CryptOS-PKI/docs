@@ -1,0 +1,41 @@
+version: "3"
+
+tasks:
+  install:
+    desc: Install dependencies.
+    cmds:
+      - npm install
+  start:
+    desc: Run the docs site locally with hot reload.
+    cmds:
+      - npm run start
+  build:
+    desc: Build the static site into build/.
+    cmds:
+      - npm run build
+  serve:
+    desc: Serve the built site locally.
+    cmds:
+      - npm run serve
+  typecheck:
+    desc: Type-check the site.
+    cmds:
+      - npm run typecheck
+  clear:
+    desc: Clear the Docusaurus build cache.
+    cmds:
+      - npm run clear
+  license:
+    desc: Verify every source file carries the Apache 2.0 license header (CI; never writes).
+    cmds:
+      - go install github.com/Bugs5382/golic/cmd/golic@v0.3.0
+      - golic inject -t apache2 -c "2026 Shane" --dry -x
+  license:fix:
+    desc: Inject the Apache 2.0 header into any source file missing it.
+    cmds:
+      - go install github.com/Bugs5382/golic/cmd/golic@v0.3.0
+      - golic inject -t apache2 -c "2026 Shane"
+  ci:
+    desc: Local gate -- build the site.
+    cmds:
+      - task: build

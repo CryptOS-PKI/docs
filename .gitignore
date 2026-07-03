@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Production build + caches
+build/
+.docusaurus/
+.cache/
+
+# Misc
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Local design notes (non-tracked)
+plan/
