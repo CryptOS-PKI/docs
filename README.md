@@ -1,19 +1,23 @@
-# 📚 docs
+# docs 📚
 
-The documentation site for [CryptOS-PKI](https://github.com/CryptOS-PKI): how to build, install, and run CryptOS, written to be readable by everyone. Built with [Docusaurus](https://docusaurus.io) 3 and the shared [rabbit-hole docs theme](https://github.com/the-rabbit-hole-tech/docs-theme).
+> 📖 The documentation site for [CryptOS-PKI](https://github.com/CryptOS-PKI): how to build, install, and run CryptOS, written to be readable by everyone. Built with [Docusaurus](https://docusaurus.io) 3 and the shared [rabbit-hole docs theme](https://github.com/the-rabbit-hole-tech/docs-theme).
 
 ## ✨ What it is
 
-The single place the whole project is documented — deployment and install through day-to-day use, with concepts explained in plain language rather than assumed. Every page is tagged with its status (✅ works today, 🚧 in flight, 🧭 roadmap) so a reader always knows whether a feature exists yet.
+The single place the whole project is documented — deployment and install through day-to-day use, with concepts explained in plain language rather than assumed. Every page is tagged with its status so a reader always knows whether a feature exists yet:
+
+- ✅ **Works today**
+- 🚧 **In flight**
+- 🧭 **Roadmap**
 
 CryptOS ships no docs inside the OS image; this is a standalone site the project publishes to the web.
 
 ## 🧱 Stack
 
-- 📘 [Docusaurus](https://docusaurus.io) 3 + TypeScript
-- 🐇 [`@the-rabbit-hole-tech/docs-theme`](https://github.com/the-rabbit-hole-tech/docs-theme) — the shared brand theme
-- 🌒 Dark mode only (set by the theme; no light/dark switch)
-- 📝 Content in Markdown / MDX under `docs/`; sidebar order lives in `sidebars.ts`
+- 📘 **[Docusaurus](https://docusaurus.io) 3 + TypeScript**
+- 🐇 **[`@the-rabbit-hole-tech/docs-theme`](https://github.com/the-rabbit-hole-tech/docs-theme)** — the shared brand theme
+- 🌒 **Dark mode only** (set by the theme; no light/dark switch)
+- 📝 **Content in Markdown / MDX** under `docs/`; sidebar order lives in `sidebars.ts`
 
 ## 🚀 Run it locally
 
