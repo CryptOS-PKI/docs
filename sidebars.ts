@@ -104,6 +104,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Integrations',
+      items: ['integrations/vmware-vmca-subordination'],
+    },
+    {
+      type: 'category',
       label: 'Reference',
       items: [
         'reference/machine-config',
