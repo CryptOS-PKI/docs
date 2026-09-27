@@ -24,3 +24,6 @@ is defined in `sidebars.ts`; the landing page is `src/pages/index.tsx`.
 - Every page states its status: Works today, In flight, or Roadmap.
 - MDX 3: do not use explicit `{#id}` heading anchors; rely on auto slugs.
 - See CLAUDE.md for the commit / PR / governance workflow.
+- Open every PR as a draft. CI skips drafts, so run `npm run build` and the
+  hooks locally, push once they pass, and mark the PR ready when the work is
+  finished; see CLAUDE.md "CI and Actions minutes".

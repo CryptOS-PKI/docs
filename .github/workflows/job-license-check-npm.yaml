@@ -1,0 +1,47 @@
+name: License Check (npm)
+# Fail if a 3rd-party npm dependency carries a license outside the allowlist. No
+# SAST/vuln scanning (deliberately out of scope).
+#
+# npm only: this repo has a root package.json and no go.mod. The old two-job
+# job-license-check.yaml also started a Go job here that found no go.mod and
+# billed a minute per run to do nothing.
+#
+# Pull requests only, and not while the PR is a draft; the PR run covers what
+# merges, so nothing reruns on push to main.
+on:
+  pull_request:
+    branches: [main]
+    # edited is here so retargeting a stacked PR onto main starts CI. Jobs
+    # skip edited events that did not change the base (title/body edits), and
+    # a skipped job is not billed.
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+# One run per PR per workflow: a new push cancels the older PR run. A title or
+# body edit gets its own group, so its run never cancels real CI.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}${{ github.event.action == 'edited' && github.event.changes.base == null && format('-edit-{0}', github.run_id) || '' }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  npm:
+    name: ⚖️ Dependency licenses (npm)${{ github.event.action == 'edited' && github.event.changes.base == null && ' (edit, not run)' || '' }}
+    if: github.event.pull_request.draft == false && (github.event.action != 'edited' || github.event.changes.base != null)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Check dependency licenses
+        run: |
+          npx --yes license-checker-rseidelsohn \
+            --production --excludePrivatePackages \
+            --onlyAllow "MIT;ISC;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD;CC0-1.0;Unlicense;BlueOak-1.0.0;Python-2.0;MPL-2.0;CC-BY-4.0"
