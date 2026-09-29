@@ -8,6 +8,148 @@ title: "🔌 gRPC API"
 This describes CryptOS as it works right now.
 :::
 
-The NodeService RPCs and their messages.
+CryptOS exposes two gRPC services. The protobuf definitions in the [CryptOS-PKI/api](https://github.com/CryptOS-PKI/api) repository are the source of truth; this page explains the parts that need more than the field comments.
 
-> This page is a stub. The full write-up lands in the documentation content workstream. 🚧
+| Service | Package | Served by | What it covers |
+|---|---|---|---|
+| `NodeService` | `cryptos.v1` | each CryptOS node, over mTLS on port 443 and the local UNIX socket | one node: config, status, ceremony, issuance, revocation, key backup and rotation, image upgrades |
+| `FleetService` | `cryptos.fleet.v1` | the Fleet Manager, as a Connect endpoint | many nodes: inventory, the profile catalog, enrollment, the audit log, operator credentials, MCP agent keys |
+
+> The rest of the RPCs are not written up here yet. Until they are, read the comments in `proto/cryptos/v1/node.proto` and `proto/cryptos/fleet/v1/fleet.proto`. 🚧
+
+## Issuance warnings
+
+Three `NodeService` responses carry a `repeated string warnings` field. A warning never means the call failed: the node did the work and is telling the operator something they should read.
+
+| RPC | Field | When it is set |
+|---|---|---|
+| `IssueLeaf` | `IssueLeafResponse.warnings` (2) | the leaf's notAfter was capped to the issuing CA's own notAfter |
+| `SignSubordinateCSR` | `SignSubordinateCSRResponse.warnings` (3) | the child CA certificate's notAfter was capped to the parent's notAfter |
+| `ApplyConfig` | `ApplyConfigResponse.warnings` (4) | a profile's `validity_days`, counted from now, already runs past this CA's notAfter |
+
+The `ApplyConfig` warnings are advisory. A CA's remaining lifetime shrinks every day, so every profile eventually outlives it; the config is still applied. Each warning names the profile and the CA's notAfter date, and says what will happen: under `cap` its certificates will be capped to that date, and under `reject` issuance from it will be refused.
+
+The warnings are plain text for a person to read. Don't parse them.
+
+The Fleet Manager's own `FleetService.IssueLeaf` response carries only `cert_der` today; it doesn't pass the node's warnings through.
+
+## Validity policy
+
+`CertificateProfile.validity_policy` (field 11) decides what a node does when a profile's `validity_days` would run past the issuing CA's own notAfter. A certificate can never outlive its issuer, so the node has to either shorten it or refuse it.
+
+| Value | Behaviour |
+|---|---|
+| `cap` (or empty) | The default. The node shortens the certificate so it ends when the issuer ends, issues it, and reports the cap in the response `warnings`. |
+| `reject` | The node refuses to issue with `FAILED_PRECONDITION`, before it loads the CA key. The error names the profile, the requested end date and the issuer's notAfter. |
+
+Any other value fails config validation. The policy applies to both `IssueLeaf` and `SignSubordinateCSR`.
+
+Profiles live in `pki.profiles[]` in the node's machine config; see [Machine config schema](./machine-config.md). The Fleet Manager's catalog (`ListProfiles`, `CreateProfile`, `UpdateProfile`, `ApplyProfileToNode`) uses the same `cryptos.v1.CertificateProfile` message, so `validity_policy` travels with a profile when the manager pushes it to a node.
+
+## MCP agent keys
+
+The Fleet Manager serves an MCP endpoint so AI agents can work with the fleet. An agent authenticates with an **MCP key**: a bearer key bound to one operator's client certificate. MCP clients that can run the OAuth login get a key from that flow; `CreateMcpKey` mints one for clients that can't. Both produce the same kind of key.
+
+A key is identity only. On every request its effective level is the lower of the bound certificate's live level and the key's `level_ceiling`, and the key stops working as soon as that certificate is revoked or expires.
+
+### Access rules
+
+- **Operator certificate only.** All three RPCs need an operator client certificate. A call that arrives with an MCP key is refused with `PERMISSION_DENIED`: a key can never mint, list or revoke keys.
+- **`ListMcpKeys`** returns the keys bound to the caller's certificate. Setting `all` lists every operator's keys and is admin-only; a non-admin who sets it is refused.
+- **`RevokeMcpKey`** lets an operator revoke the keys bound to their own certificate, and an admin revoke any key. It is idempotent: revoking a key that is already revoked returns it unchanged and writes no second audit entry. The revocation takes effect on the key's next request.
+- **`CreateMcpKey`** binds the new key to the caller's certificate serial. `level_ceiling` may not exceed the caller's own level.
+- `CreateMcpKey` and `RevokeMcpKey` are audited. The create entry names the key id, label and ceiling, never the key.
+
+### `ListMcpKeys`
+
+| Request field | Type | Meaning |
+|---|---|---|
+| `all` (1) | `bool` | list every operator's keys instead of only the caller's; admin only |
+
+| Response field | Type | Meaning |
+|---|---|---|
+| `items` (1) | `repeated McpKey` | the keys, newest first, revoked ones included |
+
+The listing never carries a key or its hash.
+
+### `RevokeMcpKey`
+
+| Request field | Type | Meaning |
+|---|---|---|
+| `id` (1) | `string` | the `McpKey.id` to revoke |
+
+| Response field | Type | Meaning |
+|---|---|---|
+| `mcp_key` (1) | `McpKey` | the key after revocation, with `revoked_at` set |
+
+An unknown id returns `NOT_FOUND`.
+
+### `CreateMcpKey`
+
+| Request field | Type | Meaning |
+|---|---|---|
+| `label` (1) | `string` | free-text name for the key, shown in listings |
+| `level_ceiling` (2) | `string` | `viewer`, `operator` or `admin`; empty means no ceiling below the operator's own level |
+
+| Response field | Type | Meaning |
+|---|---|---|
+| `plaintext_key` (1) | `string` | the bearer key: `fos_mcp_` followed by base64url of 32 random bytes |
+| `mcp_key` (2) | `McpKey` | the stored metadata for the new key |
+
+:::warning[🔑 Shown once]
+`plaintext_key` is returned in this response only. The manager stores just its hash, so it can't show the key again. A lost key is revoked and a new one minted; it is never recovered. Don't log it.
+:::
+
+A ceiling that isn't a known level, or that is above the caller's level, returns `INVALID_ARGUMENT`. When the manager's MCP endpoint is disabled, `CreateMcpKey` returns `FAILED_PRECONDITION`.
+
+### `McpKey`
+
+The metadata of one key. It never carries the key or its hash. Timestamps are RFC 3339 strings; an unset one is empty.
+
+| Field | Type | Meaning |
+|---|---|---|
+| `id` (1) | `string` | stable identifier, used by `RevokeMcpKey` and the audit `key_id` |
+| `label` (2) | `string` | the operator's name for the key |
+| `client_name` (3) | `string` | the name the MCP client registered with during the OAuth login; empty for a key from `CreateMcpKey` |
+| `operator_cn` (4) | `string` | subject CN of the operator certificate the key is bound to |
+| `operator_serial` (5) | `string` | hex serial of that certificate |
+| `level_ceiling` (6) | `string` | `viewer`, `operator` or `admin`; empty means no ceiling below the operator's own level |
+| `created_at` (7) | `string` | when the key was minted |
+| `last_used_at` (8) | `string` | when the key last authenticated a request; empty if never |
+| `revoked_at` (9) | `string` | when the key was revoked; empty while it is active |
+
+## Fleet Manager audit events
+
+`FleetService.ListAudit` returns `cryptos.fleet.v1.AuditEvent` entries. This is the manager's log, separate from the hash-chained `cryptos.v1.AuditEvent` log each node keeps (see [Audit log format](./audit-log.md)).
+
+| Field | Type | Meaning |
+|---|---|---|
+| `id` (1) | `string` | entry id |
+| `at` (2) | `string` | when it happened |
+| `kind` (3) | `string` | what happened, e.g. `issued`, `revoked`, `config-applied`, `profile-updated`, `mcp-key-created`, `mcp-key-first-used`, `mcp-key-rejected`, `mcp-key-revoked` |
+| `summary` (4) | `string` | one line for a person to read |
+| `target_kind` (5) | `string` | `cert`, `enrollment`, `mcp-key`, `node`, `profile` or `protocol` |
+| `target_path` (6) | `string` | the object acted on |
+
+### Actor fields
+
+Fields 7 onward say who acted and through which surface. They are empty on entries recorded before the manager captured an actor.
+
+| Field | Type | Meaning |
+|---|---|---|
+| `actor_kind` (7) | `string` | how the actor authenticated: `cert` for an operator client certificate, `mcp_key` for an MCP key |
+| `actor_cn` (8) | `string` | subject CN of the operator certificate that acted, or that the MCP key is bound to |
+| `actor_serial` (9) | `string` | hex serial of that operator certificate |
+| `key_id` (10) | `string` | the `McpKey.id` when `actor_kind` is `mcp_key`; empty otherwise |
+| `via` (11) | `string` | the surface the action came through: `web`, `mcp` or `api` |
+| `tool` (12) | `string` | the MCP tool name when `via` is `mcp`; empty otherwise |
+| `request_digest` (13) | `string` | lowercase hex SHA-256 of the canonical request, so an entry can be matched to the exact request without storing its body |
+| `outcome` (14) | `string` | `ok`, `denied`, `pending` or `error` |
+| `approval_id` (15) | `string` | reserved for step-up approval |
+| `approver_serial` (16) | `string` | reserved for step-up approval |
+
+:::note[🧭 Step-up approval]
+`approval_id` and `approver_serial` are always empty for now. Once the manager ships step-up approval, they will name the approval that authorized the action and carry the hex serial of the approving operator's certificate.
+:::
+
+Because an MCP key is always bound to a certificate, an action an agent takes is still attributed to a person: `actor_cn` and `actor_serial` name the operator, and `key_id` names the key they gave the agent.
