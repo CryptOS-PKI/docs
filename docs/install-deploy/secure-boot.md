@@ -8,6 +8,109 @@ title: "🛡️ Secure Boot enrollment"
 This describes CryptOS as it works right now.
 :::
 
-Generate and enroll the keys firmware needs to trust the image.
+CryptOS ships **no signing key** and asks you to trust none. You make your own Secure Boot key, build the image with it, and enroll its certificate in the firmware of the machines you run. The same certificate is stamped into the image as its **upgrade anchor**, so the key that makes an image bootable is also the only key that can replace it later.
 
-> This page is a stub. The full write-up lands in the documentation content workstream. 🚧
+This page is the short version. The full guide, with every verification command, is [Secure Boot: build and sign with your own key](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/secure-boot.md) in the `cryptos` repository.
+
+## What the key does
+
+The build uses one key and certificate (`SB_KEY` and `SB_CERT`) for three jobs:
+
+| Job | Checked by |
+|---|---|
+| The Secure Boot signature on the UKI | the machine's firmware, against its `db` list, at every boot |
+| The detached signature file `cryptos-amd64.uki.sig` | the running node, when you stage an upgrade |
+| The upgrade anchor built into the image | the node, when it checks the next image's signature |
+
+The anchor is compiled into the image. It is never read from config or disk, so nobody can swap it on a running node.
+
+## 1. Make the key
+
+Do this on the machine that will keep the key, ideally an offline or dedicated build host. Either tool makes the same three files: `sb.key` (the private key), `sb.crt` (the certificate, PEM) and `sb.der` (the certificate, DER, for firmware).
+
+With openssl (3.0 or later):
+
+```bash
+umask 077
+mkdir -p ~/cryptos-sb && cd ~/cryptos-sb
+
+openssl req -new -x509 -newkey rsa:2048 -sha256 -noenc -days 3650 \
+  -subj "/O=Example Org/CN=Example Org Secure Boot Signing 2026" \
+  -addext "basicConstraints=critical,CA:TRUE" \
+  -addext "keyUsage=critical,digitalSignature,keyCertSign" \
+  -addext "extendedKeyUsage=codeSigning" \
+  -keyout sb.key -out sb.crt
+
+openssl x509 -in sb.crt -outform DER -out sb.der
+```
+
+Or with `cryptos-sbkey`, which `task build` puts in `bin/`:
+
+```bash
+bin/cryptos-sbkey --out-dir ~/cryptos-sb --cn "Example Org Secure Boot Signing 2026"
+```
+
+Its flags are `--out-dir`, `--cn`, `--days` (0, the default, means about 10 years), `--bits` (`2048` or `4096`) and `--force` to overwrite existing files.
+
+- 🔑 **Use RSA.** The node only accepts an RSA anchor. RSA-2048 works on every UEFI firmware; RSA-4096 only on firmware that accepts it in `db`, so test a boot first.
+- ⏳ **Give it a long life.** Ten years is a good value. Changing the key later is the expensive part, not expiry.
+
+## 2. Decide: Secure Boot on or off
+
+| | Secure Boot **on**, your certificate in `db` | Secure Boot **off** |
+|---|---|---|
+| Firmware refuses a tampered or foreign image at boot | yes | no |
+| Upgrades must be signed by your key | yes | yes, through the anchor |
+| Setup per machine | enroll `sb.der` | none |
+
+:::warning[Decide before you install]
+On a TPM-backed node the disk key is sealed to TPM PCR 7, which measures the Secure Boot state and the `db` contents, and to PCR 11, which measures the image. Turning Secure Boot on or off, or changing `db`, after the install means the node can no longer unlock its own disk. A `nodeid` node does not use the TPM and is not affected.
+:::
+
+## 3. Enroll the certificate
+
+Skip this if Secure Boot stays off. You only need to **add your certificate to `db`**; the existing platform keys and vendor entries can stay.
+
+### VMware vSphere and ESXi
+
+1. Power the VM off. Under **VM Options > Advanced > Configuration Parameters**, add `uefi.allowAuthBypass` = `TRUE`, so the firmware setup accepts a `db` entry that is not signed by a KEK.
+2. Put `sb.der` on a volume the firmware can read, such as a small FAT-formatted virtual disk.
+3. Boot into firmware setup (**VM Options > Boot Options > Force EFI setup**), go to **Secure Boot Configuration > DB Options > Enroll Signature**, choose `sb.der`, save and exit. Menu names vary a little between ESXi releases.
+4. Power off, remove `uefi.allowAuthBypass` and the key disk, and check that **Secure Boot** is still enabled.
+
+Do this before the VM first boots the CryptOS ISO.
+
+### Bare metal
+
+- **Firmware setup:** copy `sb.der` to a FAT32 USB stick, put Secure Boot in Setup or Custom mode, choose the option to add or append a key to `db`, then set Secure Boot back to User mode.
+- **`sbctl` from a Linux live USB**, with the firmware in Setup Mode: `sbctl import-keys --db-cert ./sb.der`, then `sbctl enroll-keys --append`. `--append` keeps the existing keys.
+
+## 4. Build with the key
+
+```bash
+export SB_KEY="$HOME/cryptos-sb/sb.key"
+export SB_CERT="$HOME/cryptos-sb/sb.crt"
+task iso PLATFORM=vmware
+```
+
+Keep both variables set for the whole run, as described in [Build a bootable image](./build-bootable-image.md). The build checks its own signatures before it finishes. To check the result yourself:
+
+```bash
+sbverify --cert "$SB_CERT" build/out/cryptos-amd64.uki
+```
+
+## 5. Upgrade with the same key
+
+A node accepts a new image only if the image's `.sig` verifies against the anchor in the image it is **running**. Build every later version with the same key, then stage it:
+
+```bash
+cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem image stage --image build/out/cryptos-amd64.uki
+```
+
+An image signed by any other key is refused before anything is written. The [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/image-upgrade.md) covers staging, activating and rolling back.
+
+## Look after the key
+
+- 💥 **Losing it means reinstalling.** Nothing on a node can replace its anchor. Without the key you cannot sign an image the node will accept, and a reinstall reformats the disk and destroys the CA key.
+- 🚨 **A leaked key is serious.** Anyone with admin access to a node could install an image of their choosing, and with Secure Boot on it would boot on any machine that trusts your certificate. Treat it like a CA key.
+- 🗄️ **Keep it offline** when you are not building: an encrypted backup in at least two places, never committed, and never stored in CI secrets for a public repository.

@@ -17,15 +17,7 @@ The whole "brain" of a certificate authority is built and unit-tested:
 - The encrypted **API** (mTLS gRPC) and the tamper-evident **audit log**.
 - The full **`cryptosctl`** command-line tool.
 - Building the OS image and turning it into a bootable **ISO** for a platform such as VMware.
-
-## 🚧 In flight
-
-Booting a real node from start to finish:
-
-- **Maintenance mode** — the very first boot, before anything is installed, where you set the node up.
-- **Install to disk**, then reboot into the ceremony.
-
-This is where the active work is right now.
+- Installing a node from start to finish: **maintenance mode** on the very first boot, **install to disk**, then the reboot into the ceremony. See [Install & Deploy](../install-deploy/build-bootable-image.md).
 
 ## 🧭 Roadmap
 
@@ -36,4 +28,4 @@ The version stays at `0.x` until the whole system lands. There is no 1.0 yet.
 
 ## One thing to know today
 
-Right now a node signs exactly one certificate: **its own Root**. Handing out certificates to *other* machines arrives with the issuing role in Phase 2.
+A node does more than sign its own Root: it can sign subordinate CAs and issue end-entity certificates from a CSR. The `ca` commands in the [cryptosctl command reference](../reference/cryptosctl.md#certificate-authority) list what it can sign today.
