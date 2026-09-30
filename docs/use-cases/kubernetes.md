@@ -41,6 +41,10 @@ A CryptOS node certifies only ECDSA P-384 keys and RSA keys of 3072 bits or more
 
 cert-manager also has to trust the CryptOS chain for the HTTPS connection to the ACME directory. Give it the CryptOS root (or the chain your TLS front end serves) as the ACME issuer's CA bundle.
 
+:::info[Tested in CI with kind and cert-manager]
+Every `cryptos` pull request that touches the ACME code runs cert-manager in a [kind](https://kind.sigs.k8s.io/) cluster against a CryptOS intermediate. cert-manager registers with External Account Binding and proves the name with `http-01` through the cluster's ingress. The test checks that an ECDSA P-384 Certificate goes Ready, that its chain verifies to the CryptOS root, that the node recorded the serial, and that a forced renewal returns a new serial. The node in that test runs from the `cryptos` code on the CI runner with software keys, not from the OS image with a TPM. See [`ci-kind-acme.yml`](https://github.com/CryptOS-PKI/cryptos/blob/main/.github/workflows/ci-kind-acme.yml) and `task e2e:kind` to run it yourself on Linux.
+:::
+
 ## An intermediate for the cluster
 
 cert-manager can also act as a small CA of its own, signing from a CA key pair stored in a Kubernetes Secret. CryptOS can sign that CA certificate: a subordinate CA request from outside CryptOS is signed with `cryptosctl ca sign-subordinate --csr <file> --profile <ca-profile>`, the same step that makes vCenter's VMCA a CryptOS subordinate. The profile needs `basic_constraints.is_ca: true`, and `path_len: 0` stops the cluster CA from signing further CAs below it.
