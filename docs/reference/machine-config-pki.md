@@ -34,8 +34,8 @@ The key algorithm decides more than the key. A certificate's signature is made w
 | Root lifetime out of range | `config: pki.root_validity_years: must be in [1, 30], got <n>` |
 | Path length out of range | `config: pki.path_len_constraint: must be in [0, 5], got <n>` |
 
-:::caution[An RSA key needs a software state key]
-The TPM path holds ECDSA P-384 keys only. An RSA `root_key_alg` works only with `state_key.mode` set to `nodeid` or `kms`, where the CA key is a software key on the encrypted state partition. See [state_key](./machine-config.md#-state_key).
+:::caution[An RSA key in the TPM needs a TPM that has that size]
+With `state_key.mode: tpm`, an RSA CA key is created and held in the TPM like the ECDSA one. The TPM 2.0 spec only requires RSA-2048, and many TPMs stop there. If the TPM doesn't implement the size you set, key creation stops with `FailedPrecondition` and an error containing `tpm: key algorithm not supported by this TPM: RSA-3072` (or `RSA-4096`), and no key is made. The node never falls back to a smaller size or to a software key. Check the TPM's datasheet first, or use `nodeid` or `kms` mode, where the CA key is a software key on the encrypted state partition. See [state_key](./machine-config.md#-state_key).
 :::
 
 ## 🔗 parent

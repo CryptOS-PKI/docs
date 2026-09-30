@@ -193,7 +193,7 @@ How the key for the encrypted state partition (and, with it, the CA key) is prot
 
 | Mode | State-partition key | CA key |
 |---|---|---|
-| `tpm` | Sealed by the TPM | Created and held inside the TPM. The TPM must support ECDSA P-384. |
+| `tpm` | Sealed by the TPM | Created and held inside the TPM. The TPM must support ECDSA P-384, and for an RSA CA key, that RSA size. |
 | `nodeid` | Derived from the machine's SMBIOS UUID | Software key, stored on the encrypted state partition. |
 | `kms` | Wrapped by the external KMS | Software key, stored on the encrypted state partition. |
 
@@ -209,8 +209,8 @@ Set the mode before the install. The node needs it before it can unlock the stat
 A machine's SMBIOS UUID is not a secret. In `nodeid` mode the state partition is tied to the machine, but anyone who can read the UUID and the disk can derive its key, and the CA key is a software key on that partition. Don't run a production CA in `nodeid` mode.
 :::
 
-:::caution[An RSA CA key needs nodeid or kms]
-The TPM path creates ECDSA P-384 keys only. With `mode: tpm` and an RSA `pki.root_key_alg`, the ceremony fails with `tpm: RSA-3072 CA keys cannot be created in the TPM; use a software-backed state key mode for an RSA CA` (or `RSA-4096`). In `nodeid` and `kms` mode the CA key is not hardware-protected.
+:::caution[An RSA CA key in tpm mode needs a TPM with that RSA size]
+With `mode: tpm` and an RSA `pki.root_key_alg`, the CA key is created in the TPM, with the same protections as the ECDSA key. The TPM 2.0 spec only requires RSA-2048, and many TPMs implement nothing larger. If yours lacks RSA-3072 (or RSA-4096), the root ceremony fails with `FailedPrecondition` and an error containing `tpm: key algorithm not supported by this TPM: RSA-3072`, before any key is created, and you can run it again with another algorithm. An intermediate or issuing node creates its key at boot, so its boot stops on the same error. The node never falls back to a smaller size or a software key. The boot log line `init: TPM capabilities: ... RSA key sizes [...]` lists the sizes the TPM accepted. In `nodeid` and `kms` mode an RSA CA key is a software key and is not hardware-protected.
 :::
 
 ## 🛰️ management
