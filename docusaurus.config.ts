@@ -18,7 +18,7 @@ limitations under the License.
 import {createRequire} from 'module';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import {recommendedThemeConfig} from '@the-rabbit-hole-tech/docs-theme/config';
+import {recommendedThemeConfig} from '@the-rabbit-hole/docs-theme/config';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 const require = createRequire(import.meta.url);
@@ -61,7 +61,7 @@ const config: Config = {
   },
 
   // Brand theme plugin (collapsible right-side TOC + swizzled components).
-  plugins: ['@the-rabbit-hole-tech/docs-theme'],
+  plugins: ['@the-rabbit-hole/docs-theme'],
 
   presets: [
     [
@@ -74,7 +74,7 @@ const config: Config = {
         blog: false,
         theme: {
           customCss: [
-            require.resolve('@the-rabbit-hole-tech/docs-theme/styles/custom.css'),
+            require.resolve('@the-rabbit-hole/docs-theme/styles/custom.css'),
             './src/css/custom.css',
           ],
         },

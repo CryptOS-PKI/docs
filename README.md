@@ -15,8 +15,8 @@ CryptOS ships no docs inside the OS image; this is a standalone site the project
 ## 🧱 Stack
 
 - 📘 **[Docusaurus](https://docusaurus.io) 3 + TypeScript**
-- 🐇 **[`@the-rabbit-hole-tech/docs-theme`](https://github.com/the-rabbit-hole-tech/docs-theme)** — the shared brand theme
-- 🌒 **Dark mode only** (set by the theme; no light/dark switch)
+- 🐇 **[`@the-rabbit-hole/docs-theme`](https://www.npmjs.com/package/@the-rabbit-hole/docs-theme)** — the shared brand theme
+- 🌒 **Dark mode by default** (set by the theme; the navbar switch turns on light mode)
 - 📝 **Content in Markdown / MDX** under `docs/`; sidebar order lives in `sidebars.ts`
 
 ## 🚀 Run it locally
@@ -41,14 +41,7 @@ task ci          # build the site
 
 ## 🎨 Theme
 
-The look and feel come from [`@the-rabbit-hole-tech/docs-theme`](https://github.com/the-rabbit-hole-tech/docs-theme), published to GitHub Packages. Consuming it from the registry needs a token with the `read:packages` scope (the scope mapping in `.npmrc` is committed; the token is not):
-
-```ini
-@the-rabbit-hole-tech:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-```
-
-> The theme is currently vendored as a local tarball so the site builds without a token. It switches to the registry (`^0.1.1`) once that theme release ships.
+The look and feel come from [`@the-rabbit-hole/docs-theme`](https://www.npmjs.com/package/@the-rabbit-hole/docs-theme) ([source](https://github.com/the-rabbit-hole-tech/docs-theme)), published to public npm. `npm install` pulls it like any other dependency: no registry configuration and no token.
 
 ## 🚦 Status
 

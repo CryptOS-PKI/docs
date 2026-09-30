@@ -1,6 +1,6 @@
 name: Build
 # Builds the Docusaurus site so a broken build fails at PR time, not on deploy.
-# The theme is vendored as a tarball, so no registry token is needed here.
+# The theme comes from public npm, so no registry token is needed here.
 #
 # Pull requests only, and not while the PR is a draft. There is no run on push
 # to main: nothing deploys from this workflow, and the squash merge lands the
