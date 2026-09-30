@@ -29,11 +29,37 @@ A boot step that fails stops the boot and the node restarts. There is no shell t
 
 Every call to an installed node is mutual TLS. `cryptosctl` proves who you are with the bootstrap identity in `~/.cryptos/`, and it checks the node against a pinned certificate given with `--trust`.
 
-:::danger[The first pin is trust on first use]
-The first fetch of the node's certificate is trust on first use. Take it from a machine on the node's management network, over a path you control. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) in the `cryptos` repository goes through what the pin does and does not prove.
+The node does not present a certificate from its CA on this port. At every boot it makes a new **self-signed** management certificate that names only its IP address and `localhost`. So you pin that certificate itself, fetched from the node and checked against the node's own console.
+
+### Read the fingerprint off the console
+
+Once the node is up, its console (the physical screen or the hypervisor console) shows that it is waiting for its ceremony, what to do next, and the SHA-256 of this boot's management certificate:
+
+```text
+Awaiting ceremony
+
+Fetch trust, then start the ceremony
+
+Mgmt SHA-256   2D71 1642 B726 B044 0162 7CA9 FBAC 32F5
+               C853 0FB1 903C C4DB 0225 8717 921A 4881
+```
+
+The fingerprint is shown in the same form after the ceremony, on the serving dashboard. It changes on every boot, like the certificate.
+
+### Fetch the certificate
+
+:::danger[Verify the fingerprint before the first ceremony]
+The ceremony runs over this pin, and the Root certificate it returns is the one you publish. If you skip the check, whatever answered the fetch could hand you a Root that isn't your node's. Always pass the console's value to `--expect-sha256`, and never run `ceremony start` over a pin you haven't checked. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) in the `cryptos` repository goes through what the pin does and does not prove.
 :::
 
-The node does not present a certificate from its CA on this port. At every boot it makes a new **self-signed** management certificate that names only its IP address and `localhost`. So you pin that certificate itself, fetched from the node:
+```bash
+cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem \
+  trust fetch --expect-sha256 "2D71 1642 B726 B044 0162 7CA9 FBAC 32F5 C853 0FB1 903C C4DB 0225 8717 921A 4881"
+```
+
+`trust fetch` saves the certificate to `node-trust.pem` only when its SHA-256 matches the value you read off the console. Spaces, colons and case don't matter. Any other certificate fails the fetch and nothing is saved.
+
+Without `cryptosctl` at hand, openssl fetches the same certificate. Compare the SHA-256 it prints with the console before you use the file:
 
 <Tabs groupId="os" queryString>
 <TabItem value="unix" label="Linux / macOS" default>
@@ -41,7 +67,7 @@ The node does not present a certificate from its CA on this port. At every boot 
 ```bash
 openssl s_client -connect 192.0.2.10:443 -servername 192.0.2.10 </dev/null 2>/dev/null \
   | openssl x509 -outform PEM > node-trust.pem
-openssl x509 -in node-trust.pem -noout -subject -issuer -ext subjectAltName
+openssl x509 -in node-trust.pem -noout -subject -issuer -fingerprint -sha256 -ext subjectAltName
 ```
 
 </TabItem>
@@ -50,7 +76,7 @@ openssl x509 -in node-trust.pem -noout -subject -issuer -ext subjectAltName
 ```powershell
 '' | openssl s_client -connect 192.0.2.10:443 -servername 192.0.2.10 2>$null |
   openssl x509 -outform PEM -out node-trust.pem
-openssl x509 -in node-trust.pem -noout -subject -issuer -ext subjectAltName
+openssl x509 -in node-trust.pem -noout -subject -issuer -fingerprint -sha256 -ext subjectAltName
 ```
 
 </TabItem>
@@ -61,7 +87,7 @@ Check that the subject and issuer match (it is self-signed) and that the names a
 Keep two things in mind:
 
 - **Use the IP address** in `--endpoint`. The certificate has no DNS names. If you must connect through a DNS name, add `--server-name 192.0.2.10`.
-- **The pin goes stale on every reboot.** Fetch it again after any restart, upgrade or power event. A stale pin fails closed with `x509: certificate signed by unknown authority`.
+- **The pin goes stale on every reboot.** Fetch it again, checked against the console, after any restart, upgrade or power event. A stale pin fails closed with `x509: certificate signed by unknown authority`.
 
 ## Check the node
 
