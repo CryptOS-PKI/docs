@@ -104,7 +104,7 @@ Because the image and the state partition are separate, a node can change images
 2. `cryptosctl image activate --confirm "<CA common name>"` reboots into the staged image.
 3. `cryptosctl image rollback` puts the retained previous image back on the boot path if you need it.
 
-`cryptosctl image status` shows the running and staged images. The state partition (CA key, issued history, identity) is never opened by an upgrade. In the reference deployment an upgrade cost about 8 to 11 seconds of downtime per node. `cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl image status` shows the running and staged images. The state partition (CA key, issued history, identity) is never opened by an upgrade. In the reference deployment an upgrade cost about 8 to 11 seconds of downtime per node. `cryptosctl` runs on Linux and macOS.
 
 ## What is not available today
 

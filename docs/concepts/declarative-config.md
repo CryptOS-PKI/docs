@@ -88,7 +88,7 @@ cryptosctl --endpoint 192.0.2.10:443 config get > machine.yaml
 cryptosctl --endpoint 192.0.2.10:443 config apply -f machine.yaml
 ```
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming. The connection flags (`--identity`, `--identity-key`, `--trust`) are covered in the [cryptosctl reference](../reference/cryptosctl.md).
+`cryptosctl` runs on Linux and macOS. The connection flags (`--identity`, `--identity-key`, `--trust`) are covered in the [cryptosctl reference](../reference/cryptosctl.md).
 
 `config get` prints the node's current config as YAML in the same schema `config apply` accepts, so you always start from what the node really has rather than from memory.
 

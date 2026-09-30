@@ -77,7 +77,7 @@ The node's own TLS certificate for the management API is self-signed and made fr
 cryptosctl --endpoint 192.0.2.10:443 trust fetch --expect-sha256 <fingerprint from the console>
 ```
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 :::caution[Check the fingerprint before you trust it]
 With `--expect-sha256`, `trust fetch` refuses any certificate that does not match. Without it, it saves whatever certificate it is handed. Always pass it, and read the fingerprint from the node's console, not from the network, so that nobody in between can hand you their own certificate.
