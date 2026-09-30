@@ -111,7 +111,7 @@ const config: Config = {
         '<a href="/docs/introduction/status-roadmap">Read this before you run it in production</a>.',
       backgroundColor: 'var(--cryptos-warning)',
       textColor: 'var(--cryptos-warning-foreground)',
-      isCloseable: true,
+      isCloseable: false,
     },
     docs: {
       sidebar: {
