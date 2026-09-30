@@ -114,13 +114,14 @@ applied: generation=4 requires_reboot=true digest=<sha256>
 
 ### When a change takes effect
 
-Most of the config is read once, at boot. Three fields are read live, every time the node signs:
+Most of the config is read once, at boot. Four fields are read live, every time the node signs:
 
 - `pki.profiles`, the certificate profiles;
 - `pki.root_leaf_issuance`;
-- `pki.allow_unverified_revocation_url`.
+- `pki.allow_unverified_revocation_url`;
+- `pki.allow_unsynced_clock`.
 
-A change limited to those three takes effect straight away and reports `requires_reboot=false`. Anything else (network, role, the revocation base URL and port, the management link, switching ACME or EST on or off, and so on) is saved but only takes effect on the next boot, and reports `requires_reboot=true`. The node never switches those at runtime, and `cryptosctl status` shows `Reboot: pending` until the reboot.
+A change limited to those four takes effect straight away and reports `requires_reboot=false`. Anything else (network, role, the revocation base URL and port, the management link, switching ACME or EST on or off, and so on) is saved but only takes effect on the next boot, and reports `requires_reboot=true`. The node never switches those at runtime, and `cryptosctl status` shows `Reboot: pending` until the reboot.
 
 :::warning[A reboot takes the CA offline]
 Restart the node with an orderly shutdown, not a hypervisor hard reset:

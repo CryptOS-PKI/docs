@@ -106,7 +106,7 @@ pki:
   allow_unsynced_clock: true   # isolated lab only
 ```
 
-The node reads `allow_unsynced_clock` on every signing request, so an apply takes effect straight away, even though the apply reply says `requires_reboot=true`.
+The node reads `allow_unsynced_clock` on every signing request, so an apply takes effect straight away and the apply reply says `requires_reboot=false`.
 
 ## Kiss-o'-Death
 
