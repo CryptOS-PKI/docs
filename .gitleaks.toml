@@ -10,3 +10,8 @@ paths = [
     '''.idea''',
     '''.vscode''',
 ]
+# X.509 signature algorithm names (for example sha384WithRSAEncryption) look
+# like generic API keys to the default rules; they appear throughout the PKI pages.
+regexes = [
+    '''(?i)^(md5|sha1|sha224|sha256|sha384|sha512)WithRSAEncryption$''',
+]

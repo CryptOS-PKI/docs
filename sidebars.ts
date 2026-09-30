@@ -89,6 +89,7 @@ const sidebars: SidebarsConfig = {
         'using/status',
         'using/identity',
         'using/config-apply',
+        'using/enrol-devices-scep',
       ],
     },
     {
@@ -102,9 +103,36 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Integrations',
+      items: [
+        {
+          type: 'category',
+          label: 'vSphere: subordinate VMCA',
+          className: 'sidebar-integration-vmware',
+          link: {type: 'doc', id: 'integrations/vmware-vmca/index'},
+          items: [
+            'integrations/vmware-vmca/safety-gate',
+            'integrations/vmware-vmca/profile',
+            'integrations/vmware-vmca/generate-csr',
+            'integrations/vmware-vmca/sign-and-chain',
+            'integrations/vmware-vmca/cluster-prep',
+            'integrations/vmware-vmca/import',
+            'integrations/vmware-vmca/esxi-hosts',
+            'integrations/vmware-vmca/restore',
+            'integrations/vmware-vmca/verify',
+            'integrations/vmware-vmca/rollback',
+            'integrations/vmware-vmca/troubleshooting',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
       label: 'Reference',
       items: [
         'reference/machine-config',
+        'reference/machine-config-pki',
+        'reference/machine-config-enrollment',
         'reference/cryptosctl',
         'reference/grpc-api',
         'reference/root-cert-profile',
@@ -125,7 +153,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'About',
-      items: ['about/repos', 'about/license'],
+      items: ['about/repos', 'about/license', 'about/cncf'],
     },
   ],
 };
