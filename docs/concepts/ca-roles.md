@@ -64,7 +64,7 @@ Exactly one of `ca_cert_pem` or `ca_cert_sha256` must be set. The node uses this
 
 ### How a subordinate gets its certificate
 
-1. **First boot on the child.** The node creates its CA key and a CSR for the subject in `pki.root_subject`, then waits in the awaiting-certificate state.
+1. **First boot on the child.** The node creates its CA key and a CSR for the subject in `pki.root_subject`, then waits in the awaiting-certificate state. Its console shows `Awaiting parent certificate` and the management certificate SHA-256 to check your pin against.
 2. **Fetch the CSR** from the child with `cryptosctl ca get-subordinate-csr`.
 3. **Sign it on the parent** with `cryptosctl ca sign-subordinate --csr <file> --profile <name>`. The profile must be a CA profile (`basic_constraints.is_ca: true`), and it decides the child's validity, key usage and path length.
 4. **Hand the chain back** to the child with `cryptosctl ca submit-subordinate-cert --chain <file>`. The child checks it against `pki.parent` and against its own key, then commits its identity.

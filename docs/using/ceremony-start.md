@@ -112,7 +112,7 @@ The error comes back as `cryptosctl: rpc error: code = <code> desc = <message>`.
 | `ceremony: config: ...` | the file failed the config checks | fix the field it names and run it again |
 | `not available in maintenance mode` | the node has not been installed yet | [install it first](../install-deploy/bootstrap-apply.md) |
 
-The node refuses a second run only once an identity exists, so after a failure that stopped before `COMPLETE` you can fix the cause and run the same command again.
+The node refuses a second run only once an identity exists, so after a failure that stopped before `COMPLETE` you can fix the cause and run the same command again. Until a run completes, the node's console shows `Ceremony in progress` with the hint `Wait, or start it again if it failed`.
 
 ## 4. Check the Root
 
