@@ -19,6 +19,8 @@ task build        # writes bin/cryptosctl (plus bin/init, bin/cryptos-install, b
 bin/cryptosctl version
 ```
 
+`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+
 ## 2. Make your bootstrap admin identity
 
 The node needs to know who is allowed to manage it once it is installed. `cryptosctl bootstrap` makes that identity on **your workstation**: an ECDSA P-256 key and a self-signed client certificate.

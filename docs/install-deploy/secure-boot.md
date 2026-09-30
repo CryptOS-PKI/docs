@@ -2,6 +2,9 @@
 title: "🛡️ Secure Boot enrollment"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # 🛡️ Secure Boot enrollment
 
 :::tip[✅ Works today]
@@ -30,6 +33,9 @@ Do this on the machine that will keep the key, ideally an offline or dedicated b
 
 With openssl (3.0 or later):
 
+<Tabs groupId="os" queryString>
+<TabItem value="unix" label="Linux / macOS" default>
+
 ```bash
 umask 077
 mkdir -p ~/cryptos-sb && cd ~/cryptos-sb
@@ -43,6 +49,26 @@ openssl req -new -x509 -newkey rsa:2048 -sha256 -noenc -days 3650 \
 
 openssl x509 -in sb.crt -outform DER -out sb.der
 ```
+
+</TabItem>
+<TabItem value="windows" label="Windows (PowerShell)">
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\cryptos-sb" | Out-Null
+Set-Location "$HOME\cryptos-sb"
+
+openssl req -new -x509 -newkey rsa:2048 -sha256 -noenc -days 3650 `
+  -subj "/O=Example Org/CN=Example Org Secure Boot Signing 2026" `
+  -addext "basicConstraints=critical,CA:TRUE" `
+  -addext "keyUsage=critical,digitalSignature,keyCertSign" `
+  -addext "extendedKeyUsage=codeSigning" `
+  -keyout sb.key -out sb.crt
+
+openssl x509 -in sb.crt -outform DER -out sb.der
+```
+
+</TabItem>
+</Tabs>
 
 Or with `cryptos-sbkey`, which `task build` puts in `bin/`:
 
@@ -108,6 +134,8 @@ cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem image stage --image 
 ```
 
 An image signed by any other key is refused before anything is written. The [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/image-upgrade.md) covers staging, activating and rolling back.
+
+`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
 
 ## Look after the key
 

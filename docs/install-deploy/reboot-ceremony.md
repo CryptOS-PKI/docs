@@ -2,6 +2,9 @@
 title: "🔁 Reboot into the ceremony"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # 🔁 Reboot into the ceremony
 
 :::tip[✅ Works today]
@@ -28,11 +31,26 @@ Every call to an installed node is mutual TLS. `cryptosctl` proves who you are w
 
 The node does not present a certificate from its CA on this port. At every boot it makes a new **self-signed** management certificate that names only its IP address and `localhost`. So you pin that certificate itself, fetched from the node:
 
+<Tabs groupId="os" queryString>
+<TabItem value="unix" label="Linux / macOS" default>
+
 ```bash
 openssl s_client -connect 192.0.2.10:443 -servername 192.0.2.10 </dev/null 2>/dev/null \
   | openssl x509 -outform PEM > node-trust.pem
 openssl x509 -in node-trust.pem -noout -subject -issuer -ext subjectAltName
 ```
+
+</TabItem>
+<TabItem value="windows" label="Windows (PowerShell)">
+
+```powershell
+'' | openssl s_client -connect 192.0.2.10:443 -servername 192.0.2.10 2>$null |
+  openssl x509 -outform PEM -out node-trust.pem
+openssl x509 -in node-trust.pem -noout -subject -issuer -ext subjectAltName
+```
+
+</TabItem>
+</Tabs>
 
 Check that the subject and issuer match (it is self-signed) and that the names are the node's IP and `localhost`. Then pass `--trust node-trust.pem`, or copy the file over `~/.cryptos/trust.crt` to make it the default.
 
@@ -44,6 +62,8 @@ Keep two things in mind:
 This first fetch is trust on first use. Take it from a machine on the node's management network, over a path you control. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) in the `cryptos` repository goes through what the pin does and does not prove.
 
 ## Check the node
+
+`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
 
 ```bash
 cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem status
