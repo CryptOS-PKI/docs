@@ -52,7 +52,7 @@ Before signing, the node checks its own new key against the rule it applies to e
 
 ## 🔍 Check a Root yourself
 
-Fetch the certificate with `cryptosctl` and read it with openssl. `cryptosctl` runs on Linux and macOS today; a Windows build is coming. For the connection flags (`--identity`, `--identity-key`, `--trust`), see the [cryptosctl reference](./cryptosctl.md).
+Fetch the certificate with `cryptosctl` and read it with openssl. `cryptosctl` runs on Linux and macOS. For the connection flags (`--identity`, `--identity-key`, `--trust`), see the [cryptosctl reference](./cryptosctl.md).
 
 ```bash
 cryptosctl --endpoint 192.0.2.10:443 identity show -o pem > root.pem

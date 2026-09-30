@@ -46,7 +46,7 @@ Terms are in alphabetical order. Where a term names something CryptOS doesn't ha
 
 **CSR (certificate signing request):** a request, signed by the requester's own key, asking a CA to issue a certificate for that key.
 
-**cryptosctl:** the command-line tool for managing a CryptOS node. It runs on Linux and macOS; a Windows build is coming. See the [cryptosctl reference](./cryptosctl.md).
+**cryptosctl:** the command-line tool for managing a CryptOS node. It runs on Linux and macOS. See the [cryptosctl reference](./cryptosctl.md).
 
 ## D
 
