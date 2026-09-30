@@ -55,7 +55,7 @@ In `nodeid` or `kms` mode, `cryptosctl ca export-key --out <file>` writes the CA
      --chain intermediate-chain.pem
    ```
 
-   The child checks the chain against the Root it pinned before it accepts it. `cryptosctl` runs on Linux and macOS today. A Windows build is coming ([cryptos#275](https://github.com/CryptOS-PKI/cryptos/issues/275)).
+   The child checks the chain against the Root it pinned before it accepts it. `cryptosctl` runs on Linux and macOS.
 
 4. **Offline.** Power the Root off until it is needed again.
 

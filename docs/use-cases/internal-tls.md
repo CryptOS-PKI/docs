@@ -50,7 +50,7 @@ When `revocation_base_url` is set, the node checks that the URL resolves and tha
 
 ## Issuing a server certificate
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming ([cryptos#275](https://github.com/CryptOS-PKI/cryptos/issues/275)). `openssl` works the same on every system.
+`cryptosctl` runs on Linux and macOS. `openssl` works the same on every system.
 
 :::caution[Use a P-384 or RSA 3072+ key]
 The node refuses a CSR for any other key. Many tools default to RSA 2048 or ECDSA P-256, and the node answers those with `subject RSA key must be at least 3072 bits` or `subject ECDSA key must be on P-384`.

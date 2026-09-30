@@ -33,7 +33,7 @@ Give code signing its own profile, separate from any TLS profile. Then a code-si
 
 ## Issuing a signing certificate
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming ([cryptos#275](https://github.com/CryptOS-PKI/cryptos/issues/275)). `openssl` works the same on every system.
+`cryptosctl` runs on Linux and macOS. `openssl` works the same on every system.
 
 :::danger[The signing key is the whole point]
 Anyone with the private key can sign software that every machine trusting your root will accept. Make the key on the machine that will sign, and never send it anywhere, including to the CA. Keep it in a hardware token or the build system's secret store where you can, not in a file in a repository.
