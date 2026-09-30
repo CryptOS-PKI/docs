@@ -155,7 +155,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'About',
-      items: ['about/repos', 'about/license'],
+      items: ['about/repos', 'about/license', 'about/cncf'],
     },
   ],
 };
