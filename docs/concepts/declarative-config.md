@@ -119,7 +119,7 @@ Most of the config is read once, at boot. Two fields are read live, every time t
 - `pki.profiles`, the certificate profiles;
 - `pki.root_leaf_issuance`.
 
-A change limited to those two takes effect straight away and reports `requires_reboot=false`. Anything else (network, role, revocation settings, the management link, and so on) is saved but only takes effect on the next boot, and reports `requires_reboot=true`. The node never switches those at runtime.
+A change limited to those two takes effect straight away and reports `requires_reboot=false`. Anything else (network, role, revocation settings, the management link, switching ACME or EST on or off, and so on) is saved but only takes effect on the next boot, and reports `requires_reboot=true`. The node never switches those at runtime, and `cryptosctl status` shows `Reboot: pending` until the reboot.
 
 :::warning[A reboot takes the CA offline]
 Restart the node with an orderly shutdown, not a hypervisor hard reset:
@@ -141,10 +141,12 @@ With `pki.allow_unverified_revocation_url: true`, the node issues certificates w
 
 `config apply` also prints a warning, without stopping, when a profile's `validity_days` runs past the node's own CA certificate. Certificates from that profile will be cut short to the CA's `notAfter`.
 
-## Parts the API does not carry
+## Secrets in the config
 
-:::caution[The acme and est blocks do not travel over the API]
-`pki.acme` and `pki.est` hold secrets (account binding keys and enrolment passwords) and are not part of the API's config message. `config get` leaves them out, and `config apply` keeps whatever blocks the node already has. You cannot turn ACME or EST on, off or change them through `config apply` today.
+`pki.acme` and `pki.est` hold secrets: account binding keys and enrolment password digests. They travel in the API's config message, but only one way. `config get` returns them blank, next to their `key_id` or `username`, and a `config apply` that leaves one blank keeps the value the node stores for that identifier. A new identifier needs its value. So the read, edit, apply cycle above works for these blocks too, without the secrets ever coming back out of the node.
+
+:::warning[Switching ACME or EST waits for a reboot]
+Adding a protocol's block switches it on and removing it switches it off, but only at the next boot. Plan the reboot for a maintenance window: the node stops issuing while it restarts.
 :::
 
 ## The Fleet Manager uses the same file

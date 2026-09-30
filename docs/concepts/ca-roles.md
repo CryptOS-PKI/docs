@@ -116,6 +116,10 @@ A subordinate issues leaf certificates from leaf profiles (`is_ca: false`) in it
 
 SCEP and WSTEP are not available.
 
+:::caution[A Root serves no enrolment protocol]
+ACME and EST run on an intermediate or issuing node only. A Root's config with `pki.acme` or `pki.est` is refused by `config apply`, the maintenance-mode install and the first-boot ceremony, so a Root never opens either endpoint.
+:::
+
 ## Key algorithms
 
 `pki.root_key_alg` sets the node's own CA key: `ECDSA-P384`, `RSA-3072` or `RSA-4096`. Despite the name, it applies to every role. The CA key also decides the signature algorithm on everything the node signs, so a platform that only accepts RSA signatures needs an RSA key at every level of its chain.
