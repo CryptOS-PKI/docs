@@ -198,7 +198,7 @@ How the key for the encrypted state partition (and, with it, the CA key) is prot
 
 | Field | Type | Default | Meaning |
 |---|---|---|---|
-| `state_key.mode` | string | empty | `tpm`, `nodeid`, `kms`, or empty for the image's build-time default. Standard images default to `tpm`; the nodeID image variant defaults to `nodeid`. |
+| `state_key.mode` | string | empty | `tpm`, `nodeid`, `kms`, or empty for the build-time default of the image that installs the node. Fixed at install. Standard images default to `tpm`; the nodeID image variant defaults to `nodeid`. |
 | `state_key.kms.endpoint` | string | none | The base URL of the seal and unseal KMS. Required when `mode` is `kms`. |
 | `state_key.kms.trust_pem` | string | empty | A PEM CA bundle that verifies the KMS server's TLS certificate. |
 
@@ -208,13 +208,14 @@ How the key for the encrypted state partition (and, with it, the CA key) is prot
 | `nodeid` | Derived from the machine's SMBIOS UUID | Software key, stored on the encrypted state partition. |
 | `kms` | Wrapped by the external KMS | Software key, stored on the encrypted state partition. |
 
-Set the mode before the install. The node needs it before it can unlock the state partition, so it reads `state_key` from the config the installer stages on the boot partition, and falls back to the image's build-time default when none is staged. For `kms`, later boots read the endpoint from the state partition's LUKS2 header rather than from the config.
+Set the mode before the install. The node needs it before it can unlock the state partition, so on its first boot it reads `state_key` from the config the installer stages on the boot partition, and falls back to the image's build-time default when none is staged. Every later boot reads the mode from the state partition's LUKS2 header, which records how the partition was sealed, so the mode survives reboots and upgrades to an image built with a different `STATEKEY`. For `kms`, the endpoint also comes from the header rather than from the config.
 
 | Rule | Error |
 |---|---|
 | Unknown mode | `config: state_key.mode: must be one of "nodeid"/"tpm"/"kms" (empty = build default), got "<value>"` |
 | `kms` mode without a `kms` block | `config: state_key.kms: required when state_key.mode is "kms"` |
 | Endpoint not an `http` or `https` URL with a host | `config: state_key.kms.endpoint: must be an http(s) URL` |
+| A different mode on an installed node (`FailedPrecondition`, nothing stored) | `config: state_key.mode "<value>": this node's state volume is sealed in "<mode>" mode, which is fixed at install; reinstall the node to change it` |
 
 :::danger[nodeid mode is for development only]
 A machine's SMBIOS UUID is not a secret. In `nodeid` mode the state partition is tied to the machine, but anyone who can read the UUID and the disk can derive its key, and the CA key is a software key on that partition. Don't run a production CA in `nodeid` mode.
@@ -256,7 +257,8 @@ applied: generation=<n> requires_reboot=<true|false> digest=<sha256 of the store
 :::
 
 - **Live, no reboot:** a change to `pki.profiles` or `pki.root_leaf_issuance`. The signer reads both from the stored config on every request, and the apply reports `requires_reboot=false`. `pki.allow_unsynced_clock` is read the same way and takes effect straight away, though the apply still reports `requires_reboot=true` for it.
-- **Reboot needed:** everything else, including network (`ntp_servers` too), role, state key, revocation settings, `management`, and switching ACME or EST on or off or changing their settings. These are read once at boot. Until the reboot, `cryptosctl status` prints `Reboot: pending`.
+- **Reboot needed:** everything else, including network (`ntp_servers` too), role, revocation settings, `management`, and switching ACME or EST on or off or changing their settings. These are read once at boot. Until the reboot, `cryptosctl status` prints `Reboot: pending`.
+- **Refused:** a different `state_key.mode`. The mode is fixed at install; see [state_key](#-state_key).
 
 `cryptosctl config apply` also prints a `WARNING:` line for each profile whose `validity_days` already runs past the node's own CA certificate. It's a warning; the config is still applied.
 
