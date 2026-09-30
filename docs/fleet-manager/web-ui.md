@@ -72,7 +72,7 @@ If the manager turns you away, the page says why and offers **Try again**:
 
 ## Finding your way around
 
-The header holds the CryptOS mark (back to the Dashboard), your certificate's name, **Copy diagnostics** and a light and dark theme switch. The bar under it has every section: Dashboard, Fleet, Root, Nodes, Adopt, Certificates, Enrollment, Profiles, Protocols, Operators, Agent keys and Audit.
+The header holds the CryptOS mark (back to the Dashboard), your certificate's name, **Copy diagnostics** and a light and dark theme switch. The bar under it has every section: Dashboard, Fleet, Root, Nodes, Adopt, Certificates, Enrollment, Profiles, Protocols, Operators, Agent keys, Approvals and Audit.
 
 Lists refresh every 10 seconds. Every table has filters and a search box.
 
@@ -211,6 +211,7 @@ When the manager's MCP endpoint is on, AI agents use **agent keys**. Each key is
 - **Create key…** makes a key for a client that can't open the browser sign-in. It is shown once; the manager keeps only a hash.
 - **Revoke…** ends a key on the agent's next request.
 - An MCP client's sign-in opens **Authorize an MCP client** in your browser, where you choose a level ceiling and **Approve** or **Deny**.
+- **Approvals** lists the requests agents raise before a tool that changes the fleet runs, with a count of pending ones in the bar. Deciding them is its own task: see [Approving agent requests](./approvals.md).
 
 The manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md) covers setup.
 
@@ -236,3 +237,4 @@ Some screens still read the web app's built-in demo data instead of the manager:
 
 - [Fleet Manager overview](./overview.md): what the manager holds and how nodes join.
 - [Deploy with Helm](./helm.md): where each install path stands.
+- [Approving agent requests](./approvals.md): deciding an agent's step-up request.
