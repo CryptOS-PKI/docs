@@ -36,6 +36,7 @@ Boot count:      3
 Version:         <the image version>
 Revocation:      NOT_CONFIGURED
 DNS:             MACHINE_CONFIG 192.0.2.53
+Protocols:       ACME off, EST off
 ```
 :::
 
@@ -103,6 +104,23 @@ Where the node's DNS servers came from, the servers in order, and the search lis
 | `NONE` | neither gave a server, so the node cannot resolve any name |
 
 `NONE` together with a `revocation_base_url` that names a host is why a revocation check fails. Set `network.nameservers` and apply the config.
+
+### Protocols
+
+Each enrolment protocol, `on` or `off` as the saved machine config has it. A note in brackets means the running node doesn't match the saved config yet:
+
+| Note | Meaning |
+|---|---|
+| none | the protocol runs as configured |
+| `not running, reboot pending` | the protocol was switched on and starts at the next reboot |
+| `still running, reboot pending` | the protocol was switched off and stops at the next reboot |
+| `reboot pending` | its settings changed and take effect at the next reboot |
+
+A Root always shows `ACME off, EST off`: it refuses both.
+
+### Reboot
+
+`Reboot:          pending (the stored config changes take effect at the next boot)` appears when a `config apply` saved a change that waits for a reboot, such as a protocol switch. Reboot in a maintenance window to apply it; see [Apply config](./config-apply.md). The line is absent when nothing is waiting.
 
 ## A node in maintenance mode
 

@@ -49,6 +49,10 @@ The ceremony takes the machine config in the request. It reads the Root's name, 
 Whatever you send becomes the node's config. A different `network.address`, a different `bootstrap` certificate or a missing section takes effect at the next reboot. Use the exact file you installed the node with, and change only what you mean to.
 :::
 
+:::caution[No acme or est section on a Root]
+A Root never serves ACME or EST. If the file has a `pki.acme` or `pki.est` section, the ceremony refuses it before it saves anything or makes a key. Delete the section and run it again.
+:::
+
 Check these fields in particular, because the ceremony fixes them into the Root certificate:
 
 | Field | What it sets |
@@ -104,6 +108,7 @@ The error comes back as `cryptosctl: rpc error: code = <code> desc = <message>`.
 | `ceremony already in progress` | another ceremony is running on this node | wait for it to finish, then check `status` |
 | `first-boot-root ceremony requires role "root", got ...` | the config you sent is not for a Root | send the Root's config; a subordinate is signed by its parent |
 | `ceremony: client certificate is not the authorized bootstrap admin` | you connected with a different identity than the one in the config | use the matching `--identity` and `--identity-key` |
+| `ceremony: config: pki.acme: must not be set on a root node ...` (or `pki.est`) | the file switches on ACME or EST, which a Root never serves | delete the `acme` or `est` section |
 | `ceremony: config: ...` | the file failed the config checks | fix the field it names and run it again |
 | `not available in maintenance mode` | the node has not been installed yet | [install it first](../install-deploy/bootstrap-apply.md) |
 

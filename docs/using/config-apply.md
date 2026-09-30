@@ -29,8 +29,8 @@ cryptosctl --endpoint 192.0.2.10:443 config get > node.yaml
 
 This writes the config the node holds now, in the same YAML format `config apply` takes. Start from this file rather than from an old copy: it is what the node really runs.
 
-:::info[acme and est are not included]
-The `acme` and `est` sections are left out of `config get`, because they hold secrets. The node keeps its own copy of them when you apply the edited file, so leaving them out does not turn those protocols off.
+:::info[acme and est secrets come back blank]
+`config get` prints the `acme` and `est` sections with their secrets blank: each `hmac_key_base64` and `password_sha256` is empty, next to its `key_id` or `username`. Leave a blank value as it is and the node keeps the one it stores for that identifier. Set a value to replace it. A new `key_id` or `username` needs its value, or the apply is refused.
 :::
 
 ## 2. Edit the file
@@ -41,8 +41,14 @@ Change only what you mean to. The fields are described in the [machine config re
 The node stores the file you send as its entire config, not as a patch. A section you delete from the file is gone from the node at the next reboot. Always edit the output of `config get`, never a partial file.
 :::
 
-:::caution[acme and est cannot be changed this way]
-The API does not carry the `acme` and `est` sections, so `cryptosctl` does not send them even when they are in your file. The node keeps what it already has. Changing ACME or EST settings through `config apply` does not work today.
+To switch ACME or EST on, add its `pki.acme` or `pki.est` section. To switch it off, delete the section. The fields are in the [machine config reference](../reference/machine-config.md).
+
+:::caution[A Root refuses acme and est]
+ACME and EST run on an intermediate or issuing node only. A Root's config with either section is refused with `config: pki.acme: must not be set on a root node` (or `pki.est`), and nothing is saved.
+:::
+
+:::warning[Switching ACME or EST needs a reboot in a maintenance window]
+Every change to `acme` or `est`, switching it on or off included, reports `requires_reboot=true`. The protocol starts, stops or changes only at the next reboot (step 4), and the node stops issuing while it restarts. Plan the reboot for a maintenance window.
 :::
 
 ## 3. Send it
@@ -90,7 +96,7 @@ Some problems don't stop the apply but are printed as `WARNING:` lines before th
 
 Only two kinds of change take effect straight away: the certificate profiles (`pki.profiles`) and `pki.root_leaf_issuance`. The node signs with the new values from the next request, and the apply reports `requires_reboot=false`.
 
-Every other change is saved but waits for the next boot, and the apply reports `requires_reboot=true`. Until you reboot, the node keeps running the old values.
+Every other change is saved but waits for the next boot, and the apply reports `requires_reboot=true`. That includes switching ACME or EST on or off. Until you reboot, the node keeps running the old values, and `cryptosctl status` shows `Reboot: pending`.
 
 :::warning[A reboot takes the CA offline]
 While the node restarts it signs nothing and answers nothing, including its revocation addresses. Pick a quiet moment. `--confirm` must be the node's CA common name.
