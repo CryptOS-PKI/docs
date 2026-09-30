@@ -77,12 +77,18 @@ Prints a shell completion script: `cryptosctl completion bash`, `zsh`, `fish` or
 
 Sends a machine config. `cryptosctl` validates the file first and refuses unknown fields, then the node validates it again. On a maintenance node this is what installs the node.
 
+:::danger[On a maintenance node this erases the disk]
+A maintenance node that accepts the config wipes the disk named in `install.disk`. Check it before you apply.
+:::
+
 | Flag | Meaning |
 |---|---|
 | `-f`, `--file` | the machine config YAML (required) |
 | `--yes` | skip the confirmation for `pki.allow_unverified_revocation_url` (for automation) |
 
-If the config turns on `pki.allow_unverified_revocation_url`, `cryptosctl` asks for a confirmation first, because every certificate issued while it is set carries a revocation address that was never checked. On a Root you must type the Root's common name; on other roles, `yes`.
+:::danger[allow_unverified_revocation_url cannot be undone]
+If the config turns on `pki.allow_unverified_revocation_url`, `cryptosctl` asks for a confirmation first, because every certificate issued while it is set carries a revocation address that was never checked. On a Root that includes every subordinate CA it signs. On a Root you must type the Root's common name; on other roles, `yes`.
+:::
 
 It prints `applied: generation=<n> requires_reboot=<true|false> digest=<sha256>`. Most changes need a reboot to take effect.
 
@@ -97,6 +103,10 @@ Runs the first-boot Root ceremony on a Root node: creates the CA key, self-signs
 | Flag | Meaning |
 |---|---|
 | `--config` | the machine config YAML (required) |
+
+:::danger[The ceremony runs once]
+The Root's name, key type and lifetime are fixed by it. The only way to redo it is `reset`, which erases the CA key.
+:::
 
 ## Certificate authority
 
@@ -118,6 +128,14 @@ The `ca` commands marked **child** run on the subordinate being set up, and **pa
 | `ca crl` | | print this node's revocation list as a table |
 | `ca export-key` | `--out` (required), `--role`, `--yes` | export the CA key to a passphrase-encrypted backup file |
 | `ca import-key` | `--backup` (required) | restore a CA from a backup file onto a fresh node |
+
+:::danger[A revocation cannot be undone]
+`ca revoke` has no reverse: neither `cryptosctl` nor the node can take a certificate off the revocation list. Check the serial before you run it.
+:::
+
+:::danger[The backup file holds the CA key]
+Anyone with the file from `ca export-key` and its passphrase has the CA key. Keep the file offline and the passphrase apart from it.
+:::
 
 Notes:
 
@@ -152,7 +170,11 @@ Restarts the node through an orderly shutdown: it stops its listeners, closes et
 
 ### `reset`
 
-Erases the node's key material and reboots it into maintenance mode, so it can be given a new config and a new CA identity. **This cannot be undone.** Certificates the CA already signed stay valid until they expire, but nothing can issue, renew or publish a new revocation list for them. Export the key first with `ca export-key` if that matters.
+Erases the node's key material and reboots it into maintenance mode, so it can be given a new config and a new CA identity.
+
+:::danger[reset cannot be undone]
+Certificates the CA already signed stay valid until they expire, but nothing can issue, renew or publish a new revocation list for them. Export the key first with `ca export-key` if that matters (a TPM-backed node refuses the export).
+:::
 
 | Flag | Meaning |
 |---|---|

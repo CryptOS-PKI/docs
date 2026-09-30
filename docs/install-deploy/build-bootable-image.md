@@ -26,7 +26,7 @@ Two settings shape the image. Both are chosen when you build, not later.
 - 🔐 **`tpm`** is the real thing. The key that unlocks the node's encrypted state disk is sealed to the TPM security chip, and the CA key is created inside the TPM and can never be exported. The machine needs a TPM 2.0 (a vTPM on a virtual machine) that supports ECDSA P-384, or the node refuses to boot.
 - 🧪 **`nodeid`** is for hosts that cannot give the guest a vTPM, such as a standalone ESXi host. It uses no TPM at all. The disk key is derived from the machine's SMBIOS product UUID, and the CA key is made in software and stored on the encrypted disk. `cryptosctl status` shows `TPM: UNAVAILABLE` on these nodes so the weaker setup is never hidden.
 
-:::warning[nodeid is for testing only]
+:::danger[nodeid is for testing only]
 A machine UUID is not a secret. Anyone who has both a copy of the disk and the UUID can recover the CA key. Use `nodeid` to try CryptOS where no vTPM is available, never for a CA that guards real trust.
 :::
 
@@ -76,12 +76,16 @@ The files land in `build/out/`:
 
 To try CryptOS with Secure Boot turned off, you can skip the key:
 
+:::danger[An unsigned image can never be upgraded]
+An unsigned image carries **no upgrade anchor**, even if `SB_KEY` and `SB_CERT` are set in your shell, so a node installed from it can never be upgraded in place. Replacing its image means installing again, which destroys its CA key. For a node you plan to keep, build a signed ISO instead.
+:::
+
 ```bash
 task iso:unsigned PLATFORM=vmware
 task iso:unsigned PLATFORM=vmware STATEKEY=nodeid
 ```
 
-This writes `build/out/cryptos-amd64-vmware-unsigned.iso` (or `...-vmware-nodeid-unsigned.iso`). An unsigned image carries **no upgrade anchor**, even if `SB_KEY` and `SB_CERT` are set in your shell, so a node installed from it can never be upgraded in place. Replacing its image means installing again, which destroys its CA key.
+This writes `build/out/cryptos-amd64-vmware-unsigned.iso` (or `...-vmware-nodeid-unsigned.iso`).
 
 ## Release downloads
 

@@ -31,6 +31,10 @@ The anchor is compiled into the image. It is never read from config or disk, so 
 
 Do this on the machine that will keep the key, ideally an offline or dedicated build host. Either tool makes the same three files: `sb.key` (the private key), `sb.crt` (the certificate, PEM) and `sb.der` (the certificate, DER, for firmware).
 
+:::danger[This key controls every upgrade]
+`sb.key` is the only key that can sign an image your nodes will accept. Losing it means reinstalling, which destroys the CA key, and anyone who gets it can install an image of their choosing on a node they administer. Keep it as described in [Look after the key](#look-after-the-key).
+:::
+
 With openssl (3.0 or later):
 
 <Tabs groupId="os" queryString>
@@ -89,7 +93,7 @@ Its flags are `--out-dir`, `--cn`, `--days` (0, the default, means about 10 year
 | Upgrades must be signed by your key | yes | yes, through the anchor |
 | Setup per machine | enroll `sb.der` | none |
 
-:::warning[Decide before you install]
+:::danger[Decide before you install]
 On a TPM-backed node the disk key is sealed to TPM PCR 7, which measures the Secure Boot state and the `db` contents, and to PCR 11, which measures the image. Turning Secure Boot on or off, or changing `db`, after the install means the node can no longer unlock its own disk. A `nodeid` node does not use the TPM and is not affected.
 :::
 

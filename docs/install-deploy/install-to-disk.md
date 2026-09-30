@@ -38,11 +38,19 @@ After the reboot the machine should start from the disk. Remove the ISO from the
 
 For bare metal there is also `cryptos-install` (built by `task build`), a small tool you run as root from a Linux live USB on the target machine. It writes the same two-partition layout and the UKI, but no machine config:
 
+:::danger[cryptos-install erases the disk]
+Everything on the disk given to `--disk` is wiped. Check the device name on the target machine (for example with `lsblk`) before you run it.
+:::
+
 ```bash
 sudo cryptos-install --disk /dev/nvme0n1 --uki cryptos-amd64.uki --yes
 ```
 
-Without `--yes` it refuses to run, because the disk is erased. `--esp-size-mib`, `--esp-label` and `--state-label` change the defaults (512, `EFI` and `cryptos-state`); keep the default labels, because the node looks for its partitions by exactly those names.
+Without `--yes` it refuses to run, because the disk is erased. `--esp-size-mib`, `--esp-label` and `--state-label` change the defaults (512, `EFI` and `cryptos-state`).
+
+:::caution[Keep the default labels]
+The node looks for its partitions by exactly the names `EFI` and `cryptos-state`. Leave `--esp-label` and `--state-label` unset.
+:::
 
 Because no config is staged, the first boot from that disk encrypts the state partition and then waits in maintenance mode on its DHCP address. Send the config the same way as before, with `--insecure`; `install.disk` is not needed this time. The node saves it to the encrypted partition and reboots into the ceremony, the same place a normal install ends up.
 

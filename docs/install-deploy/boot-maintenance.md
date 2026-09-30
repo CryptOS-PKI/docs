@@ -13,10 +13,14 @@ The first time a machine boots the CryptOS ISO, nothing is installed yet. The no
 ## Prepare the machine
 
 - **UEFI firmware.** The ISO boots only through UEFI; it has no legacy BIOS boot entry.
-- **Secure Boot.** Turn it off for an unsigned image. For a signed image, enroll your certificate first ([Secure Boot enrollment](./secure-boot.md)). Decide this before the install: on a TPM node, changing Secure Boot afterwards locks the node out of its own disk.
+- **Secure Boot.** Turn it off for an unsigned image. For a signed image, enroll your certificate first ([Secure Boot enrollment](./secure-boot.md)).
 - **A TPM**, for a TPM-backed image. On vSphere, add a vTPM to the VM (this needs a key provider). If you cannot, use the `STATEKEY=nodeid` image instead ([Build a bootable image](./build-bootable-image.md)).
 - **A disk to install to.** The install erases it completely.
 - **A network with DHCP.** In maintenance mode the node takes its address from DHCP.
+
+:::danger[Decide on Secure Boot before the install]
+On a TPM node, changing Secure Boot afterwards locks the node out of its own disk. Set it on or off now and leave it that way.
+:::
 
 :::danger[Use a trusted, isolated network]
 Maintenance mode accepts connections **without any authentication**. Whoever reaches the node first can send it a config, erase its disk and take it over. Boot a maintenance node only on a provisioning network you control, and finish the install before you move it anywhere else.

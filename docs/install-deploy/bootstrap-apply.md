@@ -29,6 +29,9 @@ The node needs to know who is allowed to manage it once it is installed. `crypto
 cryptosctl bootstrap --common-name "Example Org bootstrap admin"
 ```
 
+:::tip[Expected output]
+The key and certificate are written, and the SHA-256 is the value for the machine config.
+
 ```text
 wrote /home/you/.cryptos/identity.crt
 wrote /home/you/.cryptos/identity.key
@@ -38,8 +41,13 @@ Stamp into machine config under bootstrap.admin_cert_pem (or admin_cert_sha256):
 -----BEGIN CERTIFICATE-----
 ...
 ```
+:::
 
-The files go to `~/.cryptos/` unless you pass `--out-dir`, and that is where `cryptosctl` looks for them by default. The certificate is valid for one year unless you set `--validity`. The private key never leaves your workstation: the node only ever learns the certificate or its fingerprint. Keep `identity.key` safe, because after the install it is the key to the node.
+The files go to `~/.cryptos/` unless you pass `--out-dir`, and that is where `cryptosctl` looks for them by default. The certificate is valid for one year unless you set `--validity`. The private key never leaves your workstation: the node only ever learns the certificate or its fingerprint.
+
+:::danger[identity.key is the key to the node]
+After the install, whoever holds `identity.key` administers the node. Keep it safe, and never copy it to the node or share it.
+:::
 
 ## 3. Write the machine config
 
@@ -89,9 +97,13 @@ What each part does:
 
 `cryptosctl` checks the file before it sends anything, so a typo such as a short fingerprint fails on your workstation:
 
+:::tip[Expected output]
+For a fingerprint only three characters long, nothing is sent and the error names the field:
+
 ```text
 cryptosctl: config: bootstrap.admin_cert_sha256: must be 64 hex characters, got 3
 ```
+:::
 
 Unknown field names are refused too, so a misspelled key is caught rather than ignored. The full list of fields, including certificate profiles, revocation and the subordinate roles, is in the [machine config reference](../reference/machine-config.md).
 
@@ -103,13 +115,21 @@ During maintenance the node uses its DHCP address. After the install it uses `ne
 
 Point `cryptosctl` at the maintenance node's DHCP address:
 
+:::danger[This erases the install disk]
+A maintenance node that accepts the config wipes the whole disk named in `install.disk` and installs itself on it. Check that `install.disk` names the right disk before you send it.
+:::
+
 ```bash
 cryptosctl --insecure --endpoint 192.0.2.50:443 config apply -f root.yaml
 ```
 
+:::tip[Expected output]
+The install has finished and the node is rebooting.
+
 ```text
 applied: generation=0 requires_reboot=true digest=
 ```
+:::
 
 The command returns once the install has finished. `requires_reboot=true` means the disk is written and the node is rebooting. The generation and digest are empty here because a maintenance node has nowhere to store config yet; they are filled in on a node that is already installed. If the config fails the node's own checks, nothing is written to the disk: fix the file and send it again.
 

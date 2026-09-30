@@ -29,6 +29,10 @@ A boot step that fails stops the boot and the node restarts. There is no shell t
 
 Every call to an installed node is mutual TLS. `cryptosctl` proves who you are with the bootstrap identity in `~/.cryptos/`, and it checks the node against a pinned certificate given with `--trust`.
 
+:::danger[The first pin is trust on first use]
+The first fetch of the node's certificate is trust on first use. Take it from a machine on the node's management network, over a path you control. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) in the `cryptos` repository goes through what the pin does and does not prove.
+:::
+
 The node does not present a certificate from its CA on this port. At every boot it makes a new **self-signed** management certificate that names only its IP address and `localhost`. So you pin that certificate itself, fetched from the node:
 
 <Tabs groupId="os" queryString>
@@ -59,8 +63,6 @@ Keep two things in mind:
 - **Use the IP address** in `--endpoint`. The certificate has no DNS names. If you must connect through a DNS name, add `--server-name 192.0.2.10`.
 - **The pin goes stale on every reboot.** Fetch it again after any restart, upgrade or power event. A stale pin fails closed with `x509: certificate signed by unknown authority`.
 
-This first fetch is trust on first use. Take it from a machine on the node's management network, over a path you control. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) in the `cryptos` repository goes through what the pin does and does not prove.
-
 ## Check the node
 
 `cryptosctl` runs on Linux and macOS today. A Windows build is coming.
@@ -68,6 +70,9 @@ This first fetch is trust on first use. Take it from a machine on the node's man
 ```bash
 cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem status
 ```
+
+:::tip[Expected output]
+The node is installed and ready for its ceremony.
 
 ```text
 Role:            ROOT
@@ -79,6 +84,7 @@ Version:         <the image version>
 Revocation:      NOT_CONFIGURED
 DNS:             MACHINE_CONFIG 192.0.2.53
 ```
+:::
 
 `Identity: NONE` means the node is ready for its ceremony. On a `nodeid` image the TPM line reads `UNAVAILABLE`. `Revocation` stays `NOT_CONFIGURED` until you set `pki.revocation_base_url`, and `DNS` shows where the node's name servers came from (`MACHINE_CONFIG` or `DHCP_LEASE`).
 
@@ -86,9 +92,16 @@ DNS:             MACHINE_CONFIG 192.0.2.53
 
 Send the same machine config again. The ceremony uses it for the Root's name, key type and lifetime:
 
+:::danger[The ceremony runs once]
+The Root's name, key type and lifetime are fixed by this run. Check `root.yaml` first: the only way to redo it is `cryptosctl reset`, which erases the CA key.
+:::
+
 ```bash
 cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem ceremony start --config root.yaml
 ```
+
+:::tip[Expected output]
+Each line is a step of the ceremony as it finishes. `COMPLETE` means the Root exists.
 
 ```text
 KEY_CREATED      tpm_public=<size> bytes
@@ -97,6 +110,7 @@ MANIFEST_WRITTEN manifest_id=<ceremony ID>
 ADMIN_ROTATED    admin_cert_sha256=<SHA-256 of your bootstrap certificate>
 COMPLETE
 ```
+:::
 
 Step by step, the node:
 
