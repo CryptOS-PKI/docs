@@ -113,7 +113,6 @@ So an attacker who copies the disk gets an encrypted volume and a sealed blob th
 | A hardware presence check before a Root key unseals. | Not built. |
 | HA pairs share one CA key with `TPM2_Duplicate`. | Not built. The key is created with `fixedTPM` and `fixedParent`, so it can't be duplicated as it stands. |
 | Extensions are measured into PCR 14, and the seal binds to it. | Not built. `ExtendPCR` exists in `internal/tpm`, but nothing calls it and the seal set is PCR 7 and 11. |
-| The CA key signs only certificates, CRLs and OCSP material built by the policy path. | The `Attest` RPC signs the SHA-384 of a caller-supplied nonce with the CA key, with no domain separation from certificate signing. It is admin-only and audited (the request digest covers the nonce), but an admin can get a CA signature over bytes of their choice. |
 
 ## Where this lives in the code
 
