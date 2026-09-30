@@ -103,10 +103,92 @@ Skip this if Secure Boot stays off. You only need to **add your certificate to `
 
 ### VMware vSphere and ESXi
 
-1. Power the VM off. Under **VM Options > Advanced > Configuration Parameters**, add `uefi.allowAuthBypass` = `TRUE`, so the firmware setup accepts a `db` entry that is not signed by a KEK.
-2. Put `sb.der` on a volume the firmware can read, such as a small FAT-formatted virtual disk.
-3. Boot into firmware setup (**VM Options > Boot Options > Force EFI setup**), go to **Secure Boot Configuration > DB Options > Enroll Signature**, choose `sb.der`, save and exit. Menu names vary a little between ESXi releases.
-4. Power off, remove `uefi.allowAuthBypass` and the key disk, and check that **Secure Boot** is still enabled.
+You add your certificate from the VM's own firmware setup, reading it from a virtual CD. These steps were checked on ESXi 8.0.3.
+
+#### Build the certificate CD
+
+The firmware's file browser reads only FAT file systems, and on a CD it finds one only as an El Torito boot image. So you put `sb.der` in a small FAT image and make that image the CD's El Torito image. No extra virtual disk is needed.
+
+:::caution[A plain ISO does not work]
+A plain ISO 9660 CD holding `sb.der` shows `No File System Found` in the firmware. Build the CD as below.
+:::
+
+Install the tools:
+
+<Tabs groupId="unix-os" queryString>
+<TabItem value="linux" label="Linux" default>
+
+```bash
+sudo apt install mtools xorriso      # Debian or Ubuntu
+sudo dnf install mtools xorriso      # Fedora
+```
+
+</TabItem>
+<TabItem value="macos" label="macOS">
+
+```bash
+brew install mtools xorriso
+```
+
+</TabItem>
+</Tabs>
+
+Then, in the directory that holds `sb.der`, build `sb-enrol.iso`. The commands are the same on Linux and macOS:
+
+```bash
+mkdir sb-enrol
+mformat -i sb-enrol/sb-enrol.img -C -f 1440 -v SBCERT ::
+mcopy -i sb-enrol/sb-enrol.img sb.der ::/cryptos-sb.der
+xorriso -as mkisofs -o sb-enrol.iso -V SBCERT \
+  -e sb-enrol.img -no-emul-boot sb-enrol
+```
+
+:::info[On Windows]
+mtools and xorriso are not native Windows tools. Run the commands above in WSL, or on the Linux host that builds the image.
+:::
+
+:::caution[The file name must end in a lowercase .der]
+The firmware refuses a name stored only as an upper-case 8.3 name, such as `SB.DER`, with `Unsupported file type`. A name longer than eight characters, such as `cryptos-sb.der`, keeps its lowercase long name on the FAT image.
+:::
+
+Check the image before you upload it:
+
+```bash
+mdir -i sb-enrol/sb-enrol.img ::/
+xorriso -indev sb-enrol.iso -report_el_torito plain
+```
+
+:::tip[What to expect]
+`mdir` lists `cryptos-sb.der` in lowercase at the end of its line, and the xorriso report has an `El Torito img path` line naming `/sb-enrol.img`.
+:::
+
+#### Enroll the certificate
+
+1. Upload `sb-enrol.iso` to a datastore the host can read.
+2. Power the VM off. Under **VM Options > Advanced > Configuration Parameters**, add `uefi.allowAuthBypass` = `TRUE`, so the firmware setup accepts a `db` entry that is not signed by a KEK.
+3. Under **VM Options > Boot Options**, check the firmware is **EFI** and turn **Secure Boot** on.
+4. Attach `sb-enrol.iso` to the VM's CD/DVD drive with **Connect At Power On** ticked.
+5. Under **VM Options > Boot Options**, tick **Force EFI setup** and power the VM on. It stops in the **Boot Manager**.
+6. Choose **Enter setup**, then **Secure Boot Configuration > Custom Secure Boot Options > DB Options > Enroll DB > Enroll DB Using File**.
+7. In the **File Explorer**, pick the volume labelled `SBCERT` (its path ends in `CDROM(...)`), then `cryptos-sb.der`.
+8. Choose **Commit Changes and Exit**.
+9. To check, open **DB Options > Delete DB**: your certificate's name is listed next to the Microsoft and VMware entries. Leave with **Esc** without ticking anything, then choose **Shut down the system** in the Boot Manager.
+
+With govc, steps 2 to 5 are:
+
+```bash
+govc vm.change -vm cryptos-node -e uefi.allowAuthBypass=TRUE
+govc device.boot -vm cryptos-node -firmware efi -secure=true
+govc device.cdrom.insert -vm cryptos-node -ds datastore1 ISO/sb-enrol.iso
+govc device.boot -vm cryptos-node -setup
+govc vm.power -on cryptos-node
+```
+
+:::warning[Remove the bypass straight away]
+While `uefi.allowAuthBypass` is set, anyone with the VM's console can change `db` from firmware setup without a KEK signature. Remove it as soon as the certificate is enrolled.
+:::
+
+10. With the VM off, remove `uefi.allowAuthBypass` (with govc: `govc vm.change -vm cryptos-node -e uefi.allowAuthBypass=`), detach `sb-enrol.iso`, and check that **Secure Boot** is still on.
 
 Do this before the VM first boots the CryptOS ISO.
 
