@@ -18,7 +18,7 @@ limitations under the License.
 import {createRequire} from 'module';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import {recommendedThemeConfig} from '@the-rabbit-hole/docs-theme/config';
+import {themes as prismThemes} from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 const require = createRequire(import.meta.url);
@@ -29,6 +29,21 @@ const require = createRequire(import.meta.url);
 // first version is cut, the production build sets DOCS_INCLUDE_NEXT=false so
 // "next" is served locally but excluded from the released site.
 const includeNext = process.env.DOCS_INCLUDE_NEXT !== 'false';
+
+// Code blocks sit on the web card colour. On those backgrounds every token of
+// these two themes meets WCAG AA except vsLight's pure red attribute names
+// (4.0:1), which take the web palette's destructive red (4.8:1) instead.
+const prismLight = {
+  ...prismThemes.vsLight,
+  plain: {...prismThemes.vsLight.plain, backgroundColor: '#ffffff'},
+  styles: prismThemes.vsLight.styles.map((entry) =>
+    entry.style.color === 'rgb(255, 0, 0)' ? {...entry, style: {...entry.style, color: '#dc2626'}} : entry,
+  ),
+};
+const prismDark = {
+  ...prismThemes.oceanicNext,
+  plain: {...prismThemes.oceanicNext.plain, backgroundColor: '#141925'},
+};
 
 const config: Config = {
   title: 'CryptOS',
@@ -60,9 +75,6 @@ const config: Config = {
     locales: ['en'],
   },
 
-  // Brand theme plugin (collapsible right-side TOC + swizzled components).
-  plugins: ['@the-rabbit-hole/docs-theme'],
-
   presets: [
     [
       'classic',
@@ -74,7 +86,13 @@ const config: Config = {
         blog: false,
         theme: {
           customCss: [
-            require.resolve('@the-rabbit-hole/docs-theme/styles/custom.css'),
+            require.resolve('@fontsource-variable/inter/index.css'),
+            // Latin only: the other JetBrains Mono subsets are small enough to
+            // be inlined into the stylesheet (about 180 KB), and code is ASCII.
+            require.resolve('@fontsource/jetbrains-mono/latin-400.css'),
+            require.resolve('@fontsource/jetbrains-mono/latin-500.css'),
+            require.resolve('@fontsource/jetbrains-mono/latin-700.css'),
+            './src/css/theme.css',
             './src/css/custom.css',
           ],
         },
@@ -83,16 +101,44 @@ const config: Config = {
   ],
 
   themeConfig: {
-    ...recommendedThemeConfig,
+    // Dark first, as in the Fleet Manager UI; the navbar toggle switches it.
+    colorMode: {
+      defaultMode: 'dark',
+      respectPrefersColorScheme: false,
+    },
+    docs: {
+      sidebar: {
+        hideable: true,
+        autoCollapseCategories: true,
+      },
+    },
     navbar: {
-      title: 'CryptOS',
+      // theme.css appends the "OS" in the primary colour, as in the web wordmark.
+      title: 'Crypt',
       items: [
-        {type: 'doc', docId: 'introduction/what-is-cryptos', label: 'Get Started', position: 'left'},
-        {type: 'doc', docId: 'concepts/certificates-101', label: 'Concepts', position: 'left'},
-        {type: 'doc', docId: 'use-cases/overview', label: 'Use Cases', position: 'left'},
-        {type: 'doc', docId: 'install-deploy/build-bootable-image', label: 'Install', position: 'left'},
-        {type: 'doc', docId: 'using/setup', label: 'Using', position: 'left'},
-        {type: 'doc', docId: 'reference/machine-config', label: 'Reference', position: 'left'},
+        // Every page shares one sidebar, so doc-type items would all mark
+        // themselves active; match each item on its own section path instead.
+        {
+          to: '/docs',
+          label: 'Get Started',
+          position: 'left',
+          activeBaseRegex: '^/docs/?$|^/docs/introduction/',
+        },
+        {to: '/docs/concepts/certificates-101', label: 'Concepts', position: 'left', activeBasePath: '/docs/concepts'},
+        {to: '/docs/use-cases/overview', label: 'Use Cases', position: 'left', activeBasePath: '/docs/use-cases'},
+        {
+          to: '/docs/install-deploy/build-bootable-image',
+          label: 'Install',
+          position: 'left',
+          activeBasePath: '/docs/install-deploy',
+        },
+        {to: '/docs/using/setup', label: 'Using', position: 'left', activeBasePath: '/docs/using'},
+        {
+          to: '/docs/reference/machine-config',
+          label: 'Reference',
+          position: 'left',
+          activeBasePath: '/docs/reference',
+        },
         {
           href: 'https://github.com/CryptOS-PKI',
           label: 'GitHub',
@@ -101,7 +147,7 @@ const config: Config = {
       ],
     },
     footer: {
-      style: 'dark',
+      style: 'light',
       links: [
         {
           title: 'Docs',
@@ -123,7 +169,8 @@ const config: Config = {
       copyright: `Copyright © ${new Date().getFullYear()} Shane · <a href="https://therabbithole.com">the rabbit hole</a>`,
     },
     prism: {
-      ...(recommendedThemeConfig as {prism?: object}).prism,
+      theme: prismLight,
+      darkTheme: prismDark,
       additionalLanguages: ['bash', 'go', 'yaml', 'json', 'protobuf', 'ini'],
     },
   } satisfies Preset.ThemeConfig,

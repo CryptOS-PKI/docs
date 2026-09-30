@@ -1,6 +1,6 @@
 # docs 📚
 
-> 📖 The documentation site for [CryptOS-PKI](https://github.com/CryptOS-PKI): how to build, install, and run CryptOS, written to be readable by everyone. Built with [Docusaurus](https://docusaurus.io) 3 and the shared [rabbit-hole docs theme](https://github.com/the-rabbit-hole-tech/docs-theme).
+> 📖 The documentation site for [CryptOS-PKI](https://github.com/CryptOS-PKI): how to build, install, and run CryptOS, written to be readable by everyone. Built with [Docusaurus](https://docusaurus.io) 3 and a CryptOS theme that matches the Fleet Manager web UI.
 
 ## ✨ What it is
 
@@ -15,8 +15,8 @@ CryptOS ships no docs inside the OS image; this is a standalone site the project
 ## 🧱 Stack
 
 - 📘 **[Docusaurus](https://docusaurus.io) 3 + TypeScript**
-- 🐇 **[`@the-rabbit-hole/docs-theme`](https://www.npmjs.com/package/@the-rabbit-hole/docs-theme)** — the shared brand theme
-- 🌒 **Dark mode by default** (set by the theme; the navbar switch turns on light mode)
+- 🎨 **CryptOS theme** in `src/css/theme.css`, ported from the Fleet Manager web UI
+- 🌒 **Dark mode by default** (the navbar switch turns on light mode)
 - 📝 **Content in Markdown / MDX** under `docs/`; sidebar order lives in `sidebars.ts`
 
 ## 🚀 Run it locally
@@ -41,7 +41,14 @@ task ci          # build the site
 
 ## 🎨 Theme
 
-The look and feel come from [`@the-rabbit-hole/docs-theme`](https://www.npmjs.com/package/@the-rabbit-hole/docs-theme) ([source](https://github.com/the-rabbit-hole-tech/docs-theme)), published to public npm. `npm install` pulls it like any other dependency: no registry configuration and no token.
+The site carries its own theme, taken from the Fleet Manager web UI ([`web`](https://github.com/CryptOS-PKI/web), `src/index.css`) so the docs and the product look the same:
+
+- 🎨 **Palette:** the web UI's Shield Blue on a graphite ramp, as `--cryptos-*` custom properties mapped onto Docusaurus's Infima variables in `src/css/theme.css`. Change a colour in the web UI first, then mirror it here.
+- 🔤 **Type:** Inter for text and JetBrains Mono for code, the navbar, tabs and the sidebar, both self-hosted through `@fontsource` (no font CDN).
+- ♿ **Contrast:** body text, links, callouts, tabs, tables, code tokens and the sidebar meet WCAG AA in both modes. Check any new colour against its real background before adding it.
+- 🧩 **No swizzled components:** everything is CSS on top of the classic theme. The landing page is `src/pages/index.tsx`.
+
+Page-level tweaks go in `src/css/custom.css`, using the tokens from `theme.css`.
 
 ## 🚦 Status
 

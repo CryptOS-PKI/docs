@@ -15,36 +15,36 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import Landing from '@the-rabbit-hole/docs-theme/landing';
+import Link from '@docusaurus/Link';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Layout from '@theme/Layout';
 
+import styles from './index.module.css';
+
+// A plain landing page until the CryptOS hero (with its code panel) and the
+// logo are designed; both will replace this layout rather than extend it.
 export default function Home() {
+  const {siteConfig} = useDocusaurusContext();
+
   return (
-    <Landing
-      buttons={[
-        {label: 'Get started', to: '/docs', variant: 'secondary'},
-        {label: 'GitHub', href: 'https://github.com/CryptOS-PKI'},
-      ]}
-      features={[
-        {
-          title: '🔒 No login, ever',
-          body: 'No SSH, no shell, no passwords. Every action goes through one mTLS gRPC API.',
-        },
-        {
-          title: '🔑 Keys stay in the TPM',
-          body: 'The certificate authority key is created and used inside the hardware chip. It never touches disk in the clear.',
-        },
-        {
-          title: '📝 Declarative and immutable',
-          body: 'One YAML file describes a node. The running system is read-only and cannot be changed.',
-        },
-      ]}
-      quickstart={{
-        title: '🚀 Quickstart',
-        lede: 'Read the docs to build, boot, and run your first Root CA:',
-        code: 'npm install\nnpm run start',
-        language: 'bash',
-        cta: {label: 'Read the docs', to: '/docs', variant: 'primary'},
-      }}
-    />
+    <Layout description={siteConfig.tagline}>
+      <main className={styles.landing}>
+        <h1 className={styles.wordmark}>
+          Crypt<span className={styles.accent}>OS</span>
+        </h1>
+        <p className={styles.tagline}>{siteConfig.tagline}</p>
+        <div className={styles.actions}>
+          <Link className="button button--primary" to="/docs/try-it-locally/requirements">
+            Get started
+          </Link>
+          <Link className="button button--secondary" to="/docs">
+            Docs
+          </Link>
+          <Link className="button button--outline button--secondary" href="https://github.com/CryptOS-PKI">
+            GitHub
+          </Link>
+        </div>
+      </main>
+    </Layout>
   );
 }

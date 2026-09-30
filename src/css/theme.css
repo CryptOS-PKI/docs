@@ -1,0 +1,420 @@
+/*
+Apache License 2.0
+
+Copyright 2026 Shane
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/*
+ * The CryptOS docs theme, ported from the Fleet Manager web UI
+ * (CryptOS-PKI/web src/index.css) so the docs and the product look like one
+ * thing. The --cryptos-* tokens are the web palette as-is (Shield Blue on a
+ * cobalt-biased graphite ramp); everything below maps them onto Infima.
+ * Change a colour in the web palette first, then mirror it here.
+ */
+
+:root {
+  --cryptos-background: #fbfcfe;
+  --cryptos-foreground: #0e1526;
+  --cryptos-card: #ffffff;
+  --cryptos-primary: #2e74c0;
+  --cryptos-primary-rgb: 46, 116, 192;
+  --cryptos-primary-foreground: #ffffff;
+  --cryptos-muted: #e3e7ef;
+  --cryptos-muted-foreground: #556077;
+  --cryptos-border: #e3e7ef;
+  --cryptos-destructive: #dc2626;
+  --cryptos-destructive-rgb: 220, 38, 38;
+  --cryptos-success: #16a34a;
+  --cryptos-success-rgb: 22, 163, 74;
+  --cryptos-warning: #d97706;
+  --cryptos-warning-rgb: 217, 119, 6;
+
+  --cryptos-font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --cryptos-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --cryptos-radius: 0.5rem;
+}
+
+[data-theme='dark'] {
+  --cryptos-background: #0c0f16;
+  --cryptos-foreground: #e7eaf1;
+  --cryptos-card: #141925;
+  --cryptos-primary: #5391d8;
+  --cryptos-primary-rgb: 83, 145, 216;
+  --cryptos-primary-foreground: #08182b;
+  --cryptos-muted: #232b3d;
+  --cryptos-muted-foreground: #8b94a6;
+  --cryptos-border: #232b3d;
+  --cryptos-destructive: #e5484d;
+  --cryptos-destructive-rgb: 229, 72, 77;
+  --cryptos-success: #2fbf71;
+  --cryptos-success-rgb: 47, 191, 113;
+  --cryptos-warning: #f5a623;
+  --cryptos-warning-rgb: 245, 166, 35;
+}
+
+:root {
+  --ifm-color-primary: #2e74c0;
+  --ifm-color-primary-dark: #2968ad;
+  --ifm-color-primary-darker: #2763a3;
+  --ifm-color-primary-darkest: #205186;
+  --ifm-color-primary-light: #3780cf;
+  --ifm-color-primary-lighter: #4086d1;
+  --ifm-color-primary-lightest: #5d98d8;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #5391d8;
+  --ifm-color-primary-dark: #3b81d2;
+  --ifm-color-primary-darker: #2f7acf;
+  --ifm-color-primary-darkest: #2764ab;
+  --ifm-color-primary-light: #6ba1de;
+  --ifm-color-primary-lighter: #78a8e0;
+  --ifm-color-primary-lightest: #9cc0e9;
+}
+
+:root,
+[data-theme='dark'] {
+  --ifm-color-success: var(--cryptos-success);
+  --ifm-color-warning: var(--cryptos-warning);
+  --ifm-color-danger: var(--cryptos-destructive);
+  --ifm-color-info: var(--cryptos-primary);
+
+  --ifm-background-color: var(--cryptos-background);
+  --ifm-background-surface-color: var(--cryptos-card);
+  --ifm-color-content: var(--cryptos-foreground);
+  --ifm-color-content-secondary: var(--cryptos-muted-foreground);
+  --ifm-heading-color: var(--cryptos-foreground);
+  --ifm-hr-background-color: var(--cryptos-border);
+
+  --ifm-font-family-base: var(--cryptos-font-sans);
+  --ifm-heading-font-family: var(--cryptos-font-sans);
+  --ifm-font-family-monospace: var(--cryptos-font-mono);
+  --ifm-heading-font-weight: 600;
+  --ifm-global-radius: var(--cryptos-radius);
+  --ifm-code-font-size: 90%;
+  --ifm-code-background: var(--cryptos-muted);
+  --ifm-code-border-radius: calc(var(--cryptos-radius) - 4px);
+
+  --ifm-navbar-height: 3.5rem;
+  --ifm-navbar-background-color: var(--cryptos-card);
+  --ifm-navbar-link-color: var(--cryptos-muted-foreground);
+  --ifm-navbar-link-hover-color: var(--cryptos-foreground);
+  --ifm-navbar-shadow: none;
+
+  --ifm-menu-color: var(--cryptos-muted-foreground);
+  --ifm-menu-color-active: var(--cryptos-primary);
+  --ifm-menu-color-background-hover: var(--cryptos-muted);
+  --ifm-menu-color-background-active: rgba(var(--cryptos-primary-rgb), 0.1);
+
+  --ifm-toc-border-color: var(--cryptos-border);
+  --ifm-table-border-color: var(--cryptos-border);
+  --ifm-table-head-background: var(--cryptos-muted);
+  --ifm-table-stripe-background: transparent;
+
+  --ifm-tabs-color: var(--cryptos-muted-foreground);
+  --ifm-tabs-color-active: var(--cryptos-primary);
+  --ifm-tabs-color-active-border: var(--cryptos-primary);
+
+  --ifm-breadcrumb-item-background-active: var(--cryptos-muted);
+  --ifm-footer-background-color: var(--cryptos-card);
+  --ifm-footer-color: var(--cryptos-muted-foreground);
+  --ifm-footer-link-color: var(--cryptos-muted-foreground);
+  --ifm-footer-link-hover-color: var(--cryptos-foreground);
+  --ifm-footer-title-color: var(--cryptos-foreground);
+
+  --docusaurus-highlighted-code-line-bg: rgba(var(--cryptos-primary-rgb), 0.12);
+}
+
+body {
+  font-feature-settings:
+    'rlig' 1,
+    'calt' 1;
+}
+
+/* Header and top nav: a card-coloured bar with a bottom border, and mono nav
+   items with the active one underlined in Shield Blue, as in the web TopNav. */
+.navbar {
+  border-bottom: 1px solid var(--cryptos-border);
+}
+
+.navbar__title {
+  font-family: var(--cryptos-font-mono);
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.025em;
+  color: var(--cryptos-foreground);
+}
+
+/* The web wordmark shows "OS" in the hero colour. The navbar title is plain
+   text, so the config sets it to "Crypt" and the accent is added here; this
+   avoids ejecting the Logo component for one coloured word. */
+.navbar__title::after {
+  content: 'OS';
+  color: var(--cryptos-primary);
+}
+
+.navbar__items:not(.navbar__items--right) > .navbar__item.navbar__link,
+.navbar__items--right > .navbar__item.navbar__link {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  font-family: var(--cryptos-font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+  border-bottom: 2px solid transparent;
+  transition: color var(--ifm-transition-fast);
+}
+
+.navbar__item.navbar__link--active {
+  color: var(--cryptos-primary);
+  border-bottom-color: var(--cryptos-primary);
+}
+
+/* Theme toggle as the web's ghost icon button. Docusaurus gives the toggle
+   hashed CSS-module classes, so these match on the class prefix. */
+.navbar [class*='colorModeToggle'] [class*='toggle_'] {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.navbar [class*='toggleButton_'] {
+  border-radius: calc(var(--cryptos-radius) - 2px);
+  color: var(--cryptos-foreground);
+}
+
+.navbar [class*='toggleButton_']:hover {
+  background: var(--cryptos-muted);
+}
+
+.navbar [class*='toggleButton_'] svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Sidebar, as the web sidebar: mono items, muted until hovered, active item
+   tinted with the primary colour. */
+.theme-doc-sidebar-container {
+  border-right-color: var(--cryptos-border) !important;
+}
+
+.menu {
+  font-family: var(--cryptos-font-mono);
+  font-size: 0.875rem;
+}
+
+.menu__link {
+  border-radius: calc(var(--cryptos-radius) - 2px);
+}
+
+.menu__link:hover,
+.menu__caret:hover {
+  color: var(--cryptos-foreground);
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  font-weight: 500;
+}
+
+.menu__list-item-collapsible:hover {
+  background: var(--cryptos-muted);
+}
+
+.menu__list-item-collapsible--active,
+.menu__list-item-collapsible--active:hover {
+  background: var(--ifm-menu-color-background-active);
+}
+
+/* The web's light primary on its own 10% tint is 3.9:1, under AA for the
+   small sidebar text, so light mode uses the next darker primary shade. */
+:root:not([data-theme='dark']) {
+  --ifm-menu-color-active: var(--ifm-color-primary-darkest);
+}
+
+/* Tabs follow the same pattern as the top nav. */
+.tabs {
+  border-bottom: 1px solid var(--cryptos-border);
+}
+
+.tabs__item {
+  font-family: var(--cryptos-font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+  border-radius: calc(var(--cryptos-radius) - 2px) calc(var(--cryptos-radius) - 2px) 0 0;
+  margin-bottom: -1px;
+}
+
+.tabs__item:hover {
+  background: var(--cryptos-muted);
+  color: var(--cryptos-foreground);
+}
+
+.tabs__item--active,
+.tabs__item--active:hover {
+  color: var(--cryptos-primary);
+}
+
+/* Callouts use the web's notice pattern: a soft tint of the status colour, a
+   40% border, and body text in the normal foreground so it stays readable.
+   The left edge and the icon carry the full status colour. */
+.theme-admonition.alert {
+  --cryptos-alert-rgb: var(--cryptos-primary-rgb);
+  --ifm-alert-foreground-color: var(--cryptos-foreground);
+  --ifm-alert-background-color: rgba(var(--cryptos-alert-rgb), 0.1);
+  --ifm-alert-background-color-highlight: rgba(var(--cryptos-alert-rgb), 0.18);
+  --ifm-alert-border-color: rgb(var(--cryptos-alert-rgb));
+  --ifm-alert-border-width: 1px;
+  --ifm-alert-border-left-width: 4px;
+  border-style: solid;
+  border-color: rgba(var(--cryptos-alert-rgb), 0.4);
+  border-left-color: rgb(var(--cryptos-alert-rgb));
+  box-shadow: none;
+}
+
+.theme-admonition.alert--success {
+  --cryptos-alert-rgb: var(--cryptos-success-rgb);
+}
+
+.theme-admonition.alert--warning {
+  --cryptos-alert-rgb: var(--cryptos-warning-rgb);
+}
+
+.theme-admonition.alert--danger {
+  --cryptos-alert-rgb: var(--cryptos-destructive-rgb);
+}
+
+.theme-admonition.alert--secondary {
+  --ifm-alert-background-color: var(--cryptos-muted);
+  --ifm-alert-background-color-highlight: var(--cryptos-border);
+  border-color: var(--cryptos-border);
+  border-left-color: var(--cryptos-muted-foreground);
+}
+
+.theme-admonition.alert svg {
+  fill: var(--cryptos-alert-icon, rgb(var(--cryptos-alert-rgb)));
+}
+
+/* The light green and amber reach only 2.8:1 on their tints, so the icons
+   (non-text, 3:1 needed) take the next darker step of the same ramps. */
+:root:not([data-theme='dark']) .theme-admonition.alert--success {
+  --cryptos-alert-icon: #15803d;
+}
+
+:root:not([data-theme='dark']) .theme-admonition.alert--warning {
+  --cryptos-alert-icon: #b45309;
+}
+
+.theme-admonition.alert--secondary svg {
+  fill: var(--cryptos-muted-foreground);
+}
+
+.theme-admonition.alert a {
+  color: var(--ifm-link-color);
+  text-decoration-color: currentColor;
+}
+
+/* Code: cards with a border, as the web cards are, in both modes. */
+.theme-code-block {
+  border: 1px solid var(--cryptos-border);
+  box-shadow: none;
+}
+
+code {
+  border: none;
+  vertical-align: baseline;
+}
+
+/* Tables: bordered, with a muted head row. */
+table thead tr {
+  border-bottom: 1px solid var(--cryptos-border);
+}
+
+table th {
+  font-weight: 600;
+}
+
+table tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+/* Buttons, as the web Button: medium weight, small text, md radius. */
+.button {
+  border-radius: calc(var(--cryptos-radius) - 2px);
+  font-weight: 500;
+}
+
+.button--primary {
+  --ifm-button-background-color: var(--cryptos-primary);
+  --ifm-button-border-color: var(--cryptos-primary);
+  color: var(--cryptos-primary-foreground);
+}
+
+.button--primary:hover {
+  --ifm-button-background-color: rgba(var(--cryptos-primary-rgb), 0.9);
+  --ifm-button-border-color: rgba(var(--cryptos-primary-rgb), 0.9);
+  color: var(--cryptos-primary-foreground);
+}
+
+.button--secondary {
+  --ifm-button-background-color: var(--cryptos-muted);
+  --ifm-button-border-color: var(--cryptos-muted);
+  color: var(--cryptos-foreground);
+}
+
+.button--secondary:hover {
+  --ifm-button-background-color: var(--cryptos-border);
+  color: var(--cryptos-foreground);
+}
+
+.button--outline.button--secondary {
+  --ifm-button-background-color: transparent;
+  --ifm-button-border-color: var(--cryptos-border);
+  color: var(--cryptos-foreground);
+}
+
+.button--outline.button--secondary:hover {
+  --ifm-button-background-color: var(--cryptos-muted);
+}
+
+/* Prev and next links, breadcrumbs and the footer on the same surfaces. */
+.pagination-nav__link {
+  border-color: var(--cryptos-border);
+  background: var(--cryptos-card);
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--cryptos-primary);
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--cryptos-foreground);
+}
+
+.footer {
+  border-top: 1px solid var(--cryptos-border);
+}
+
+.footer__title {
+  font-family: var(--cryptos-font-mono);
+  font-size: 0.875rem;
+}
+
+.footer__links {
+  justify-content: space-evenly;
+}
+
+.footer__col {
+  flex: 0 0 14rem;
+  max-width: 14rem;
+}
