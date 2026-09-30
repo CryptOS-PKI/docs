@@ -109,6 +109,7 @@ const sidebars: SidebarsConfig = {
         {
           type: 'category',
           label: 'vSphere: subordinate VMCA',
+          className: 'sidebar-integration-vmware',
           link: {type: 'doc', id: 'integrations/vmware-vmca/index'},
           items: [
             'integrations/vmware-vmca/safety-gate',

@@ -3,3 +3,8 @@ Copyright 2026 Shane
 
 This product includes software developed as part of the CryptOS-PKI project
 (https://github.com/CryptOS-PKI).
+
+static/img/integrations/vmware.svg is from the dashboard-icons project
+(https://github.com/homarr-labs/dashboard-icons), licensed under the Apache
+License, Version 2.0. VMware is a trademark of Broadcom Inc.; the icon is used
+only to identify the VMware integration.

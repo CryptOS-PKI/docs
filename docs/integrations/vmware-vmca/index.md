@@ -1,11 +1,12 @@
 ---
-title: "🖥️ vSphere: subordinate VMCA to a CryptOS Intermediate"
+title: "vSphere: subordinate VMCA to a CryptOS Intermediate"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import VmwareLogo from '@site/static/img/integrations/vmware.svg';
 
-# 🖥️ vSphere: subordinate VMCA to a CryptOS Intermediate
+# <VmwareLogo className="integration-logo" role="img" aria-label="VMware" /> vSphere: subordinate VMCA to a CryptOS Intermediate
 
 :::tip[✅ Tested]
 This procedure was carried out end to end on vCenter Server 8.0.3 with four ESXi 8 hosts. The timings and outputs below come from that run, with names and numbers replaced by documentation examples.
@@ -15,7 +16,7 @@ This page walks through making vCenter's built-in certificate authority (VMCA) a
 
 Every stage ends with a **Verify before continuing** block. Do not move to the next stage until every item in it holds.
 
-## 0. Overview
+## Overview
 
 ### What changes
 
@@ -159,3 +160,7 @@ Work through the stages in order.
 9. [Verification](./verify.md)
 10. [Rollback and cleanup](./rollback.md)
 11. [Troubleshooting and gotchas](./troubleshooting.md)
+
+---
+
+VMware and vCenter are trademarks of Broadcom Inc.

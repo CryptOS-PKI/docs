@@ -5,3 +5,19 @@
  * theme.css, loaded first in theme.customCss. Add page-level tweaks here, and
  * use the --cryptos-* tokens from theme.css rather than new colours.
  */
+
+.integration-logo {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.1em;
+}
+
+.sidebar-integration-vmware > .menu__list-item-collapsible > .menu__link::before {
+  content: '';
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.4em;
+  background: url('/img/integrations/vmware.svg') center / contain no-repeat;
+}
