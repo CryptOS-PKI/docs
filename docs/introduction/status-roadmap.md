@@ -24,7 +24,9 @@ The whole "brain" of a certificate authority is built and unit-tested:
 - **Phase 2** — the **issuing** role and the protocol adapters (ACME, SCEP, EST, and more) so CryptOS can hand certificates to other machines, plus the **Fleet Manager** web app for running many nodes at once.
 - **Phase 3** — high-availability pairs, many independent Roots, signed add-on extensions, and disaster recovery.
 
-The version stays at `0.x` until the whole system lands. There is no 1.0 yet.
+:::info[Alpha: 0.x]
+Every CryptOS release before `1.0.0` is a `0.x` alpha. `1.0.0` will be the first GA release, once the whole system lands. It isn't out yet.
+:::
 
 ## One thing to know today
 
