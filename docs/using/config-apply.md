@@ -96,7 +96,7 @@ Some problems don't stop the apply but are printed as `WARNING:` lines before th
 
 ## 4. Reboot if it asks for one
 
-Only three kinds of change take effect straight away: the certificate profiles (`pki.profiles`), `pki.root_leaf_issuance` and `pki.allow_unverified_revocation_url`. The node signs with the new values from the next request, and the apply reports `requires_reboot=false`. `pki.allow_unsynced_clock` is also read on every request and takes effect straight away, but the apply reports `requires_reboot=true` for it.
+Only four kinds of change take effect straight away: the certificate profiles (`pki.profiles`), `pki.root_leaf_issuance`, `pki.allow_unverified_revocation_url` and `pki.allow_unsynced_clock`. The node signs with the new values from the next request, and the apply reports `requires_reboot=false`.
 
 Every other change is saved but waits for the next boot, and the apply reports `requires_reboot=true`. That includes switching ACME or EST on or off. Until you reboot, the node keeps running the old values, and `cryptosctl status` shows `Reboot: pending`.
 

@@ -256,7 +256,7 @@ applied: generation=<n> requires_reboot=<true|false> digest=<sha256 of the store
 ```
 :::
 
-- **Live, no reboot:** a change to `pki.profiles`, `pki.root_leaf_issuance` or `pki.allow_unverified_revocation_url`. The signer reads them from the stored config on every request, and the apply reports `requires_reboot=false`. `pki.allow_unsynced_clock` is read the same way and takes effect straight away, though the apply still reports `requires_reboot=true` for it.
+- **Live, no reboot:** a change to `pki.profiles`, `pki.root_leaf_issuance`, `pki.allow_unverified_revocation_url` or `pki.allow_unsynced_clock`. The signer reads them from the stored config on every request, and the apply reports `requires_reboot=false`.
 - **Reboot needed:** everything else, including network (`ntp_servers` too), role, the revocation base URL and port, `management`, and switching ACME or EST on or off or changing their settings. These are read once at boot. Until the reboot, `cryptosctl status` prints `Reboot: pending`.
 - **Refused:** a different `state_key.mode`. The mode is fixed at install; see [state_key](#-state_key).
 
