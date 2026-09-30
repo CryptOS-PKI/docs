@@ -5,7 +5,7 @@ title: "📚 Audit log format"
 # 📚 Audit log format
 
 :::tip[Works today]
-The node writes and chains its audit log today. Reading it from outside the node is not available yet; see [What you can't do yet](#-what-you-cant-do-yet).
+The node writes and chains its audit log today. Reading it from outside the node is not available; see [What you can't do today](#-what-you-cant-do-today).
 :::
 
 How the tamper-evident log is structured and verified.
@@ -93,10 +93,10 @@ Protobuf JSON output isn't byte-stable: the spacing and order can differ between
 
 The audit key is an Ed25519 key derived, not stored. The node generates a 32-byte master seed at first boot and keeps it at `/var/lib/cryptos/seed` on the encrypted state partition. The audit key is HKDF-SHA256 over that seed, with no salt and the info string `cryptos.dev/audit-signer/v1`. The key is separate from the CA key, so audit signing never touches the key that issues certificates. The [ceremony manifest](../deep-dives/ceremony-walkthrough.md) is signed by a second key from the same seed, with the info string `cryptos.dev/ceremony-signer/v1`.
 
-## 🚧 What you can't do yet
+## 🚧 What you can't do today
 
-:::info[Planned]
-The node has no API call that returns its audit log or its audit public key, and it doesn't ship entries to a SIEM yet. So you can't fetch the files and verify them off the node in this alpha. Shipping and retrieval are planned for a later phase.
+:::info[No way to read the log off the node]
+The node has no API call that returns its audit log or its audit public key, and it doesn't ship entries to a SIEM. So you can't fetch the files and verify them off the node in this alpha.
 :::
 
 :::caution[A failed audit write doesn't fail the call]
@@ -104,7 +104,7 @@ If the node can't append an entry, the API call still returns its normal result 
 :::
 
 :::warning[A reset destroys the audit log]
-`cryptosctl reset` erases the state partition's key material, and the audit log lives on that partition. Since there is no way to export the log yet, a reset takes the node's audit history with it.
+`cryptosctl reset` erases the state partition's key material, and the audit log lives on that partition. Since there is no way to export the log, a reset takes the node's audit history with it.
 :::
 
 ## 🧭 The Fleet Manager audit log
@@ -117,15 +117,15 @@ The Fleet Manager records its own actions (approving an enrolment, applying a pr
 |---|---|
 | `id` | The entry's ID, `aud-` followed by 32 hex characters. |
 | `at` | When it happened, RFC 3339 UTC. |
-| `kind` | What happened: `config-applied`, `enroll-approved`, `enroll-rejected`, `issued`, `mcp-key-created`, `mcp-key-first-used`, `mcp-key-rejected`, `mcp-key-revoked`, `profile-applied`, `profile-created`, `profile-deleted`, `profile-updated`, `protocol-toggled`, `rekeyed`, `renewed` or `revoked`. |
+| `kind` | What happened: `approval-approved`, `approval-decide-refused`, `approval-denied`, `approval-requested`, `approval-used`, `config-applied`, `enroll-approved`, `enroll-rejected`, `issued`, `mcp-key-created`, `mcp-key-first-used`, `mcp-key-rejected`, `mcp-key-revoked`, `profile-applied`, `profile-created`, `profile-deleted`, `profile-updated`, `protocol-toggled`, `rekeyed`, `renewed` or `revoked`. |
 | `summary` | A one-line human description. |
-| `target_kind`, `target_path` | What it acted on: `cert`, `enrollment`, `mcp-key`, `node`, `profile` or `protocol`, and which one. |
+| `target_kind`, `target_path` | What it acted on: `approval`, `cert`, `enrollment`, `mcp-key`, `node`, `profile` or `protocol`, and which one. |
 | `actor_kind` | `cert` for an operator client certificate, `mcp_key` for an MCP agent key. |
 | `actor_cn`, `actor_serial` | The CN and hex serial of the operator certificate that acted, or that the MCP key is bound to. |
 | `key_id` | The MCP key's ID when `actor_kind` is `mcp_key`. |
 | `via`, `tool` | The surface the action came through (`web`, `mcp` or `api`), and the MCP tool name when `via` is `mcp`. |
 | `request_digest` | Lowercase hex SHA-256 of the canonical request. |
 | `outcome` | `ok`, `denied`, `pending` or `error`. |
-| `approval_id`, `approver_serial` | Reserved for step-up approval, and always empty until the manager ships it. |
+| `approval_id`, `approver_serial` | The step-up approval an MCP call ran under, and the serial of the operator certificate that decided it. Empty when no approval was involved. |
 
 Entries recorded before the manager captured actors have the actor fields empty. The chain hash of each row is the lowercase hex SHA-256 of the previous row's hash and the row's fields, each field length-prefixed. The manager stores the hash and previous hash with each row, but `ListAudit` doesn't return them. For the RPC itself, see the [gRPC API reference](./grpc-api.md).

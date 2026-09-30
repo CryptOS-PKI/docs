@@ -6,7 +6,7 @@ title: "📖 Glossary"
 
 Plain definitions for every term used in these docs.
 
-Terms are in alphabetical order. Where a term names something not built yet, the entry says so.
+Terms are in alphabetical order. Where a term names something CryptOS doesn't have, the entry says so.
 
 ## A
 
@@ -112,8 +112,6 @@ Terms are in alphabetical order. Where a term names something not built yet, the
 
 **Path length (`pathLenConstraint`):** the part of Basic Constraints that limits how many CA levels may sit below a CA. A Root carries none.
 
-**Planned:** marks a feature that is designed but not in the alpha.
-
 ## R
 
 **RFC 5280:** the standard that defines X.509 certificates and CRLs on the internet. See the [Root certificate profile](./root-cert-profile.md).
@@ -122,13 +120,11 @@ Terms are in alphabetical order. Where a term names something not built yet, the
 
 **Root CA:** the top of a hierarchy. It signs its own certificate, and everything below it is trusted because the Root is.
 
-**Root Mode:** a planned locked-down state for a Root. Not in the alpha.
-
 ## S
 
 **SAN (Subject Alternative Name):** the certificate extension listing the names a certificate is valid for, such as DNS names and IP addresses.
 
-**SCEP** (RFC 8894): a certificate enrolment protocol for network gear and devices. Planned, not in the alpha.
+**SCEP** (RFC 8894): a certificate enrolment protocol for network gear and devices. Not available in CryptOS.
 
 **Secure Boot:** firmware checking that the operating system image is signed by a key it trusts before running it. See [Secure Boot](../install-deploy/secure-boot.md).
 
@@ -160,7 +156,7 @@ Terms are in alphabetical order. Where a term names something not built yet, the
 
 ## W
 
-**WSTEP:** a Microsoft protocol Windows uses to request certificates. Planned, not in the alpha.
+**WSTEP:** a Microsoft protocol Windows uses to request certificates. Not available in CryptOS.
 
 ## X
 

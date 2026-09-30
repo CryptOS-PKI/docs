@@ -124,6 +124,6 @@ One line starting `SHA256 Fingerprint=`, then 32 bytes as colon-separated hex. R
 
 The Root lasts `root_validity_years` (1 to 30) from the ceremony. A certificate a Root signs can't outlive the Root: the node caps it at the Root's notAfter.
 
-:::info[Planned]
-Renewing or re-keying a Root in place, with a cross-signed rollover, is not in the alpha. Pick `root_validity_years` for the whole life of the hierarchy.
+:::caution[A Root can't be renewed in place]
+Renewing or re-keying a Root in place, with a cross-signed rollover, is not available. Pick `root_validity_years` for the whole life of the hierarchy.
 :::

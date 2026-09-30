@@ -228,7 +228,7 @@ Set by the Fleet Manager when it links the node (the node's `SetManagement` RPC 
 | `manager_cn` empty | `config: management.manager_cn: required when management is set` |
 | `trust_pem` empty | `config: management.trust_pem: required when management is set` |
 
-:::info[Stored, not yet enforced]
+:::info[Stored, not enforced]
 In this alpha the node validates and keeps the `management` block, but its mTLS listener still verifies clients against the bootstrap admin certificate only.
 :::
 

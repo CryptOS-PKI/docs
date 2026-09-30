@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 # 📄 Machine config: ACME and EST
 
 :::tip[Works today]
-ACME (RFC 8555, `http-01` only) and EST (RFC 7030) both work in the alpha. SCEP and WSTEP are not built yet.
+ACME (RFC 8555, `http-01` only) and EST (RFC 7030) both work in the alpha. SCEP and WSTEP are not available.
 :::
 
 The `pki.acme` and `pki.est` blocks of the [machine config](./machine-config.md). Each enrolment protocol is off unless its block is present: a protocol is opened on purpose, never by forgetting to close it. Both issue from a leaf profile defined under [`pki.profiles`](./machine-config-pki.md#-certificate-profiles).
