@@ -22,7 +22,7 @@ Every command that talks to a node picks one of three ways to connect:
 | Server TLS only | `--insecure` | a node in maintenance mode, which has no identity yet and asks for no client certificate |
 | Local socket | `--socket /run/cryptos.sock` | on the node itself only; no TLS and no client certificate |
 
-Mutual TLS always uses TLS 1.3. The identity is the bootstrap admin certificate and key from `cryptosctl bootstrap`. The trust file is the node's current self-signed management certificate, pinned, which changes on every reboot; see [Reboot into the ceremony](../install-deploy/reboot-ceremony.md#trust-the-nodes-management-certificate).
+Mutual TLS always uses TLS 1.3. The identity is the bootstrap admin certificate and key from `cryptosctl bootstrap`. Before the node has its CA, the trust file is the node's current self-signed management certificate, pinned, which changes on every reboot. Once the node has its CA, its management certificate is CA-signed, and the trust file is your root certificate, which does not go stale. See [Reboot into the ceremony](../install-deploy/reboot-ceremony.md#trust-the-nodes-management-certificate).
 
 ## Global flags
 

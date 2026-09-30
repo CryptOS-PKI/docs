@@ -44,7 +44,7 @@ notAfter=Sep 21 12:00:00 2041 GMT
 
 With 15 years left on the Intermediate, the tested run used `validity_days: 3650` (10 years). The VMCA certificate expired in 2036, well inside the Intermediate's 2041. VMCA's own leaf certificates are much shorter (2 years for the machine SSL certificate and 5 years for ESXi hosts by default) and VMCA renews those itself.
 
-(`node-trust.pem` is the Intermediate's pinned management certificate. See [2.4](#24-apply-and-verify).)
+(`node-trust.pem` is the Intermediate's pinned management certificate, or use `root.pem`. See [2.4](#24-apply-and-verify).)
 
 ## 2.3 The profile snippet
 
@@ -86,7 +86,13 @@ Do not set `allow_unverified_revocation_url` to get past this. Fix DNS instead.
 
 ## 2.4 Apply and verify
 
-**Pin the Intermediate's current management certificate.** The management listener presents a self-signed certificate that is regenerated on every boot. Fetch it after the node's most recent boot:
+**Trust the Intermediate's management certificate.** The Intermediate already has its CA, so its management listener presents a certificate signed by that CA, followed by the chain up to your Root. The key is new on every boot, but the chain is not.
+
+:::tip[Trust the Root instead of a pin]
+If you already have the Root certificate you distribute as `root.pem` ([4.2](./sign-and-chain.md#42-get-the-root-certificate)), use `--trust root.pem` wherever this procedure says `--trust node-trust.pem`. It keeps working across reboots, so you can skip every re-pin below.
+:::
+
+Otherwise pin the certificate itself. Fetch it after the node's most recent boot:
 
 <Tabs groupId="os" queryString>
 <TabItem value="unix" label="Linux / macOS" default>
@@ -110,18 +116,18 @@ openssl x509 -in node-trust.pem -noout -subject -issuer -ext subjectAltName
 </Tabs>
 
 :::tip[Expected output]
-Subject and issuer are identical (self-signed), and the SANs are the node's IP and `localhost`:
+The issuer is the Intermediate CA, and the SANs are the node's IP, plus any names in `pki.est.hostnames`:
 
 ```text
-subject=...
-issuer=...
+subject=CN = 192.0.2.21
+issuer=CN = Example Intermediate CA G1, ...
 X509v3 Subject Alternative Name:
-    DNS:localhost, IP Address:192.0.2.21
+    IP Address:192.0.2.21
 ```
 
 :::
 
-Address the node by IP. Its management certificate has no DNS names.
+Address the node by IP, or by a name in `pki.est.hostnames`. For any other name, add `--server-name 192.0.2.21`.
 
 For readability, the rest of this procedure shortens the connection flags with a shell variable:
 
@@ -171,7 +177,7 @@ reboot accepted: the node is shutting down cleanly and rebooting
 The node is back in about 10 seconds.
 
 :::caution[Re-pin node-trust.pem after every reboot]
-**Re-pin** `node-trust.pem` after every reboot (repeat the `openssl s_client` fetch above), or every later call fails with `x509: certificate signed by unknown authority`.
+With a pinned `node-trust.pem`, **re-pin** after every reboot (repeat the `openssl s_client` fetch above), or every later call fails with `x509: certificate signed by unknown authority`. With `--trust root.pem` there is nothing to do.
 :::
 
 If `config apply` prints `WARNING:` about `revocation_base_url` naming a host with no `nameservers`, add `network.nameservers` before going further.
@@ -235,4 +241,4 @@ curl.exe -s -o NUL -w '%{http_code} %{content_type}\n' http://pki-inter.example.
 - [ ] `validity_days` ends before the Intermediate's `notAfter`.
 - [ ] `status` shows `Revocation: OK` with your base URL.
 - [ ] `/crl` and `/ca.cer` answer `200` from the workstation.
-- [ ] `node-trust.pem` was fetched after the node's latest boot.
+- [ ] `--trust` is `root.pem`, or a `node-trust.pem` fetched after the node's latest boot.

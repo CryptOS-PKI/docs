@@ -96,7 +96,7 @@ Terms are in alphabetical order. Where a term names something CryptOS doesn't ha
 
 **Maintenance mode:** the state a node boots into before it is installed, where it waits for a machine config. See [Maintenance mode](../concepts/maintenance-mode.md).
 
-**Management certificate:** the self-signed certificate a node's management API presents. The node makes a new one on every boot, so a client pins it again after each reboot.
+**Management certificate:** the certificate a node's management API presents, with a new key on every boot. Before the node has its CA it is self-signed, and a client pins it again after each reboot. Once the node has its CA it is signed by that CA, and a client trusts the root instead.
 
 ## N
 

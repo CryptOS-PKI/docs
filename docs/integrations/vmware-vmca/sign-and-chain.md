@@ -28,7 +28,7 @@ cryptosctl ca sign-subordinate \
 
 - `sign-subordinate` is a subcommand of `ca`. `--csr` (PEM or DER) and `--profile` are both required, and the profile must be a CA profile defined on the node.
 - `--endpoint`, `--identity`, `--identity-key` and `--trust` are the global connection flags. If you connect through a DNS name instead of the IP, add `--server-name 192.0.2.21`.
-- There is no `--node` flag, and `--trust root.pem` does not work (the management certificate is self-signed and pinned, not issued by your Root).
+- There is no `--node` flag. `--trust root.pem` works in place of `node-trust.pem`: the Intermediate has its CA, so its management certificate chains to your Root.
 
 The command prints nothing on stderr on success. `vmca-chain.pem` is **leaf-first** and contains exactly two certificates: the new VMCA certificate, then the Intermediate. **The Root is not included.**
 
@@ -57,7 +57,7 @@ If the call fails:
 
 | Error | Cause | Fix |
 | --- | --- | --- |
-| `x509: certificate signed by unknown authority` | The node rebooted since you fetched `node-trust.pem` | Fetch it again ([2.4](./profile.md#24-apply-and-verify)) |
+| `x509: certificate signed by unknown authority` | The node rebooted since you fetched `node-trust.pem` | Fetch it again, or use `--trust root.pem` ([2.4](./profile.md#24-apply-and-verify)) |
 | `FailedPrecondition ... revocation preflight failing for configured revocation_base_url; issuance blocked` | The Intermediate cannot resolve or reach its own `revocation_base_url` | Fix `network.nameservers` or DNS, reboot, confirm `Revocation: OK` |
 | An error naming the key size | The CSR key is below RSA-3072 | Regenerate the CSR ([stage 3](./generate-csr.md)) with a larger key |
 | An error naming the profile | The profile name is wrong or it is not a CA profile | Check `config get` |

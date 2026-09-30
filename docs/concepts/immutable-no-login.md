@@ -71,11 +71,15 @@ Every reboot takes the CA offline until it is back up. In the reference deployme
 
 ## The management certificate changes on every boot
 
-The node's own TLS certificate for the management API is self-signed and made fresh on every boot. `cryptosctl` pins it with `--trust`, so after a reboot the old pin no longer matches. Fetch the new one and check it against the fingerprint on the console:
+The node's own TLS certificate for the management API gets a fresh key on every boot. What you trust depends on whether the node has its CA yet.
 
-```bash
-cryptosctl --endpoint 192.0.2.10:443 trust fetch --expect-sha256 <fingerprint from the console>
-```
+- **Before the node has a CA** (a Root before its ceremony, a subordinate before its certificate is accepted), the certificate is self-signed. `cryptosctl` pins it with `--trust`, so after a reboot the old pin no longer matches. Fetch the new one and check it against the fingerprint on the console:
+
+  ```bash
+  cryptosctl --endpoint 192.0.2.10:443 trust fetch --expect-sha256 <fingerprint from the console>
+  ```
+
+- **Once the node has its CA**, the certificate is signed by that CA and carries the node's CA chain. Point `--trust` at your root certificate instead. That trust survives reboots and upgrades, because the chain, not the key, is what you trust.
 
 `cryptosctl` runs on Linux and macOS.
 

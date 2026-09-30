@@ -129,7 +129,7 @@ Restart the node with an orderly shutdown, not a hypervisor hard reset:
 cryptosctl --endpoint 192.0.2.10:443 reboot --confirm "Example Root CA G1"
 ```
 
-`--confirm` must be the node's CA common name. The CA does not sign or answer the API until it is back up. Its management certificate is regenerated on every boot, so refresh your `--trust` pin afterwards.
+`--confirm` must be the node's CA common name. The CA does not sign or answer the API until it is back up. Its management certificate gets a new key on every boot. With your root certificate as `--trust` nothing changes; a pinned management certificate has to be fetched again. See [Trust the node's management certificate](../install-deploy/reboot-ceremony.md#trust-the-nodes-management-certificate).
 :::
 
 ### Warnings that need a decision

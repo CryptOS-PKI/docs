@@ -190,7 +190,7 @@ The fields are listed in the [gRPC API reference](../reference/grpc-api.md).
 
 | Error | Cause | What to do |
 |---|---|---|
-| `x509: certificate signed by unknown authority` | the pin is stale: the node rebooted since you fetched it | [fetch it again](./setup.md) |
+| `x509: certificate signed by unknown authority` | the pin is stale: the node rebooted since you fetched it, or it now has its CA and presents a CA-signed certificate | before the CA, [fetch it again](./setup.md); after it, [trust the root](./setup.md#trust-the-root-once-the-node-has-its-ca) |
 | `load client identity: ...` | your identity files are missing or unreadable | check `--identity` and `--identity-key` |
 | a connection error or a timeout | the node is down, still booting, or unreachable | check the console and your network path |
 
