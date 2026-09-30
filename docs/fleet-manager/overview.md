@@ -20,6 +20,8 @@ The Fleet Manager is one Go program, [`manager`](https://github.com/CryptOS-PKI/
 - **Answers the Fleet API.** The web UI calls it. The API is defined as `FleetService` in the [`api`](https://github.com/CryptOS-PKI/api) repo.
 - **Talks to your nodes.** For every node it manages, the manager dials the node's management API over mutual TLS, the same API `cryptosctl` uses.
 
+Two small routes answer without a login: `/healthz` for health checks (`200` when the manager can serve and reach its Postgres, `503` when it can't) and `/version` for the build details.
+
 It can also serve an MCP endpoint at `/mcp` for AI agents. That is off by default; the manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md) covers it.
 
 ## What it keeps, and what it never holds
@@ -34,7 +36,7 @@ The manager keeps its records in Postgres, named by `database_url` in its config
 
 Each node's own state (its CA, its issued certificates, its config) stays on the node.
 
-It also keeps one file pair per adopted node: the admin certificate and key it uses to manage that node. They live in `MANAGER_NODE_CREDS_DIR`, which defaults to `/var/lib/cryptos-manager/node-creds`.
+It also keeps one file pair per adopted node: the admin certificate and key it uses to manage that node. They live in `MANAGER_NODE_CREDS_DIR`, which defaults to `/var/lib/cryptos-manager/node-creds`. In the container image that folder is the only place the manager writes, and the rest of its filesystem is read-only, so give the folder a volume. The manager's Docker Compose example mounts one.
 
 :::caution[Without database_url nothing is saved]
 If `database_url` is not set, the manager uses an in-memory store filled with a demo catalog and logs `no database_url configured, using in-memory store (demo catalog seeded)`. Everything is lost on restart. That mode is for trying the UI offline. Set `database_url` for any real fleet.
@@ -149,6 +151,6 @@ The design has a node start its own enrollment: it would call the manager with i
 ## Where to go next
 
 - [The web UI](./web-ui.md): the pages and what you can do on each.
-- [Deploy with Helm](./helm.md): the chart, and what to use until it works.
+- [Deploy with Helm](./helm.md): the supported chart, and what to use until it is published.
 - [Machine config](../reference/machine-config.md): the node config the adopt wizard fills in.
 - [cryptosctl](../reference/cryptosctl.md): managing a node without the Fleet Manager.
