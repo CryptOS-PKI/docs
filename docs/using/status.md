@@ -36,6 +36,7 @@ Boot count:      3
 Version:         <the image version>
 Revocation:      NOT_CONFIGURED
 DNS:             MACHINE_CONFIG 192.0.2.53
+Clock:           SYNCED MACHINE_CONFIG 192.0.2.123 (via 192.0.2.123, offset 1.2ms, stratum 2, synced 2026-09-30T12:00:00Z, stepped at boot)
 Protocols:       ACME off, EST off
 ```
 :::
@@ -104,6 +105,21 @@ Where the node's DNS servers came from, the servers in order, and the search lis
 | `NONE` | neither gave a server, so the node cannot resolve any name |
 
 `NONE` together with a `revocation_base_url` that names a host is why a revocation check fails. Set `network.nameservers` and apply the config.
+
+### Clock
+
+The node's time sync: the state, where the servers came from and which they are, then the server, offset, stratum and time of the latest good sync, or why the latest attempt didn't adjust the clock.
+
+| Value | Meaning |
+|---|---|
+| `NOT_CONFIGURED` | no time source: `network.ntp_servers` is empty and the DHCP lease had no NTP servers, so the node runs on its hardware clock |
+| `PENDING` | a source is configured and no sync attempt has finished yet |
+| `SYNCED` | the latest attempt adjusted the clock |
+| `UNSYNCED` | the latest attempt didn't adjust the clock; the line ends with why |
+
+:::warning[A clock that never synced stops signing]
+While a time source is configured but the clock hasn't synced this boot, the node refuses to sign certificates. CRL and OCSP keep working. An `UNSYNCED` line without a `synced` time means signing is refused. Fix what the line names, usually a server the node can't reach on UDP port 123. See [Keep the clock in sync](./time-sync.md).
+:::
 
 ### Protocols
 

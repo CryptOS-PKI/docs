@@ -35,6 +35,7 @@ network:
   gateway: 192.0.2.1
   nameservers: [192.0.2.53]
   search: [example.org]
+  ntp_servers: [192.0.2.123]
 bootstrap:
   admin_cert_pem: |
     -----BEGIN CERTIFICATE-----
@@ -121,6 +122,7 @@ The node is IPv4 only. At boot it flushes any address the kernel got over DHCP a
 | `network.gateway` | string | none | The default gateway, as an IP address. Required. |
 | `network.nameservers` | list of strings | empty | Up to 3 DNS servers, as IPv4 addresses, tried in order. Empty falls back to the DNS servers from the kernel's DHCP lease, if it had one. |
 | `network.search` | list of strings | empty | Up to 6 DNS search domains, in order. Empty falls back to the domain from the DHCP lease, if any. |
+| `network.ntp_servers` | list of strings | empty | Up to 3 time servers the node keeps its clock in sync with, each an IPv4 address or a hostname. A hostname is looked up at every poll. Empty falls back to the NTP servers from the kernel's DHCP lease (option 42); with neither, the node runs on its hardware clock. See [Keep the clock in sync](../using/time-sync.md). |
 
 | Rule | Error |
 |---|---|
@@ -133,6 +135,11 @@ The node is IPv4 only. At boot it flushes any address the kernel got over DHCP a
 | The same nameserver twice | `config: network.nameservers[<i>]: <address> is listed twice` |
 | More than 6 search domains | `config: network.search: at most 6 entries, got <n>` |
 | A search domain that is not a valid DNS name | `config: network.search[<i>]: <reason>`, for example `"<name>" has a label starting or ending with a hyphen` |
+| More than 3 time servers | `config: network.ntp_servers: at most 3 entries, got <n>` |
+| A time server that is neither an IPv4 address nor a valid hostname | `config: network.ntp_servers[<i>]: must be an IPv4 address or a hostname: <reason>` |
+| An IPv6 time server | `config: network.ntp_servers[<i>]: must be an IPv4 address, got "<value>"` |
+| An IPv4 time server that is `0.0.0.0`, multicast or `255.255.255.255` | `config: network.ntp_servers[<i>]: <address> is not a unicast address` |
+| The same time server twice | `config: network.ntp_servers[<i>]: <value> is listed twice` |
 
 A search domain may use letters, digits and hyphens, in labels of 1 to 63 characters, 253 characters at most, with an optional trailing dot.
 
@@ -142,6 +149,10 @@ The validator accepts any CIDR, but the node configures IPv4 only. With an IPv6 
 
 :::caution[Set nameservers when the revocation URL is a hostname]
 If `pki.revocation_base_url` names a host and `network.nameservers` is empty, `cryptosctl config apply` prints a `WARNING:` saying the node can resolve that host only if its DHCP lease supplies DNS servers. Without a resolver the revocation preflight fails and the node refuses all issuance. Set `network.nameservers` to servers that resolve the name.
+:::
+
+:::caution[A time server hostname needs nameservers too]
+If `network.ntp_servers` names a host and `network.nameservers` is empty, `cryptosctl config apply` prints a `WARNING:`: the node can look the host up only if its DHCP lease supplies DNS servers. If it can't, that server is never asked and, with no other server answering, the node refuses to sign until its clock syncs. Set `network.nameservers`, or name the server by IPv4 address. An empty `ntp_servers` also prints a `WARNING:`, which is expected on an offline Root.
 :::
 
 ## 🔑 bootstrap
@@ -244,8 +255,8 @@ applied: generation=<n> requires_reboot=<true|false> digest=<sha256 of the store
 ```
 :::
 
-- **Live, no reboot:** a change to `pki.profiles` or `pki.root_leaf_issuance` only. The signer reads both from the stored config on every request.
-- **Reboot needed:** everything else, including network, role, state key, revocation settings, `management`, and switching ACME or EST on or off or changing their settings. These are read once at boot. Until the reboot, `cryptosctl status` prints `Reboot: pending`.
+- **Live, no reboot:** a change to `pki.profiles` or `pki.root_leaf_issuance`. The signer reads both from the stored config on every request, and the apply reports `requires_reboot=false`. `pki.allow_unsynced_clock` is read the same way and takes effect straight away, though the apply still reports `requires_reboot=true` for it.
+- **Reboot needed:** everything else, including network (`ntp_servers` too), role, state key, revocation settings, `management`, and switching ACME or EST on or off or changing their settings. These are read once at boot. Until the reboot, `cryptosctl status` prints `Reboot: pending`.
 
 `cryptosctl config apply` also prints a `WARNING:` line for each profile whose `validity_days` already runs past the node's own CA certificate. It's a warning; the config is still applied.
 
