@@ -12,7 +12,7 @@ Read a node's role, identity state, and health.
 
 `cryptosctl status` is the first command to run against any node: after an install, after a reboot, before a ceremony, and whenever something looks wrong. It changes nothing on the node.
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
 - `cryptosctl` set up to reach the node, with a fresh pin: [Setup](./setup.md).

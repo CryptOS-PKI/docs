@@ -12,7 +12,7 @@ Kick off the first-boot Root ceremony from your workstation.
 
 The **first-boot ceremony** is how a Root CA node gets its identity. In one run the node creates its CA key (inside the TPM on a TPM node), signs its own Root certificate with it, writes a signed **ceremony manifest** that records what happened, and makes your bootstrap identity its standing administrator. It happens once per node, and only on a Root.
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
 - A node installed with `role.kind: root` and booted from its disk. See [Reboot into the ceremony](../install-deploy/reboot-ceremony.md) for the first boot.

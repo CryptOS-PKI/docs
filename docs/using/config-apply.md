@@ -14,7 +14,7 @@ Everything a CryptOS node does comes from one YAML file, its **machine config**.
 
 This page is for a node that is already installed. Sending a config to a node in maintenance mode installs it instead; that is covered in [Bootstrap and apply config](../install-deploy/bootstrap-apply.md).
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
 - `cryptosctl` set up to reach the node, with a fresh pin: [Setup](./setup.md).

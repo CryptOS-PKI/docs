@@ -12,7 +12,7 @@ Create the admin key and certificate you use to run the ceremony.
 
 A CryptOS node has no user accounts and no passwords. It trusts exactly one client certificate: the **bootstrap admin** named in its machine config. You make that identity on your own workstation with `cryptosctl bootstrap`, put the certificate in the config, and keep the key. The same identity runs the ceremony and every command after it.
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
 - `cryptosctl` on your workstation; see [Bootstrap and apply config](../install-deploy/bootstrap-apply.md) for where to get it.
