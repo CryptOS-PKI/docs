@@ -90,6 +90,7 @@ const sidebars: SidebarsConfig = {
         'using/identity',
         'using/config-apply',
         'using/time-sync',
+        'using/audit-log',
         'using/enrol-devices-scep',
       ],
     },
