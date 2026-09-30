@@ -13,8 +13,8 @@ There are two separate jobs here, and it helps to keep them apart:
 - **Workload certificates**: certificates for what runs *in* the cluster, such as ingress hostnames and service-to-service TLS. This page is mostly about these.
 - **The cluster's own PKI**: the API server, etcd, kubelet and front-proxy certificates that Kubernetes (or Talos) creates for itself. CryptOS does not act as the external CA for those.
 
-:::caution[cert-manager can't use CryptOS over ACME today]
-- **ACME can't be switched on.** The node code has an RFC 8555 ACME server, with External Account Binding and the `http-01` challenge, but the alpha can't switch it on: the wire config that `cryptosctl config apply` and the Fleet Manager send has no field for the `pki.acme` block. See the [overview](./overview.md#enrolment-protocols).
+:::caution[What cert-manager gets over ACME]
+- **ACME is off until you switch it on.** An intermediate or issuing node serves RFC 8555 ACME, with External Account Binding and the `http-01` challenge, from the `pki.acme` block of its machine config. `cryptosctl config apply` stores the block and ACME starts at the next reboot, so plan the switch for a maintenance window. A Root refuses the block. See the [overview](./overview.md#enrolment-protocols).
 - **No `dns-01` and no wildcard names**, which cert-manager usually relies on for internal names.
 :::
 
@@ -24,7 +24,7 @@ You can issue certificates for cluster workloads by CSR, the same way as for any
 
 ## How the ACME server behaves
 
-The ACME server is written and tested in the `cryptos` code. It can't be switched on in the alpha, but its behaviour is fixed in the code:
+Once ACME is switched on, it behaves like this:
 
 - **One profile decides the certificate.** The node's `pki.acme.profile` names the leaf profile every ACME order uses. The client picks only the names, and only names whose challenge passed.
 - **`http-01` only.** The node fetches `http://<name>:80/.well-known/acme-challenge/...` for each name, as the node itself resolves it. That works for an ingress hostname that resolves to the cluster's ingress from the CA's network. It does not work for a name the CA can't reach, and a wildcard name is refused when the order is placed.

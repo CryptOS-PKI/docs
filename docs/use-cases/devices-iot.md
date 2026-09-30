@@ -12,9 +12,12 @@ The goal is a device that enrols once and then renews itself for years, with no 
 Any device that can produce a CSR, or accept a certificate and key you load onto it, can get a certificate from an intermediate or issuing node. You issue it with `cryptosctl ca issue-leaf` or the Fleet Manager, the same way as for a server. See [Internal TLS and mTLS](./internal-tls.md) for the steps. Renewal is manual.
 :::
 
-:::caution[Devices can't enrol on their own today]
-- **No SCEP.** The node does not serve SCEP (RFC 8894), so a Cisco IOS or IOS-XE trustpoint, and most other network platforms, can't enrol or renew on their own.
-- **EST can't be switched on.** The node code has a full RFC 7030 EST server, but the alpha can't switch it on: the wire config that `cryptosctl config apply` and the Fleet Manager send has no field for the `pki.est` block. See the [overview](./overview.md#enrolment-protocols).
+:::caution[Devices without an EST client can't enrol on their own]
+The node does not serve SCEP (RFC 8894), so a Cisco IOS or IOS-XE trustpoint, and most other network platforms, can't enrol or renew on their own.
+:::
+
+:::warning[EST is off until you switch it on, and the switch needs a reboot]
+An intermediate or issuing node can serve EST (RFC 7030) from the `pki.est` block of its machine config. `cryptosctl config apply` stores the block, and EST starts at the next reboot, so plan the switch for a maintenance window. A Root refuses the block. See the [overview](./overview.md#enrolment-protocols).
 :::
 
 ## Check the device's key first
@@ -25,7 +28,7 @@ A CryptOS node certifies only **ECDSA P-384** keys and **RSA keys of 3072 bits o
 
 ## What the EST server does
 
-The EST server is written and tested in the `cryptos` code. It can't be switched on in the alpha, but how it behaves is fixed in the code:
+Once EST is switched on, it behaves like this:
 
 | Operation | Authenticated by | Names it may ask for |
 |---|---|---|

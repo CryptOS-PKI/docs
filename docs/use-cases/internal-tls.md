@@ -12,8 +12,8 @@ With CryptOS, each service gets a certificate from your own issuing CA. Clients 
 An intermediate or issuing node issues server and client certificates from a CSR, under a profile you define. You send the CSR with `cryptosctl ca issue-leaf` or through the Fleet Manager. The node records every certificate, revokes on request, and serves a CRL and OCSP.
 :::
 
-:::caution[No automatic enrolment or renewal]
-The node code has an ACME server (`http-01`) and an EST server, but the alpha can't switch either on: the wire config has no field for them. Each certificate is requested by hand and renewed by hand. See the [overview](./overview.md#enrolment-protocols).
+:::info[Automatic enrolment is off until you switch it on]
+An issuing node can serve ACME (`http-01`) and EST, so clients enrol and renew on their own. Both are off by default; switching one on is a config change that takes effect at the next reboot. See the [overview](./overview.md#enrolment-protocols). This page covers requesting and renewing by hand.
 :::
 
 ## What you set up once

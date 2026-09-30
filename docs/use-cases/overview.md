@@ -31,9 +31,17 @@ Carrying CSRs by hand works, but it does not scale to hundreds of servers or a r
 |---|---|---|
 | gRPC `IssueLeaf` | `cryptosctl`, the Fleet Manager | Works today |
 | CRL and OCSP | Every TLS client that checks revocation | Works today |
+| ACME (RFC 8555, `http-01`) | certbot, lego, acme.sh, win-acme, cert-manager | Off until you switch it on in the machine config |
+| EST (RFC 7030) | Network gear and devices with an EST client | Off until you switch it on in the machine config |
 
-:::caution[ACME and EST can't be switched on]
-The node code has full ACME and EST servers. They start only when the node's machine config has a `pki.acme` or `pki.est` block. The config that crosses the wire (the `MachineConfig` message used by `cryptosctl config apply`, the maintenance-mode install and the Fleet Manager) has no field for either block. An apply keeps a block that is already on the node, but it can't add one. So in this alpha there is no supported way to switch ACME or EST on. Use `cryptosctl ca issue-leaf` or the Fleet Manager instead.
+ACME and EST run on an intermediate or issuing node. You switch each one on by adding its `pki.acme` or `pki.est` block to the node's machine config and running `cryptosctl config apply`, and off by removing the block and applying again. See the [machine config reference](../reference/machine-config.md) and the [ACME](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/acme.md) and [EST](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/est.md) guides.
+
+:::warning[Switching ACME or EST needs a reboot]
+The listeners start only at boot. `config apply` stores the switch, on or off, and prints `requires_reboot=true`; the protocol starts or stops at the next reboot, and the node stops issuing while it restarts. Plan the reboot for a maintenance window. Until then `cryptosctl status` shows the protocol with `reboot pending`.
+:::
+
+:::caution[A Root never serves ACME or EST]
+A config that sets `pki.acme` or `pki.est` on a Root is refused, and nothing is stored. Serve them from an issuing node under the Root.
 :::
 
 The Fleet Manager lists each enrolment protocol adapter with an **Enabled** switch. As the page itself says, enabling records intent: it does not start the protocol on a node.
