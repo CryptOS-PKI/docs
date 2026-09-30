@@ -19,7 +19,7 @@ CryptOS is open source under the **Apache License, Version 2.0**. You can use it
 | [lab](https://github.com/CryptOS-PKI/lab) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/lab/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/lab/blob/main/NOTICE) |
 | [.github](https://github.com/CryptOS-PKI/.github) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/.github/blob/main/LICENSE) |
 
-Every repo carries the Apache License 2.0 in its `LICENSE` file.
+Every repo's `LICENSE` file is the Apache License 2.0 text exactly as published at [apache.org/licenses/LICENSE-2.0.txt](https://www.apache.org/licenses/LICENSE-2.0.txt), with nothing reworded or filled in, so GitHub and other license scanners detect it as `Apache-2.0`. The copyright line lives in `NOTICE`, not in `LICENSE`.
 
 ## Copyright
 
