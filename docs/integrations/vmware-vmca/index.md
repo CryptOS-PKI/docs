@@ -8,7 +8,7 @@ import VmwareLogo from '@site/static/img/integrations/vmware.svg';
 
 # <VmwareLogo className="integration-logo" role="img" aria-label="VMware" /> vSphere: subordinate VMCA to a CryptOS Intermediate
 
-:::tip[✅ Tested]
+:::tip[Tested]
 This procedure was carried out end to end on vCenter Server 8.0.3 with four ESXi 8 hosts. The timings and outputs below come from that run, with names and numbers replaced by documentation examples.
 :::
 
@@ -89,7 +89,7 @@ Work through this list before scheduling the window.
 9. **Cluster health:** every host is Connected, none is in maintenance mode, no vMotion or other task is running, and there are no unacknowledged alarms you cannot explain.
 
 :::info[cryptosctl on Windows]
-`cryptosctl` runs on Linux and macOS today; a Windows build is coming. The `cryptosctl` steps in this procedure are shown for Linux and macOS only. Every other workstation command has a **Linux / macOS** tab and a **Windows (PowerShell)** tab. The PowerShell commands work in Windows PowerShell 5.1 and PowerShell 7, and use `curl.exe`, which ships with Windows 10 and later.
+`cryptosctl` runs on Linux and macOS. The `cryptosctl` steps in this procedure are shown for Linux and macOS only. Every other workstation command has a **Linux / macOS** tab and a **Windows (PowerShell)** tab. The PowerShell commands work in Windows PowerShell 5.1 and PowerShell 7, and use `curl.exe`, which ships with Windows 10 and later.
 :::
 
 ### Set up govc once
