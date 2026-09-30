@@ -18,7 +18,7 @@ This page explains what the log records, how each entry is bound to the one befo
 
 ## What gets an entry
 
-Both management listeners, the mTLS API on port 443 and the local socket `/run/cryptos.sock`, run every call through an audit interceptor. Each call produces exactly one entry, written after the handler returns:
+Both management listeners, the mTLS API on port 443 and the local socket `/run/cryptos.sock`, run every call through an audit interceptor. Each call except `GetStatus` and `GetIdentity` produces exactly one entry, written after the handler returns:
 
 | Field | Value |
 |---|---|
@@ -29,13 +29,14 @@ Both management listeners, the mTLS API on port 443 and the local socket `/run/c
 | `request_digest_sha256` | SHA-256 of the request message in deterministic protobuf encoding. Empty for streaming calls. |
 | `outcome` | `OUTCOME_OK`, `OUTCOME_DENIED` (the call returned `PermissionDenied`) or `OUTCOME_ERROR` (any other error). |
 | `prev_entry_sha256` | The hash that chains this entry to the one before it (below). |
-| `details` | A few facts in the clear, where a reader needs them without the request: the DNS names asserted on `IssueLeaf` (`request_dns_names`), and the requested and effective expiry when a validity cap applied (`requested_not_after`, `effective_not_after`). |
+| `details` | A few facts in the clear, where a reader needs them without the request: the serial a revocation named (`serial_hex`), the DNS names asserted on `IssueLeaf` (`request_dns_names`), the requested and effective expiry when a validity cap applied (`requested_not_after`, `effective_not_after`), the generation, digest and reboot need of an applied config (`config_generation`, `config_digest_sha256`, `requires_reboot`), and whether a `Reboot` asked for a restart or a power-off (`reboot_kind`). |
 
 The request itself is not stored, only its digest. Anyone holding the original request can hash it the same way and match it to its entry. Streaming calls (`StartCeremony`, `StageImage`) get one entry when the stream ends, and their requests are not digested.
 
 :::caution[Not everything reaches the log]
-Only gRPC calls on a serving node are recorded. These are not:
+Only gRPC calls on a serving node, and SCEP enrolment decisions, are recorded. These are not:
 
+- `GetStatus` and `GetIdentity`, which the node console polls every 2 seconds and the Fleet Manager calls whenever it shows a node. They are skipped by name, as an allow-list: they change nothing and return only what the node publishes anyway, and recording them made up almost all of a log. Every other call, reads included, is recorded;
 - anything in maintenance mode (before install, or after a reset), which drops audit events;
 - ACME, EST, CRL and OCSP traffic on their HTTP listeners (certificates issued through ACME and EST are still recorded in the issued-certificate store, but not in the audit log);
 - connections rejected during the TLS handshake, such as a client without the admin certificate, because they never reach gRPC;

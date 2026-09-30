@@ -12,6 +12,8 @@ See who did what on a node, and check that nobody changed the record.
 
 A node records every call to its API in a signed, hash-chained audit log: the ceremony, every issuance and revocation, each config apply, key exports and reboots. `cryptosctl audit list` reads it and `cryptosctl audit verify` checks the chain. Neither changes anything, and both calls are themselves recorded.
 
+The status reads the console and the Fleet Manager poll (`GetStatus` and `GetIdentity`) are not recorded, and neither is anything in maintenance mode or on the ACME, EST, CRL and OCSP listeners. [Audit log format](../reference/audit-log.md#-what-gets-recorded) lists what is and isn't recorded, and where the rest shows up.
+
 `cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
@@ -32,10 +34,10 @@ The oldest entries first, one page at a time:
 ```text
 SEQ  TIME                  ACTOR               EVENT              OUTCOME  SUMMARY
 1    2026-09-30T14:02:11Z  CN=admin            StartCeremony      ok       ran the first-boot ceremony
-2    2026-09-30T14:05:40Z  CN=admin            ApplyConfig        ok       applied a machine config
+2    2026-09-30T14:05:40Z  CN=admin            ApplyConfig        ok       applied a machine config: generation 2
 3    2026-09-30T14:07:02Z  CN=admin            IssueLeaf          ok       issued a leaf certificate: web.example.org
 4    2026-09-30T14:09:15Z  CN=admin            RevokeCertificate  ok       revoked a certificate: 4f1a09c2
-5    2026-09-30T14:11:30Z  (local socket)      Reboot             ok       rebooted or powered off the node
+5    2026-09-30T14:11:30Z  (local socket)      Reboot             ok       rebooted the node
 (more entries: repeat with --page-token YTE6NTozZjljMmExYjdkMDA0ZTYx, or use --all)
 ```
 :::
@@ -55,11 +57,15 @@ cryptosctl --endpoint 192.0.2.10:443 audit list \
 |---|---|
 | `--since` | entries at or after a time: RFC 3339 (`2026-09-30T12:00:00Z`) or a duration back from now (`24h`) |
 | `--until` | entries before a time, in the same forms |
-| `--type` | one call, by name (`RevokeCertificate`) or full method |
+| `--type` | one call, by name (`RevokeCertificate`) or full method (`/cryptos.v1.NodeService/RevokeCertificate`), or a SCEP operation (`PKCSReq`); case-sensitive |
 | `--actor` | entries whose actor subject contains the text; case-sensitive |
 
 :::caution[Keep the filters with a page token]
 A `--page-token` belongs to the filters it was printed with. Change a filter and keep the token, and the node refuses it with `InvalidArgument`. Drop the token and start again.
+:::
+
+:::caution[A mistyped type is refused]
+`--type` must name a call the node has. A name it doesn't know, such as `RevokeCert` or `revokecertificate`, is refused with `InvalidArgument` rather than listing nothing. Check the spelling and case.
 :::
 
 `-o json` or `-o yaml` gives each entry as the node stored it, with its SHA-256 and summary, for a script or a ticket.
