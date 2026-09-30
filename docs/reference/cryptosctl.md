@@ -123,14 +123,14 @@ The `ca` commands marked **child** run on the subordinate being set up, and **pa
 | `ca submit-rotation` | `--chain` (PEM, leaf first, required) | **child:** install the parent-signed chain for the rotated key |
 | `ca issue-leaf` | `--csr` (PEM or DER, required), `--profile` (required), `--dns` (repeatable) | issue an end-entity certificate from a CSR |
 | `ca list-issued` | | list the certificates this node has issued |
-| `ca revoke` | `--serial` (hex, required), `--reason` (RFC 5280 reason code, default `0`) | revoke a certificate this node issued |
+| `ca revoke` | `--serial` (hex, required; case, leading zeros, a `0x` prefix and colons are ignored, so `openssl x509 -serial` output works as it is), `--reason` (RFC 5280 reason code, default `0`) | revoke a certificate this node issued |
 | `ca revocations` | | list this node's revoked certificates |
 | `ca crl` | | print this node's revocation list as a table |
 | `ca export-key` | `--out` (required), `--role`, `--yes` | export the CA key to a passphrase-encrypted backup file |
 | `ca import-key` | `--backup` (required) | restore a CA from a backup file onto a fresh node |
 
 :::danger[A revocation cannot be undone]
-`ca revoke` has no reverse: neither `cryptosctl` nor the node can take a certificate off the revocation list. Check the serial before you run it.
+`ca revoke` has no reverse: neither `cryptosctl` nor the node can take a certificate off the revocation list. Check the serial before you run it. An unknown serial fails with `NotFound`, and the message shows the normalised serial the node looked up (lower case, no leading zeros).
 :::
 
 :::danger[The backup file holds the CA key]
