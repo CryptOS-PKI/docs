@@ -20,7 +20,7 @@ The ceremony is one server-streaming RPC, `NodeService/StartCeremony`. The clien
 cryptosctl ceremony start --config machine.yaml
 ```
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 :::tip[Expected output]
 A completed ceremony prints five lines, one per event, in this order. The values differ on every run.

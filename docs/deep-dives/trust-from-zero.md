@@ -16,7 +16,7 @@ A freshly built CryptOS image knows nobody. It carries no administrator account,
 2. **You trust the node:** that the machine answering is the one you installed.
 3. **The world trusts the Root:** that the self-signed Root certificate is the one this node made.
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 ## Step 1: you make your own credential
 
