@@ -22,7 +22,7 @@ Run the commands from the root of the `cryptos` checkout.
 :::
 
 :::info[Why not `task qemu:run`]
-The Taskfile has a `task qemu:run` target, but it does not get you through this walkthrough yet. It boots the image with an empty state disk and no machine config, so the node waits in re-provision maintenance mode on the address DHCP gave it, and its port forward points at `10.0.0.10`, an address the node only takes once it has a config. The steps below stage the config first, the way the integration test does.
+The Taskfile has a `task qemu:run` target, but it does not get you through this walkthrough. It boots the image with an empty state disk and no machine config, so the node waits in re-provision maintenance mode on the address DHCP gave it, and its port forward points at `10.0.0.10`, an address the node only takes once it has a config. The steps below stage the config first, the way the integration test does.
 :::
 
 ## 1. Make a lab folder
@@ -62,6 +62,10 @@ Stamp into machine config under bootstrap.admin_cert_pem (or admin_cert_sha256):
 :::
 
 The key is an ECDSA P-256 key and the certificate is self-signed, valid for one year, for client authentication only.
+
+:::danger[The admin certificate expires, and an expired one locks you out]
+The certificate lasts for its `--validity`, 365 days by default (`8760h`). Renew it before then, while it still works; [Make your admin identity](../using/bootstrap.md) covers the limits on that today. Once it expires the node refuses it, and the only way back in today is the console reset (**Ctrl-R**), which wipes the node's CA identity. The CA key survives a reset only if you exported it beforehand with `cryptosctl ca export-key`, and a node that keeps its key in the TPM refuses that export.
+:::
 
 :::caution[identity.key is the only key to this node]
 Whoever holds `~/.cryptos/identity.key` can manage the node, and it is the only credential the node accepts. `cryptosctl bootstrap` overwrites both files if you run it again, so run it once. If you lose the key, you start again from a fresh disk.

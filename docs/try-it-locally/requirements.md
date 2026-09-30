@@ -47,6 +47,33 @@ crw-rw---- 1 root kvm 10, 232 ... /dev/kvm
 ```
 :::
 
+## Hardware
+
+Two machines are involved, even when they are the same box: the **node**, which is the virtual machine CryptOS runs in, and the **build host**, which compiles the image and runs QEMU.
+
+### The node
+
+These are the sizes CryptOS is tested with: the `cryptos` QEMU integration test, `task qemu:run` and the walkthrough on these pages all boot the node this way. Treat them as the minimum for a node.
+
+| Resource | Minimum | Notes |
+|---|---|---|
+| vCPU | 1 | QEMU's default; the test boots pass no `-smp`. |
+| RAM | 2 GiB | QEMU `-m 2048`. |
+| Disk | 2 GiB | A 512 MiB EFI partition for the images, and the rest as the encrypted `cryptos-state` partition. The installer gives the state partition whatever is left, so a bigger disk leaves more room for issued certificates and the audit log. |
+| TPM | TPM 2.0 with ECDSA P-384 | swtpm on these pages, a vTPM on VMware. The default image seals its disk key to the TPM and makes its CA key inside it, and it does not finish booting on a TPM without ECDSA P-384. |
+| Firmware | UEFI | OVMF here. Legacy BIOS can't boot a UKI. The debug image built on these pages is unsigned, so Secure Boot stays off. |
+| Network | 1 NIC | virtio-net in QEMU. The `vmware` image has the e1000e and vmxnet3 drivers built in. |
+| Disk controller | any the image has a driver for | virtio-blk in QEMU. The `vmware` image has NVMe, SATA/AHCI and PVSCSI built in. |
+
+### The build host
+
+- **Linux on x86-64**, with KVM if you can (see below).
+- **Tested size:** the `cryptos` CI builds the image on GitHub's standard hosted Linux runner, which has 4 vCPUs and 16 GB of RAM. A machine that size builds it; smaller ones have not been measured.
+- **Room for the node on top**, if you run QEMU on the same machine: its 1 vCPU and 2 GiB of RAM, plus the 2 GiB disk image.
+- **Free disk space** for the kernel source, the Docker images that build the static disk tools, and the build output. No exact figure has been measured.
+
+The Fleet Manager isn't part of this walkthrough. No sizing has been measured for it, and its chart sets no resource requests or limits.
+
 ## Build tools
 
 These turn the `cryptos` source into a bootable image.
