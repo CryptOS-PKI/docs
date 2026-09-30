@@ -65,7 +65,7 @@ Test-NetConnection -ComputerName 192.0.2.10 -Port 443
 
 ## 3. Pin the node's management certificate
 
-The node does not present a certificate from its CA on port 443. At every boot it makes a new **self-signed** certificate that names only its IP address and `localhost`. You pin that certificate itself.
+Until the node has its CA, it cannot present a certificate from that CA on port 443. At every boot it makes a new **self-signed** certificate that names only its IP address and `localhost`. You pin that certificate itself. Once the node has its CA, see [Trust the root once the node has its CA](#trust-the-root-once-the-node-has-its-ca).
 
 First read the **Mgmt SHA-256** line on the node's console. It is the fingerprint of this boot's management certificate, in groups of four hex digits. Then fetch the certificate and check it against that value in one step:
 
@@ -109,15 +109,31 @@ cryptosctl --endpoint 192.0.2.10:443 --trust ~/.cryptos/root-1.crt status
 The node makes a new management certificate at every boot: a restart, `image activate`, a power event or a hypervisor restart. After any of them, calls fail with `x509: certificate signed by unknown authority`. Run `trust fetch` again with the new console value. A stale pin fails closed; it never lets a wrong connection through.
 :::
 
+### Trust the root once the node has its CA
+
+After the Root's ceremony, or once a subordinate's certificate is accepted, the node switches with no restart to a management certificate signed by its own CA, followed by its CA chain up to the root. The key still changes on every boot, but the chain does not, so trust the root instead of a pin. The self-signed pin stops working at the switch, and the console's serving dashboard shows `Mgmt cert  CA-signed, trust the CA` under the fingerprint.
+
+Use the root certificate you already hold with `--trust`:
+
+```bash
+cryptosctl --endpoint 192.0.2.10:443 --trust ~/.cryptos/root.pem status
+```
+
+For a new Root, [Switch to your root after the ceremony](../install-deploy/reboot-ceremony.md#switch-to-your-root-after-the-ceremony) shows how to read the root off the node and check it against the ceremony output.
+
+:::caution[Don't keep a CA-signed certificate as a pin]
+`trust fetch` still saves whatever certificate the node presents, including a CA-signed one, and that pin goes stale at the next reboot like any other. Use the root.
+:::
+
 ## 4. Use the IP address
 
-The management certificate has no DNS names, so connect by IP:
+Before the node has its CA, the management certificate has no DNS names. After that, it carries the IP and any names in `pki.est.hostnames`. Connecting by IP works in both cases:
 
 ```bash
 cryptosctl --endpoint 192.0.2.10:443 status
 ```
 
-If you have to go through a DNS name, add `--server-name` with the node's IP, so the name checked is the one the certificate carries:
+If you have to go through a DNS name the certificate does not carry, add `--server-name` with the node's IP, so the name checked is the one the certificate carries:
 
 ```bash
 cryptosctl --endpoint pki-root.example.org:443 --server-name 192.0.2.10 status

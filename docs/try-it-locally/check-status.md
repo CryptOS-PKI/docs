@@ -13,13 +13,13 @@ Confirm the node has an identity and is healthy.
 After the ceremony the node is a working Root CA. This page proves it: the node reports its identity, the Root certificate checks out, and everything survives a restart.
 
 :::info[Before you start]
-You need the node from [Run the first-boot ceremony](./first-boot-ceremony.md), with the ceremony ended on `COMPLETE`, and the pin in `~/.cryptos/trust.crt` from that page. Use the second terminal, with `LAB` set.
+You need the node from [Run the first-boot ceremony](./first-boot-ceremony.md), with the ceremony ended on `COMPLETE`, and `$LAB/root.pem` from step 4 of that page. Use the second terminal, with `LAB` set.
 :::
 
 ## 1. Check the node's status
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost status
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 --trust "$LAB/root.pem" status
 ```
 
 :::tip[Expected output]
@@ -53,7 +53,7 @@ What the lines mean:
 ## 2. Look at the Root certificate
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost identity show
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 --trust "$LAB/root.pem" identity show
 ```
 
 :::tip[Expected output]
@@ -76,7 +76,7 @@ Subject and issuer match because a Root signs itself. `SHA-256` is the `cert_sha
 ## 3. Validate the chain
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost identity validate
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 --trust "$LAB/root.pem" identity validate
 ```
 
 :::tip[Expected output]
@@ -89,10 +89,9 @@ Any other result is an error with the reason. For a Root it means the certificat
 
 ## 4. Inspect it with openssl
 
-Save the certificate as PEM and read it with a tool that has nothing to do with CryptOS:
+Read the `$LAB/root.pem` you saved on the previous page with a tool that has nothing to do with CryptOS:
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost identity show -o pem > "$LAB/root.pem"
 openssl x509 -in "$LAB/root.pem" -noout -subject -issuer -dates -fingerprint -sha256 -ext basicConstraints,keyUsage
 ```
 
@@ -114,7 +113,7 @@ The Root carries no path length limit. Limits belong on the intermediates below 
 ## 5. Compare the CLI and node versions
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost version
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 --trust "$LAB/root.pem" version
 ```
 
 :::tip[Expected output]
@@ -136,7 +135,7 @@ A restart proves the node keeps its identity: it unseals its disk with the TPM, 
 :::
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost reboot --confirm "CryptOS Local Root" --power-off
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 --trust "$LAB/root.pem" reboot --confirm "CryptOS Local Root" --power-off
 ```
 
 :::tip[Expected output]
@@ -147,11 +146,10 @@ power-off accepted: the node is shutting down cleanly and powering off
 The node closes its database and audit log, locks its disk, and powers off, and QEMU exits in the first terminal.
 :::
 
-In the first terminal, start swtpm again if it exited with QEMU (`pgrep -a swtpm` prints nothing), then run the same `qemu-system-x86_64` command as on [Boot it in QEMU](./boot-qemu.md). Keep the same `$LAB` folder: the same disk, the same TPM state, the same UKI. When **management API** is marked `[ok]`, pin the new management certificate and check again:
+In the first terminal, start swtpm again if it exited with QEMU (`pgrep -a swtpm` prints nothing), then run the same `qemu-system-x86_64` command as on [Boot it in QEMU](./boot-qemu.md). Keep the same `$LAB` folder: the same disk, the same TPM state, the same UKI. When **management API** is marked `[ok]`, check again, with the same `root.pem`:
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost trust fetch
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost status
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 --trust "$LAB/root.pem" status
 ```
 
 :::tip[Expected output]
@@ -162,7 +160,7 @@ Identity:        ESTABLISHED
 Boot count:      2
 ```
 
-The management certificate is new, so its SHA-256 differs from the first fetch. That is expected: the node makes a fresh one at every boot, and the old pin no longer works.
+The management certificate has a new key, so the console's SHA-256 differs from before the restart. `root.pem` still works because the new certificate is signed by the same Root.
 :::
 
 ## Run the whole flow as a test

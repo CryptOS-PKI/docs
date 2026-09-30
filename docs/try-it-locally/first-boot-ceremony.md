@@ -27,7 +27,7 @@ Use a second terminal, with `LAB` set as on the boot page.
 Every call is mutual TLS, so `cryptosctl` needs to know which certificate the node will present. The node makes a new self-signed management certificate at every boot. Fetch it and save it as your pin:
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost trust fetch
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 trust fetch
 ```
 
 :::tip[Expected output]
@@ -53,7 +53,7 @@ Subject and issuer are the same because the certificate is self-signed. If the c
 ## 2. Check the node is ready
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost status
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 status
 ```
 
 :::tip[Expected output]
@@ -82,7 +82,7 @@ The ceremony creates the Root key inside swtpm, and swtpm keeps its state as ord
 :::
 
 ```bash
-cryptosctl --endpoint 127.0.0.1:4443 --server-name localhost ceremony start --config "$LAB/machine.yaml"
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 ceremony start --config "$LAB/machine.yaml"
 ```
 
 :::tip[Expected output]
@@ -96,8 +96,34 @@ ADMIN_ROTATED    admin_cert_sha256=<64 hex digits>
 COMPLETE
 ```
 
-`COMPLETE` means the Root exists. The node commits the Root just before it reports `MANIFEST_WRITTEN`. If the output stops before that line, nothing was committed and you can run the command again. If it stops after it, the Root exists: check with `status` on the next page.
+`COMPLETE` means the Root exists. The node commits the Root just before it reports `MANIFEST_WRITTEN`. If the output stops before that line, nothing was committed and you can run the command again. If it stops after it, the Root exists: go on with step 4.
 :::
+
+Keep the `cert_sha256` value; step 4 checks the Root against it.
+
+## 4. Trust the Root
+
+Now that the node has its CA, it stops presenting the self-signed certificate. From the next connection on it presents a certificate signed by the Root, followed by the Root itself, so the pin from step 1 no longer works. Trust the Root instead: fetch this certificate once, read the Root over it, and check the Root's fingerprint:
+
+```bash
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 trust fetch
+cryptosctl --endpoint 127.0.0.1:4443 --server-name 10.0.0.10 identity show -o pem > "$LAB/root.pem"
+openssl x509 -in "$LAB/root.pem" -noout -fingerprint -sha256
+```
+
+:::tip[Expected output]
+`trust fetch` now shows the Root as the issuer, and only the node's IP as the name:
+
+```text
+Subject:    CN=10.0.0.10
+Issuer:     CN=CryptOS Local Root,O=Local Lab,C=US
+SANs:       10.0.0.10
+```
+
+The fingerprint openssl prints is the `cert_sha256` from step 3, written with colons.
+:::
+
+From here on, pass `--trust "$LAB/root.pem"`. Unlike the pin, it keeps working after the node reboots. The node's console now shows `Mgmt cert  CA-signed, trust the CA` under the fingerprint.
 
 ## What each step means
 
@@ -118,7 +144,7 @@ The [ceremony walkthrough](../deep-dives/ceremony-walkthrough.md) goes deeper in
 | `IDENTITY_EXISTS` | The node already has a Root. | Nothing: go to the next page. The ceremony never runs twice. |
 | `first-boot-root ceremony requires role "root"` | The config passed with `--config` is not a Root. | Pass the `machine.yaml` from the boot page. |
 | `ceremony already in progress` | Another ceremony call is running. | Wait for it to finish, then check `status`. |
-| `x509: certificate signed by unknown authority` | The pin in `~/.cryptos/trust.crt` is stale, usually because the node rebooted. | Run `trust fetch` again. |
+| `x509: certificate signed by unknown authority` | Before step 3: the pin in `~/.cryptos/trust.crt` is stale, usually because the node rebooted. After step 3: the node now presents a CA-signed certificate. | Before step 3, run `trust fetch` again. After it, follow step 4. |
 
 ## Next step
 

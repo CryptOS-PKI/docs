@@ -30,9 +30,11 @@ nodeclient: node pki-root has no pinned server certificate (/var/lib/cryptos-man
 
 ## Why the pin changes on every boot
 
-A node makes a new self-signed certificate for its management API every time it boots. Its CA doesn't sign it, so the node's CA chain can't be used to check it. It's the same certificate `cryptosctl --trust` takes.
+A node makes a new key and certificate for its management API every time it boots. Before the node has its CA, that certificate is self-signed. Once it has its CA, the node signs it with that CA, but the key and fingerprint still change on every boot. The manager compares the whole certificate with the pin, so either way a pin holds until the node's next reboot. After that the manager refuses the node until you pin its new certificate.
 
-So a pin holds until the node's next reboot. After that the manager refuses the node until you pin its new certificate.
+:::info[Checking the CA chain instead of a pin]
+Because a node with a CA now presents a certificate its CA signs, it can be checked against the node's CA chain, which does not change on reboot. The manager does not do that yet; it comes with a later Fleet Manager release. Until then, pin and re-pin as described here.
+:::
 
 When you [adopt a node](./overview.md#adopting-a-new-node), the fingerprint you confirm pins the node's maintenance-mode certificate for the adoption steps up to the install. The installed node boots with a new certificate, and the manager doesn't check it unless you pin it.
 

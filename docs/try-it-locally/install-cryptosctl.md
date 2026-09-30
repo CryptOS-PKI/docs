@@ -81,12 +81,12 @@ You made the identity pair on [Boot it in QEMU](./boot-qemu.md), with the same c
 
 ## Flags you will use here
 
-The node in QEMU is reachable as `127.0.0.1:4443`, but its management certificate names `10.0.0.10` and `localhost`, not `127.0.0.1`. So every command on the next pages passes the same two flags:
+The node in QEMU is reachable as `127.0.0.1:4443`, but its management certificate names `10.0.0.10`, not `127.0.0.1`. So every command on the next pages passes the same two flags:
 
 | Flag | Value | Why |
 |---|---|---|
 | `--endpoint` | `127.0.0.1:4443` | the port QEMU forwards to the node's API. The default is `localhost:443`. |
-| `--server-name` | `localhost` | the name to check on the node's certificate |
+| `--server-name` | `10.0.0.10` | the name to check on the node's certificate, before and after the ceremony |
 
 The [cryptosctl command reference](../reference/cryptosctl.md) lists every command and flag.
 

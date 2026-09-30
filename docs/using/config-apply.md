@@ -116,7 +116,7 @@ reboot accepted: the node is shutting down cleanly and rebooting
 ```
 :::
 
-After the reboot the node has a new management certificate, so fetch the pin again ([Setup](./setup.md)). If you changed `network.address`, the node comes back on the new address: fetch the pin from there.
+After the reboot the node has a new management certificate. With your root certificate as `--trust` nothing changes; a pinned certificate has to be fetched again ([Setup](./setup.md)). If you changed `network.address`, the node comes back on the new address, and its certificate names that address: connect there.
 
 ## 5. Check the change
 

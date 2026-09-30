@@ -78,9 +78,11 @@ cryptosctl --endpoint 192.0.2.10:443 trust fetch --expect-sha256 "<Mgmt SHA-256 
 
 The full procedure, and why the pin goes stale after every reboot, is in [Trusting a node's management certificate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md).
 
-:::caution[Fetch the pin again after every reboot]
-The management certificate changes on every boot, even after the ceremony: it is never replaced by one your Root issued. A pin taken before a reboot fails afterwards with `x509: certificate signed by unknown authority`. Run `trust fetch --expect-sha256` again after each reboot, and don't drop `--expect-sha256`, because without it `trust fetch` saves whatever certificate it received.
+:::caution[Fetch the pin again after every reboot until the ceremony]
+Before the node has its CA, the management certificate changes on every boot. A pin taken before a reboot fails afterwards with `x509: certificate signed by unknown authority`. Run `trust fetch --expect-sha256` again after each reboot, and don't drop `--expect-sha256`, because without it `trust fetch` saves whatever certificate it received.
 :::
+
+Once the node has its CA, the pin stops working and is no longer needed. On the same boot, from the next connection on, the listener switches to a certificate that its CA signs (`caServerCert`, the mechanism the EST listener uses), with a new key each boot, the `network.address` IP and the `pki.est.hostnames` names as its subject alternative names, `serverAuth` only, and the node's CA chain up to the Root after it. From then on you verify the node with the Root itself: `--trust root.pem`. The signing uses the CA key directly, not the issuance path, so the SNTP clock gate never takes the management listener down.
 
 At this point both sides have proof: the node knows your certificate from the config you wrote, and you know the node's certificate from its own console.
 
@@ -116,7 +118,7 @@ These are the places where the alpha is short of the design. Each one is traceab
 | M-of-N administrator quorum for Root operations. | Not built. One certificate authorizes everything. |
 | The node proves to you that it runs on a genuine TPM (EK certificate, attestation quote over PCRs). | Not built. The ceremony returns the TPM creation data for the key, but no endorsement key certificate or quote, and `cryptosctl` doesn't check it. The `Attest` RPC used by the Fleet Manager is a signature by the CA key over a nonce, not a TPM quote. |
 | No unauthenticated path to change a node. | Maintenance mode, before install, has none of the protections above (Step 3). |
-| The management listener presents a certificate from the node's CA. | The listener presents a new self-signed certificate on every boot, pinned by fingerprint (Step 5). |
+| The management listener presents a certificate from the node's CA. | Only once the node has its CA. Before that, the listener presents a new self-signed certificate on every boot, pinned by fingerprint (Step 5). |
 
 ## Where this lives in the code
 
@@ -127,7 +129,7 @@ All paths are in [CryptOS-PKI/cryptos](https://github.com/CryptOS-PKI/cryptos) o
 | Bootstrap credential | `cmd/cryptosctl/bootstrap.go` (`generateBootstrapCredential`) |
 | Loading and pinning the admin | `internal/bootstrap/bootstrap.go` (`LoadTrust`, `VerifyPeerCertificate`, `ClientCAPool`) |
 | Maintenance mode TLS | `internal/init/servertls.go` (`MaintenanceServerTLSConfig`), `internal/grpc/server.go` (`NewMaintenance`), `cmd/cryptosctl/client.go` (`insecureClientTLSConfig`) |
-| Management listener | `internal/init/servertls.go` (`GenerateServerCert`, `ServerTLSConfig`, `PublishManagementCert`), `internal/init/run.go` step 12 |
+| Management listener | `internal/init/servertls.go` (`GenerateServerCert`, `ServerTLSConfig`, `PublishManagementCert`), `internal/init/mgmtcert.go` (`managementCert`), `internal/init/boot.go` (`ManagementSANs`), `internal/init/run.go` step 12 |
 | Admin check per RPC | `internal/grpc/authz.go` (`AuthorizeAdmin`) |
 | Local socket | `internal/grpc/server.go` (`NewLocal`), `internal/init/boot.go` (`LocalSocketPath`) |
 | Pin fetch | `cmd/cryptosctl/trust.go` (`trust fetch`) |
