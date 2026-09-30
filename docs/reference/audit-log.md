@@ -10,13 +10,22 @@ The node writes and chains its audit log today, and `cryptosctl audit list` and 
 
 How the tamper-evident log is structured and verified.
 
-Every CryptOS node keeps an **audit log**: one entry for every call to its API, each entry signed and chained to the one before it. A changed, removed or reordered entry breaks the chain from that point on. For the reasoning behind the design, see [How the audit log proves integrity](../deep-dives/audit-integrity.md). The Fleet Manager keeps a separate log of its own, described [at the end of this page](#-the-fleet-manager-audit-log).
+Every CryptOS node keeps an **audit log**: one entry for every call to its API except the status polls, each entry signed and chained to the one before it. A changed, removed or reordered entry breaks the chain from that point on. For the reasoning behind the design, see [How the audit log proves integrity](../deep-dives/audit-integrity.md). The Fleet Manager keeps a separate log of its own, described [at the end of this page](#-the-fleet-manager-audit-log).
 
 ## 📝 What gets recorded
 
-- **Every gRPC call** on the node's mTLS listener and on its local socket, one entry per call, written when the call finishes, whatever its outcome.
+- **Every gRPC call** on the node's mTLS listener and on its local socket, one entry per call, written when the call finishes, whatever its outcome, except `GetStatus` and `GetIdentity` (below).
 - **Streaming calls** (for example `StartCeremony` and `StageImage`) get one entry for the whole stream, with no request digest.
-- **Not recorded:** calls in maintenance mode, where there is no state partition to write to yet; HTTP requests to the ACME, EST, CRL and OCSP listeners; and a client whose certificate fails the TLS handshake, since it never reaches an API call.
+- **SCEP enrolment decisions**, one entry per `PKIOperation`, with the method `scep/PKCSReq`, `scep/RenewalReq`, `scep/CertPoll`, `scep/GetCert` or `scep/GetCRL` and the device's signer certificate as the actor.
+
+These are not recorded:
+
+| What | Why, and where it shows instead |
+|---|---|
+| `GetStatus` and `GetIdentity`, from any caller | The node console polls both every 2 seconds and the Fleet Manager calls them whenever it shows a node. They change nothing and return only what the node publishes anyway (its status and its CA certificate), so recording them would fill the log with reads. Every other read is recorded, including `GetConfig`, `ListIssued`, `GetIssuedCertificate`, `ExportCAKey`, `ListAuditEvents` and `VerifyAuditChain`. |
+| Maintenance mode, including the installer's first `ApplyConfig` | There is no state partition to write to yet, so the install is recorded nowhere. The log starts on the installed node's first boot. |
+| ACME, EST, CRL and OCSP requests, and SCEP `GetCACert` and `GetCACaps` | They run on their own HTTP listeners, not the gRPC API. Every certificate ACME or EST issues is in the node's issued set (`cryptosctl ca list-issued`). Protocol events go to the node's kernel log, which is held in memory only and lost at reboot. |
+| A client whose certificate fails the TLS handshake | It never reaches an API call. |
 
 ## 📂 Where it lives
 
@@ -44,12 +53,12 @@ Each line is one entry:
 Three real entries, as the node writes them:
 
 ```text
-{"seq":"1", "ts":"2026-09-30T14:02:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/GetStatus", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="} RQvUXbWcr7F2EZDtdSHWIoELUw/HQNwlqtZ/AZVdw3b3bhMxP+KiaeVr8qKROQmywWbdI3rPXsATBOQRKc7IBA
-{"seq":"2", "ts":"2026-09-30T14:02:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/IssueLeaf", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"NiQ5UXTWRM6xAu6Zzn/MzqLYtJTDBcNDtXgoVWq7WVE=", "details":{"request_dns_names":"web.example.org"}} uW3SfFHJswOg9YtWcUNrJr8p4kcGqFDG8u4BnsfAEtcee2BmHl+YSRkyA15oZVZ5xczAKBNraV04JkZguPFfDA
-{"seq":"3", "ts":"2026-09-30T14:02:11.482Z", "rpcMethod":"/cryptos.v1.NodeService/StartCeremony", "outcome":"OUTCOME_ERROR", "prevEntrySha256":"cWaCj8mpClYsWucjexbnYViPcq1DCwkoR1CsuGTRwhQ="} /wnvI2TADiLazVj0HD51BURPEU4qkRGh2Bc1REX+uJ//1XCcs6652uaMU6xmM54qWzqBNHlEsga397SyRw+QDA
+{"seq":"1", "ts":"2026-09-30T14:02:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/StartCeremony", "outcome":"OUTCOME_OK", "prevEntrySha256":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="} 1onlVZIwAQNwMLAHuzJr0KRHmTluVSJN+ojWHpWIZTa0aI1IVCnprmMYqD57rt79NkhSVQ0ywmAmA2eFzBnVDg
+{"seq":"2", "ts":"2026-09-30T14:03:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/ApplyConfig", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"JLpgGDBdvilYnnOnzr008RfLokhuE1XRv7POYwYBKyc=", "details":{"config_digest_sha256":"9f2c4e1a7b3d5f6082a4c6e8f0b2d4f6a8c0e2f4b6d8fa1c3e5a7c9eb1d3f5a7", "config_generation":"2", "requires_reboot":"false"}} JMsxHOhrnEsiQxmqQPcAAJrywl3mP0iOt9w68aUFYoCZh6M7v6BzlvOp7YvHfu7gdvaFCxJ+29OVm1bNRVCyDA
+{"seq":"3", "ts":"2026-09-30T14:04:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/IssueLeaf", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"X2seRmi7bktrRE7SSz7Oaj0Pj6lVAQ32GUkPruCAfCc=", "details":{"request_dns_names":"web.example.org"}} m1TlQGyzX8MVFlppOCtxzuLE7ZTJY7NtUlaicdXwFWA6Z8YTx24P6DTj2uv+0uu5X3v+H0h/W6mEIUkKxPkIBA
 ```
 
-The request digests here are a placeholder pattern; a real one is the SHA-256 of a real request.
+The request digests and the config digest here are placeholder patterns; a real one is the SHA-256 of a real request or config.
 
 ## 📋 Fields
 
@@ -74,6 +83,13 @@ The `details` keys the node writes today:
 | `request_dns_names` | `IssueLeaf`, when the caller passes DNS names (`cryptosctl ca issue-leaf --dns`) | The names, comma-separated. Recorded once the caller is authorized, whether or not the signer accepts them. |
 | `requested_not_after` | `IssueLeaf` or `SignSubordinateCSR`, when the certificate was capped at the issuer's notAfter | The notAfter the profile asked for, RFC 3339 UTC. |
 | `effective_not_after` | Same | The notAfter the certificate received, RFC 3339 UTC. |
+| `config_generation` | `ApplyConfig`, when the apply succeeds | The config generation the apply produced, in decimal. |
+| `config_digest_sha256` | Same | The SHA-256 of the applied config, in lower-case hex. |
+| `requires_reboot` | Same | `true` when part of the change takes effect only at the next boot, otherwise `false`. |
+| `reboot_kind` | `Reboot` | `reboot` or `power_off`, as the caller asked. Recorded on a refused call too. |
+| `transaction_id`, `pki_status`, `remote_addr`, `fail_info`, `reason`, `profile`, `authorized_by`, `challenge_id`, `serial_hex`, `names` | SCEP `PKIOperation` entries | The decision on one SCEP request. The challenge itself never appears, only the ID of the one consumed. |
+
+The details are part of the entry's JSON, so the signature and the chain cover them like every other field.
 
 ## 🔗 Chain and signature rules
 
@@ -102,6 +118,10 @@ The audit key is an Ed25519 key derived, not stored. The node generates a 32-byt
 
 :::caution[A failed audit write doesn't fail the call]
 If the node can't append an entry, the API call still returns its normal result to the client. The audit write error is dropped rather than turned into a failure the caller sees.
+:::
+
+:::caution[The log is never trimmed]
+The node keeps one file per UTC day and never trims or deletes them, so the log grows for as long as the node runs. Keep an eye on the state partition's free space on a busy issuing CA.
 :::
 
 :::warning[A reset destroys the audit log]
