@@ -54,7 +54,7 @@ Approving lets the agent run that exact call once, with no further check from yo
 :::
 
 1. On the request's row, select **Approve…** or **Deny…**.
-2. The confirmation repeats the tool, who asked, the required level, the summary and the **Request digest (SHA-256)**. The digest is a hash of the call's exact arguments. Check that the approval ID and summary match what the agent showed you.
+2. The confirmation repeats the tool, who asked, the required level, the **Approval ID** and the summary. Check that the approval ID and summary match what the agent showed you. The **Request digest (SHA-256)** under them is a hash of the call's exact arguments. The agent never receives it, so there is nothing to compare it with; the audit log records it with the decision and the agent's call.
 3. Select **Approve** or **Deny**. **Cancel** closes the dialog without deciding.
 
 :::tip[Expected output]
