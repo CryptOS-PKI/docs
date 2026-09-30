@@ -55,7 +55,7 @@ The build identity of the binary you just installed:
 Client version:  <git describe of your checkout>
 Client commit:   <full commit hash>
 Client built:    <commit date, UTC>
-Go version:      go1.25...
+Go version:      go1.26...
 ```
 
 The version is what `git describe --tags --always --dirty` says about your checkout. It reads `dev`, with the commit and date `unknown`, when the source had no Git history. That is harmless here, but build from a full clone if you want to tell builds apart.
