@@ -170,7 +170,7 @@ const config: Config = {
       // (cncf/foundation copyright-notices.md). The LF Projects trademark lines
       // from the CNCF website guidelines apply only once the project is accepted.
       copyright:
-        'Copyright © 2026 The CryptOS Authors<br />' +
+        'Copyright © The CryptOS Authors<br />' +
         'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/docs/blob/main/LICENSE">Apache License 2.0</a>',
     },
     prism: {
