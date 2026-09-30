@@ -29,12 +29,12 @@ tasks:
     desc: Verify every source file carries the Apache 2.0 license header (CI; never writes).
     cmds:
       - go install github.com/Bugs5382/golic/cmd/golic@v0.3.0
-      - golic inject -t apache2 -c "2026 Shane" --dry -x
+      - golic inject -t apache2 -c "The CryptOS Authors." --dry -x
   license:fix:
     desc: Inject the Apache 2.0 header into any source file missing it.
     cmds:
       - go install github.com/Bugs5382/golic/cmd/golic@v0.3.0
-      - golic inject -t apache2 -c "2026 Shane"
+      - golic inject -t apache2 -c "The CryptOS Authors."
   ci:
     desc: Local gate -- build the site.
     cmds:
