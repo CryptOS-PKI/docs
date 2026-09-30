@@ -12,11 +12,6 @@ CryptOS keeps to one rule here: **it never sees your software.** It doesn't take
 An intermediate or issuing node issues a code-signing certificate from a CSR, under a profile whose extended key usage is Code Signing (`1.3.6.1.5.5.7.3.3`). You send the CSR with `cryptosctl ca issue-leaf` or through the Fleet Manager, and revoke with `cryptosctl ca revoke` if the key leaks.
 :::
 
-:::info[Planned]
-- **An RFC 3161 timestamp service**, so signatures stay valid after the signing certificate expires.
-- **Build pipelines enrolling on their own**, proving who they are with something like a CI provider's OIDC token instead of an operator carrying the CSR.
-:::
-
 ## What you set up once
 
 Add a code-signing profile to the issuing node's machine config. The profile decides everything about the certificate except its subject and public key:
@@ -91,7 +86,7 @@ The node refuses a CSR for any other key, with `subject RSA key must be at least
 
 A signature is only as good as the certificate behind it, and the certificate expires. A signing tool that adds an RFC 3161 **timestamp** records that the signature was made while the certificate was still valid, so the signature keeps validating afterwards.
 
-CryptOS does not serve timestamps yet. Until it does, either point your signing tool at another RFC 3161 timestamp service, or plan for signatures to stop validating on platforms that check expiry once the certificate runs out.
+CryptOS does not serve timestamps. Either point your signing tool at another RFC 3161 timestamp service, or plan for signatures to stop validating on platforms that check expiry once the certificate runs out.
 
 ## If a signing key leaks
 

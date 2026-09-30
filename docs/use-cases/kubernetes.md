@@ -6,26 +6,25 @@ title: "☸️ Kubernetes workloads"
 
 A Kubernetes cluster uses a lot of certificates, and they come and go fast: ingress certificates for every hostname, certificates for webhooks and controllers, and mTLS between services. Nobody carries CSRs by hand for that. In Kubernetes the job usually goes to **cert-manager**, which asks a CA for certificates and renews them before they expire.
 
-The plan is for cert-manager to use CryptOS as an ordinary **ACME** server, so the cluster needs nothing CryptOS-specific installed. This page says how far the alpha gets.
+This page says how far the alpha gets.
 
 There are two separate jobs here, and it helps to keep them apart:
 
 - **Workload certificates**: certificates for what runs *in* the cluster, such as ingress hostnames and service-to-service TLS. This page is mostly about these.
-- **The cluster's own PKI**: the API server, etcd, kubelet and front-proxy certificates that Kubernetes (or Talos) creates for itself. Rooting those in CryptOS is a separate, planned piece of work.
+- **The cluster's own PKI**: the API server, etcd, kubelet and front-proxy certificates that Kubernetes (or Talos) creates for itself. CryptOS does not act as the external CA for those.
 
-:::info[Planned]
-- **cert-manager over ACME.** The node code has an RFC 8555 ACME server, with External Account Binding and the `http-01` challenge. The alpha can't switch it on yet: the wire config that `cryptosctl config apply` and the Fleet Manager send has no field for the `pki.acme` block. See the [overview](./overview.md#enrolment-protocols).
-- **`dns-01` and wildcard names**, which cert-manager usually relies on for internal names. Tracked in [cryptos#110](https://github.com/CryptOS-PKI/cryptos/issues/110).
-- **CryptOS as the external CA for the cluster's own PKI**, including Talos machine and cluster certificates. Tracked in [cryptos#113](https://github.com/CryptOS-PKI/cryptos/issues/113).
+:::caution[cert-manager can't use CryptOS over ACME today]
+- **ACME can't be switched on.** The node code has an RFC 8555 ACME server, with External Account Binding and the `http-01` challenge, but the alpha can't switch it on: the wire config that `cryptosctl config apply` and the Fleet Manager send has no field for the `pki.acme` block. See the [overview](./overview.md#enrolment-protocols).
+- **No `dns-01` and no wildcard names**, which cert-manager usually relies on for internal names.
 :::
 
 :::tip[Works today]
 You can issue certificates for cluster workloads by CSR, the same way as for any server: make the key and CSR, issue with `cryptosctl ca issue-leaf` or the Fleet Manager, and load the result into a Kubernetes TLS Secret yourself. See [Internal TLS and mTLS](./internal-tls.md). Renewal is manual.
 :::
 
-## How cert-manager will fit, once ACME is on
+## How the ACME server behaves
 
-The ACME server is written and tested in the `cryptos` code. Its behaviour, which shapes how a cluster will use it, is already fixed:
+The ACME server is written and tested in the `cryptos` code. It can't be switched on in the alpha, but its behaviour is fixed in the code:
 
 - **One profile decides the certificate.** The node's `pki.acme.profile` names the leaf profile every ACME order uses. The client picks only the names, and only names whose challenge passed.
 - **`http-01` only.** The node fetches `http://<name>:80/.well-known/acme-challenge/...` for each name, as the node itself resolves it. That works for an ingress hostname that resolves to the cluster's ingress from the CA's network. It does not work for a name the CA can't reach, and a wildcard name is refused when the order is placed.
@@ -50,7 +49,7 @@ cert-manager can also act as a small CA of its own, signing from a CA key pair s
 With this setup the cluster CA's private key sits in a Kubernetes Secret, not in a TPM. Anyone who can read that Secret can issue certificates that chain to your CryptOS root, for any name the CA certificate allows. Keep the certificate short-lived, give the CA its own profile so it can be revoked on its own, and keep RBAC on that Secret tight.
 :::
 
-This path is not tested with cert-manager yet. The signing step itself is the one proven with VMCA; see [vCenter VMCA as a CryptOS subordinate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/vmca-subordination.md) for a worked example of the profile and the command.
+This path has not been tested with cert-manager. The signing step itself is the one proven with VMCA; see [vCenter VMCA as a CryptOS subordinate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/vmca-subordination.md) for a worked example of the profile and the command.
 
 ## Related
 

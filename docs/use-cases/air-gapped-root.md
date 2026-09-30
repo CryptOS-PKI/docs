@@ -16,16 +16,8 @@ CryptOS is built for this. A Root node only signs CAs unless you tell it otherwi
 - Between signings the Root can be shut down cleanly with `cryptosctl reboot --confirm "<Root CA CN>" --power-off`.
 :::
 
-:::info[Planned]
-**Root Mode**, a locked-down state for the Root:
-
-- every service listener (enrolment protocols and OCSP) shut down;
-- the management API only on a dedicated interface or the local console, with any Fleet Manager link suspended;
-- a hardware presence check before the Root key is unsealed;
-- **M-of-N approval**, so Root operations need several administrators to sign off;
-- a recovery method chosen at first boot, such as Shamir shares, paper, smart card or KMS escrow.
-
-None of this is in the alpha. Today "offline" means the Root node is powered off, or cut off from the network, between signings.
+:::info[Offline means powered off]
+CryptOS has no locked-down mode for a Root. While it runs, a Root serves its management API like any other node, there is no hardware presence check before its key unseals, and one admin certificate authorizes every operation. "Offline" means the Root node is powered off, or cut off from the network, between signings.
 :::
 
 ## Choosing where the Root key lives
@@ -39,7 +31,7 @@ The node's **state-key mode** (`state_key.mode` in the machine config, or the de
 | Can it be backed up? | No. `ca export-key` is refused | Yes, with `ca export-key` to a passphrase-sealed file |
 | Protected by hardware? | Yes | No |
 
-An RSA CA key can't be held in the TPM yet. That is tracked in [cryptos#197](https://github.com/CryptOS-PKI/cryptos/issues/197). If something you must chain to only accepts RSA, the whole chain above it has to be RSA, and today that means the software modes.
+An RSA CA key can't be held in the TPM. If something you must chain to only accepts RSA, the whole chain above it has to be RSA, and today that means the software modes.
 
 :::danger[A TPM-held Root can't be backed up]
 In `tpm` mode the Root key never leaves the TPM, by design. `cryptosctl ca export-key` answers `this node's CA key is non-exportable (TPM-backed)`. If that TPM or vTPM is lost, for example when the VM is deleted or its encryption keys are gone, the Root is gone. Every subordinate then has to be re-issued under a new Root, and every client has to trust the new one. Plan for that before the ceremony. Keep the VM, its vTPM and the host keys that protect it backed up by your platform.
@@ -74,7 +66,7 @@ A CA profile's `path_len` is clamped to what the signing CA's own certificate le
 Relying parties that check revocation will look up the subordinate CA certificates too, and those point at the **Root's** CRL and OCSP when the Root has `pki.revocation_base_url` set.
 
 :::caution[An offline Root serves no CRL or OCSP]
-The Root's `/crl`, `/ocsp` and `/ca.cer` are served by the Root node itself, and only while it runs. The CRL it signs is valid for `crl_next_update_hours` (168 hours, one week, by default). CryptOS has no built-in way yet to publish the Root's CRL from somewhere else while the Root is off. Before you rely on an offline Root, decide how clients will reach a current CRL for your subordinates, and bring the Root up often enough to renew it.
+The Root's `/crl`, `/ocsp` and `/ca.cer` are served by the Root node itself, and only while it runs. The CRL it signs is valid for `crl_next_update_hours` (168 hours, one week, by default). CryptOS has no built-in way to publish the Root's CRL from somewhere else while the Root is off. Before you rely on an offline Root, decide how clients will reach a current CRL for your subordinates, and bring the Root up often enough to renew it.
 :::
 
 :::caution[Signing needs the revocation URL to resolve]

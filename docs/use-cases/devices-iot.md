@@ -12,10 +12,9 @@ The goal is a device that enrols once and then renews itself for years, with no 
 Any device that can produce a CSR, or accept a certificate and key you load onto it, can get a certificate from an intermediate or issuing node. You issue it with `cryptosctl ca issue-leaf` or the Fleet Manager, the same way as for a server. See [Internal TLS and mTLS](./internal-tls.md) for the steps. Renewal is manual.
 :::
 
-:::info[Planned]
-- **SCEP (RFC 8894)**, so a Cisco IOS or IOS-XE trustpoint, and most other network platforms, can enrol and renew on their own. Tracked in [cryptos#185](https://github.com/CryptOS-PKI/cryptos/issues/185).
-- **EST switched on.** The node code has a full RFC 7030 EST server, but the alpha can't switch it on yet: the wire config that `cryptosctl config apply` and the Fleet Manager send has no field for the `pki.est` block. See the [overview](./overview.md#enrolment-protocols).
-- **Machine and user certificates for 802.1X, VPN and MDM**, such as a laptop that authenticates as a machine before login and as the user after. Tracked in [cryptos#112](https://github.com/CryptOS-PKI/cryptos/issues/112).
+:::caution[Devices can't enrol on their own today]
+- **No SCEP.** The node does not serve SCEP (RFC 8894), so a Cisco IOS or IOS-XE trustpoint, and most other network platforms, can't enrol or renew on their own.
+- **EST can't be switched on.** The node code has a full RFC 7030 EST server, but the alpha can't switch it on: the wire config that `cryptosctl config apply` and the Fleet Manager send has no field for the `pki.est` block. See the [overview](./overview.md#enrolment-protocols).
 :::
 
 ## Check the device's key first
@@ -24,9 +23,9 @@ Any device that can produce a CSR, or accept a certificate and key you load onto
 A CryptOS node certifies only **ECDSA P-384** keys and **RSA keys of 3072 bits or more**. Plenty of devices generate RSA 2048 or ECDSA P-256 by default, and some can do nothing else. The node refuses those CSRs with `subject RSA key must be at least 3072 bits` or `subject ECDSA key must be on P-384`. Before you plan a rollout, check that the device can generate RSA 3072, RSA 4096 or P-384.
 :::
 
-## What the EST server does, once it can be switched on
+## What the EST server does
 
-The EST server is written and tested in the `cryptos` code. How it behaves is already settled, and it shapes how a device fleet will use it:
+The EST server is written and tested in the `cryptos` code. It can't be switched on in the alpha, but how it behaves is fixed in the code:
 
 | Operation | Authenticated by | Names it may ask for |
 |---|---|---|
@@ -49,7 +48,7 @@ Nothing in `simpleenroll` proves that the device owns the name it asks for. Whoe
 
 ## SCEP, and why it matters
 
-Most network platforms have neither an EST client nor an ACME client. A Cisco switch, for example, enrols a **trustpoint** over SCEP. Until CryptOS serves SCEP, those devices get certificates by CSR, and each renewal is a manual job. SCEP is tracked in [cryptos#185](https://github.com/CryptOS-PKI/cryptos/issues/185), and how its challenge password is handled is still being designed.
+Most network platforms have neither an EST client nor an ACME client. A Cisco switch, for example, enrols a **trustpoint** over SCEP. CryptOS does not serve SCEP, so those devices get certificates by CSR, and each renewal is a manual job.
 
 ## Revocation for devices
 
