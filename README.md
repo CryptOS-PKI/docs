@@ -53,7 +53,7 @@ Page-level tweaks go in `src/css/custom.css`, using the tokens from `theme.css`.
 
 ## 🚦 Status
 
-**Pre-alpha.** The site is a structural skeleton — the full information architecture with stub pages; the prose is being written. It stays on `0.x.y` until the whole system lands.
+**Pre-alpha.** The full information architecture is in place. The Introduction, Install & Deploy, and `cryptosctl` reference pages are written; the other pages are still stubs being filled in. It stays on `0.x.y` until the whole system lands.
 
 The build phases (project-wide):
 
