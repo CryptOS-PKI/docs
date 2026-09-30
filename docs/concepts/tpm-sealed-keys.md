@@ -66,7 +66,7 @@ For hosts that cannot give the VM a TPM, and for RSA CA keys, two other modes ex
 
 ### nodeid
 
-Built into an image with `STATEKEY=nodeid`. There is no TPM at all. The state key is derived from the VM's SMBIOS product UUID.
+Built into an image with `STATEKEY=nodeid`, or chosen with `state_key.mode: nodeid` on any image. There is no TPM at all. The state key is derived from the VM's SMBIOS product UUID.
 
 :::danger[nodeid is for development only]
 A VM's UUID is not secret. Anyone who has both the disk image and the UUID can derive the state key, open the partition and read the CA key. `cryptosctl status` reports `TPM: UNAVAILABLE` on such a node so the weaker protection is never hidden. Use `nodeid` to try CryptOS where there is no vTPM, never for a CA that guards real trust.
@@ -92,8 +92,8 @@ The `kms` mode is in the code, but no reference deployment has run it, and the i
 
 `state_key.mode` left empty means the image's build-time default: `tpm`, or `nodeid` for an image built with `STATEKEY=nodeid`.
 
-:::caution[Match state_key.mode to the image]
-The node reads `state_key.mode` from the staged config on its first boot only. On every later boot the staged config is gone and the node uses the image's build-time default. Leave `state_key.mode` empty, or set it to the mode the image was built for, so that every boot unlocks the disk the same way.
+:::caution[The mode is fixed at install]
+The node reads `state_key.mode` from the staged config on its first boot, when it formats the state partition. After that it reads the mode from the partition's LUKS2 header on every boot, so the mode chosen at install stays, whatever `STATEKEY` a later image was built with. A `config apply` that names a different `state_key.mode` is refused with `FailedPrecondition` and nothing is stored. To change the mode, reinstall the node.
 :::
 
 ## What is not available today
