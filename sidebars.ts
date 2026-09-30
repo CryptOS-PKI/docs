@@ -132,6 +132,8 @@ const sidebars: SidebarsConfig = {
       label: 'Reference',
       items: [
         'reference/machine-config',
+        'reference/machine-config-pki',
+        'reference/machine-config-enrollment',
         'reference/cryptosctl',
         'reference/grpc-api',
         'reference/root-cert-profile',
