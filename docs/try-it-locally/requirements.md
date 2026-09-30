@@ -79,7 +79,7 @@ The Fleet Manager isn't part of this walkthrough. No sizing has been measured fo
 These turn the `cryptos` source into a bootable image.
 
 - **Git**, to clone the source. Clone the whole history: the build stamps its version from `git describe`.
-- **Go**, at the version in the `cryptos` `go.mod` (Go 1.25 today).
+- **Go**, at the version in the `cryptos` `go.mod` (Go 1.26 today).
 - **go-task**, the `task` command. Every build step is a `task` target.
 - **Docker**, usable by your user without `sudo`. The static disk tools baked into the image (`cryptsetup`, `mkfs.ext4`, `sgdisk`, `mkfs.vfat`) are compiled from source inside containers.
 - **The kernel and image tools**, from your package manager.
