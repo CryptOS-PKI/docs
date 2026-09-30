@@ -38,12 +38,13 @@ pki:
     allowed_identifier_suffixes: [example.com]
 ```
 
-- `min_rsa_key_bits: 2048` is needed for Cisco: IOS and IOS-XE SCEP trustpoints cannot hold a larger RSA key. 2048 is the lowest any profile may allow. Leave it out and the profile requires RSA 3072, which suits devices that can do more. Stronger RSA keys and ECDSA P-384 keys are always accepted.
+- `min_rsa_key_bits: 2048` is needed for Cisco: IOS and IOS-XE SCEP trustpoints cannot hold a larger RSA key. 2048 is the lowest any profile may allow. Leave it out and the profile requires RSA 3072, which suits devices that can do more. Stronger RSA keys are always accepted.
+- Devices must enrol with an **RSA** key. The node encrypts its SCEP reply to the device's key, which needs RSA, so a request signed with an ECDSA key is refused with the SCEP failure `badAlg`.
 - `allowed_identifier_suffixes` is required. Every name a device asks for, its subject common name included, must be one of these domains or a name under one.
 - `key_alg` in the profile has no effect on SCEP: the certificate is for the key the device generates.
 
 :::caution[A Root refuses pki.scep]
-A Root's config with `pki.scep` is refused with `config: pki.scep: must not be set on a root node`, and nothing is saved. Serve SCEP from an intermediate or issuing node.
+A Root's config with `pki.scep` is refused with `config: pki.scep: must not be set on a root node; a root serves no enrolment protocol, so serve SCEP from an intermediate or issuing node`, and nothing is saved. Serve SCEP from an intermediate or issuing node.
 :::
 
 :::warning[Switching SCEP on needs a reboot in a maintenance window]
