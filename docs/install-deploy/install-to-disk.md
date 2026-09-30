@@ -2,11 +2,15 @@
 title: "💾 Install to disk"
 ---
 
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
+
 # 💾 Install to disk
 
 :::tip[✅ Works today]
 This describes CryptOS as it works right now.
 :::
+
+<Pre10Notice />
 
 When a maintenance node accepts your machine config, it installs itself onto the disk named in `install.disk` and reboots. You do not run anything else. This page explains what it writes, so you know what to expect and what the disk looks like afterwards.
 

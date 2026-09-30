@@ -2,11 +2,15 @@
 title: "💿 Build a bootable image"
 ---
 
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
+
 # 💿 Build a bootable image
 
 :::tip[✅ Works today]
 This describes CryptOS as it works right now.
 :::
+
+<Pre10Notice />
 
 A CryptOS node boots from one file: a **Unified Kernel Image** (UKI). The UKI holds the kernel, a tiny start-up program, and the read-only system image, all in one signed file. To install a node you usually wrap that UKI in an **ISO** and boot the machine or virtual machine from it.
 

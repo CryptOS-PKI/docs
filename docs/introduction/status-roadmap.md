@@ -2,9 +2,13 @@
 title: "🗺️ Project status and roadmap"
 ---
 
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
+
 # 🗺️ Project status and roadmap
 
 CryptOS is **pre-alpha**. It stays on version `0.x` and is not ready for production yet. Here is an honest picture of what is finished and what is still coming.
+
+<Pre10Notice />
 
 ## ✅ Works today
 
