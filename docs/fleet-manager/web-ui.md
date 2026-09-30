@@ -192,17 +192,17 @@ This page records intent only. ACME (RFC 8555) and EST (RFC 7030) are served by 
 
 ## Operators
 
-The operator certificates the manager has issued, with level, serial, expiry and status. It needs an operator CA node, named by `operator_ca_node` in the manager's config. Without one the page says `No operator-CA node is configured.`
+The operator certificates the manager knows about, with level, serial, expiry and status. It needs an operator CA (see [The operator CA and revocation](./operator-ca.md)). Without one the page says no operator CA is configured.
 
-:::caution[Without an operator CA node, revocation isn't enforced]
-If `operator_ca_node` is not set, the manager can't revoke operator certificates, and a revoked one keeps working until it expires. Set it before you hand out certificates.
+**Revoke…** (`admin`) puts a certificate on the manager's denylist: the manager refuses it from its next request. It needs `database_url`.
+
+:::warning[Revoking here doesn't revoke at your CA]
+The denylist stops the certificate at the Fleet Manager only. Revoke it at your operator CA as well and publish a new CRL.
 :::
 
-**Issue operator…** (`admin`) makes the key in your browser, has the operator CA sign it, and downloads `{CN}-operator.p12`. Set the passphrase first and save it: it opens the file and can't be recovered. **Revoke…** (`admin`) revokes one; the manager then refuses that certificate.
+The manager doesn't issue operator certificates: your operator CA signs them. Certificates the manager recorded before operator CAs became external are listed as `legacy_node` and can't log in.
 
-{/* screenshot: fleet-manager/operators-not-configured.png: the Operators page with the No operator-CA node is configured message */}
-
-A certificate made outside the manager, for example with OpenSSL against the operator CA, doesn't appear here and can't be revoked here.
+{/* screenshot: fleet-manager/operators-not-configured.png: the Operators page with no operator CA configured */}
 
 ## Agent keys and MCP sign-in
 

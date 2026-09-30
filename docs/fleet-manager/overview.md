@@ -46,7 +46,7 @@ What it never holds is a CA's private key. Those keys are made and kept on the n
 
 ## How operators log in
 
-There are no usernames or passwords. You log in with an **operator certificate** installed in your browser. The manager checks it against the operator CA named by `operatorCAPath`, and reads your access level from an extension in the certificate (OID `1.3.6.1.4.1.59999.1.1`).
+There are no usernames or passwords. You log in with an **operator certificate** installed in your browser. The manager checks it on every request against the operator CA, an external CA that is never a CryptOS node (see [The operator CA and revocation](./operator-ca.md)), and reads your access level from an extension in the certificate (OID `1.3.6.1.4.1.59999.1.1`).
 
 The web page itself loads without a certificate, so someone who can't get in sees why. Every API call needs one.
 
@@ -56,7 +56,7 @@ There are three levels. Each includes the one before it.
 |---|---|
 | `viewer` | See nodes, certificates, profiles, protocols, enrollments and the audit log. |
 | `operator` | Issue and revoke certificates, re-key a subordinate CA, read a node's config, open enrollments and approve subordinate ones, and list operator certificates. |
-| `admin` | Adopt and decommission nodes, approve a node link, edit and apply configs and profiles, turn protocol adapters on or off, switch a node's enrolment protocols, back up and restore CA keys, and issue or revoke operator certificates. |
+| `admin` | Adopt and decommission nodes, approve a node link, edit and apply configs and profiles, turn protocol adapters on or off, switch a node's enrolment protocols, back up and restore CA keys, and revoke operator certificates on the manager's denylist. |
 
 The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/operator-pki.md) shows how to mint the first operator certificate.
 
@@ -133,7 +133,7 @@ A `LINK` enrollment brings in a node that is already installed and running, whic
 1. Someone with `operator` opens the request with the node's address, an admin certificate and key the node trusts, and the node's CA chain.
 2. The manager sends the node a random challenge. The node signs it with its CA identity key, and the manager records that key's fingerprint. The request is now `PENDING`.
 3. Someone with `admin` approves it and supplies the connection details again. The manager runs the challenge again and refuses the approval if the fingerprint has changed.
-4. On approval the manager writes a management block into the node's config: the manager's name, the operator CA as a trusted client CA, and a flag that marks the node's own operator surface read-only.
+4. On approval the manager writes a management block into the node's config: the manager's name and a flag that marks the node's own operator surface read-only. It doesn't send the operator CA, so operator certificates never log in to a node directly.
 
 ### Signing a subordinate
 

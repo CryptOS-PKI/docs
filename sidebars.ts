@@ -100,6 +100,8 @@ const sidebars: SidebarsConfig = {
       items: [
         'fleet-manager/overview',
         'fleet-manager/node-trust',
+        'fleet-manager/operator-ca',
+        'fleet-manager/migrating-from-operator-ca-node',
         'fleet-manager/helm',
         'fleet-manager/web-ui',
         'fleet-manager/approvals',
