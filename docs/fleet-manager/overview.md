@@ -56,7 +56,7 @@ There are three levels. Each includes the one before it.
 |---|---|
 | `viewer` | See nodes, certificates, profiles, protocols, enrollments and the audit log. |
 | `operator` | Issue and revoke certificates, re-key a subordinate CA, read a node's config, open enrollments and approve subordinate ones, and list operator certificates. |
-| `admin` | Adopt and decommission nodes, approve a node link, edit and apply configs and profiles, turn protocol adapters on or off, back up and restore CA keys, and issue or revoke operator certificates. |
+| `admin` | Adopt and decommission nodes, approve a node link, edit and apply configs and profiles, turn protocol adapters on or off, switch a node's enrolment protocols, back up and restore CA keys, and issue or revoke operator certificates. |
 
 The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/operator-pki.md) shows how to mint the first operator certificate.
 
@@ -139,11 +139,28 @@ A `LINK` enrollment brings in a node that is already installed and running, whic
 
 A `SUBORDINATE` enrollment gives an adopted Intermediate or Issuing node its CA certificate. You name the child node, the parent CA by its common name, and the profile to sign under. On approval (`operator` or above), the manager asks the child for its certificate request, has the parent sign it, and hands the signed chain back to the child.
 
+## Switching an enrolment protocol on a node
+
+The manager can switch ACME or EST on or off on one node through the Fleet API call `SetNodeProtocol` (`admin` only). The web UI does not call it yet: its Protocols page still records intent only (see [The web UI](./web-ui.md#protocols)).
+
+1. **The manager reads the node's config** and changes one thing: the `enabled` flag of that protocol's block (`pki.acme` or `pki.est`). The block's other settings go back as the node stored them. EAB keys and EST password digests are write-only, so the node returns them blank, the manager sends them back blank, and the node keeps the values it has. The other protocol's block is left out, so the node keeps it as it is.
+2. **The node checks and stores it.** Switching a protocol on needs its block complete (for ACME a `base_url`, a `profile` and an External Account Binding key unless anonymous accounts are allowed; for EST `hostnames` and a `profile`), because the manager does not fill in settings. A Root refuses to switch either protocol on. A refusal comes back with the node's reason, and nothing is audited.
+3. **The switch waits for the next boot.** The node answers `requires_reboot`, and the protocol's listener starts or stops only when the node boots again.
+4. **The manager shows the reboot as pending.** `ListNodes` and `GetNode` report, per node, each protocol's configured and running state and a `reboot_required` flag. The flag stays set until the node reports the protocol running in its new state and no stored change is waiting.
+5. **The audit log gets one entry per switch,** `protocol-enabled` or `protocol-disabled`, naming who did it, the node and the protocol. A whole-config `ApplyNodeConfig` call that turns a protocol on or off gets the same entry.
+
+A protocol that is already in the state you asked for is left alone: nothing is applied or audited.
+
+:::warning[A switch needs a reboot in a maintenance window]
+Turning a protocol on or off takes effect only at the node's next boot, and rebooting an Issuing CA stops issuance until it is back. The manager can't reboot a node yet, so plan the reboot for a maintenance window and restart it from its hypervisor or its power control.
+:::
+
 ## What is not available today
 
 - A node can't start its own enrollment. The manager starts every link, adoption and enrollment, and the challenge in a `LINK` is signed by the node's CA identity key, not the TPM endorsement key.
 
-- Switching a protocol adapter on in the manager only records the intent. ACME and EST are served by the nodes themselves and set in each node's config; SCEP and Windows autoenrollment are not built.
+- Switching a protocol adapter on in the manager's protocol catalog only records the intent. ACME and EST are switched per node with `SetNodeProtocol` (above), which the web UI does not use yet; SCEP and Windows autoenrollment are not built.
+- The manager can't reboot a node, so a protocol switch or any other reboot-required change waits for a reboot you start at the node.
 - The manager records the read-only flag on a linked node, but the node does not enforce it.
 
 ## Where to go next
