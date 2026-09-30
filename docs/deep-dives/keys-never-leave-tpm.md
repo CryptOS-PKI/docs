@@ -7,7 +7,7 @@ title: "🗝️ How keys never leave the TPM"
 Following the private key from creation to signing without it ever touching disk.
 
 :::tip[Works today]
-On a node built with the default `tpm` state-key mode and `pki.root_key_alg: ECDSA-P384`, the CA key is created inside the TPM, is marked non-exportable by the TPM itself, and signs only inside the TPM. The rest of this page shows where that holds and where it doesn't.
+On a node built with the default `tpm` state-key mode, the CA key is created inside the TPM, is marked non-exportable by the TPM itself, and signs only inside the TPM. The rest of this page shows where that holds and where it doesn't.
 :::
 
 ## First, which key and which mode
@@ -16,7 +16,7 @@ The claim in the title holds for one configuration. The image is built with a st
 
 | State-key mode | State volume key | CA key backend | CA key algorithms | CA key exportable |
 |---|---|---|---|---|
-| `tpm` (default) | Sealed to the TPM under PCR 7 and PCR 11 | TPM (`tpmRootBackend`) | `ECDSA-P384` only | No |
+| `tpm` (default) | Sealed to the TPM under PCR 7 and PCR 11 | TPM (`tpmRootBackend`) | `ECDSA-P384`, and `RSA-3072` or `RSA-4096` where the TPM implements the size | No |
 | `nodeid` | Derived from the SMBIOS product UUID | Software (`softRootBackend`) | `ECDSA-P384`, `RSA-3072`, `RSA-4096` | Yes |
 | `kms` | Wrapped by an external KMS | Software (`softRootBackend`) | `ECDSA-P384`, `RSA-3072`, `RSA-4096` | Yes |
 
@@ -24,15 +24,15 @@ The claim in the title holds for one configuration. The image is built with a st
 In the `nodeid` and `kms` modes the CA key is generated in process memory with Go's `crypto/rand` and stored as a plain DER key inside the encrypted state volume. The code calls this backend "NOT hardware-protected. Dev tier only." In `nodeid` mode the volume key comes from the SMBIOS UUID, which is not a secret, so the encryption binds the data to the machine but doesn't keep a determined attacker with the disk out. Use the `tpm` image for any CA you rely on.
 :::
 
-:::caution[An RSA CA always uses a software key today]
-The TPM path is written for ECC only. With `pki.root_key_alg` set to `RSA-3072` or `RSA-4096` on a `tpm` node, the ceremony stops at key creation with an error ending `tpm: RSA-3072 CA keys cannot be created in the TPM; use a software-backed state key mode for an RSA CA` (or `RSA-4096`). An RSA CA needs the `nodeid` or `kms` image, and its key is a software key.
+:::caution[An RSA CA key in the TPM needs a TPM with that size]
+The TPM 2.0 spec only requires a TPM to implement RSA-2048, and many parts stop there, below the RSA-3072 floor for a CA key. Before creating an RSA key, `CreateKey` asks the TPM with `TPM2_TestParms` whether it implements the size. If it doesn't, key creation stops with an error containing `tpm: key algorithm not supported by this TPM: RSA-3072` (or `RSA-4096`) and nothing is created. The ceremony and CA-key rotation return it as `FailedPrecondition`; an intermediate or issuing node's boot stops on it. The node never falls back to a smaller size or to a software key. Check the TPM's datasheet before the ceremony, or use the `nodeid` or `kms` image, where the key is a software key.
 :::
 
 From here on, this page covers the `tpm` mode.
 
 ## Boot: the TPM has to be able to do the job
 
-PID 1 opens `/dev/tpmrm0` (the kernel's resource-managed TPM device) and asks it for its supported curves with `TPM2_GetCapability(TPM_CAP_ECC_CURVES)`. If the TPM can't be opened the boot fails with a hint to use the nodeID image; if it doesn't list NIST P-384 the boot fails with `init: TPM does not advertise ECDSA P-384`. A node never falls back to a software key on its own.
+PID 1 opens `/dev/tpmrm0` (the kernel's resource-managed TPM device) and asks it for its supported curves with `TPM2_GetCapability(TPM_CAP_ECC_CURVES)`, and for the RSA sizes it accepts (2048, 3072, 4096) with `TPM2_TestParms`. It logs both on a line starting `init: TPM capabilities:`. If the TPM can't be opened the boot fails with a hint to use the nodeID image; if it doesn't list NIST P-384 the boot fails with `init: TPM does not advertise ECDSA P-384`. A node never falls back to a software key on its own.
 
 ## Creation: the key is born inside the TPM
 
@@ -46,11 +46,15 @@ When the [ceremony](./ceremony-walkthrough.md) runs, two TPM objects are involve
 |---|---|---|
 | Type, curve | ECC, `TPM_ECC_NIST_P384` | An ECDSA P-384 key. |
 | Scheme | ECDSA with SHA-384 | The TPM signs only with this scheme. |
+| Type, size (RSA instead) | RSA, 3072 or 4096 bits, exponent 65537 | An RSA key. RSA-2048 is refused. |
+| Scheme (RSA) | none | Each signing call picks PKCS#1 v1.5 or PSS and the SHA-2 hash. |
 | `sensitiveDataOrigin` | set | The TPM generated the private key itself; it was never supplied from outside. |
 | `fixedTPM` | set | The key can't be duplicated to another TPM. |
 | `fixedParent` | set | The key can't be re-wrapped under another parent. |
 | `sign` | set | A signing key. |
 | `userWithAuth` | set, with an empty auth value | Use is authorized by an empty password, not by a policy. |
+
+The RSA key gets exactly the same five attributes as the ECDSA key.
 
 `TPM2_Create` returns four things, and these are all that ever leave the TPM:
 
@@ -68,11 +72,11 @@ The CA key is not kept loaded. Every operation that needs it (issuing a leaf, si
 
 1. Read the two blobs from etcd.
 2. `TPM2_Load` them under the SRK. The TPM decrypts the private part internally and returns a transient handle.
-3. Go's `crypto/x509` builds the structure to sign and hashes it with SHA-384 on the host.
-4. `Key.Sign` sends only the 48-byte digest to `TPM2_Sign` and gets back `r` and `s`, which it DER-encodes as the `SEQUENCE { r, s }` that `crypto/x509` expects. A digest of any other length is refused.
+3. Go's `crypto/x509` builds the structure to sign and hashes it on the host: SHA-384 for an ECDSA key, and for an RSA key the SHA-2 hash its signature algorithm names.
+4. `Key.Sign` sends only the digest to `TPM2_Sign`. For ECDSA it must be 48 bytes; the TPM returns `r` and `s`, which `Key.Sign` DER-encodes as the `SEQUENCE { r, s }` that `crypto/x509` expects. For RSA the hash and the padding (PKCS#1 v1.5, or PSS) come from the caller's signer options, the TPM pads and signs, and `Key.Sign` checks the signature against the public key before it returns it unwrapped. A digest whose length doesn't match its hash is refused.
 5. `TPM2_FlushContext` releases the transient handle.
 
-The randomness for each ECDSA signature comes from the TPM, not from the host. Certificate construction stays in the Go standard library, and `go-tpm` only marshals TPM commands.
+The randomness for each ECDSA signature, and each PSS salt, comes from the TPM, not from the host. Certificate construction stays in the Go standard library, and `go-tpm` only marshals TPM commands.
 
 :::info[Other keys are software keys by design]
 Only the CA key is in the TPM. The delegated OCSP responder key and the EST server TLS key are generated in software and certified by the CA key. The per-boot management TLS key is generated in software, self-signed, and pinned by fingerprint. The OCSP responder key is stored in etcd at `/cryptos/pki/ocsp-responder/key-blob`, so OCSP responses are signed without loading the CA key per request.
@@ -106,8 +110,8 @@ So an attacker who copies the disk gets an encrypted volume and a sealed blob th
 
 | Design goal | What the alpha does |
 |---|---|
-| Private keys are TPM-sealed and never live on the filesystem in the clear. | True in `tpm` mode for ECDSA P-384 only. RSA CA keys, and every key in `nodeid` and `kms` mode, are software keys stored inside the encrypted volume. |
-| RSA CA keys in the TPM. | Not built. Most TPM 2.0 parts implement only RSA-2048, which is below the RSA-3072 floor. |
+| Private keys are TPM-sealed and never live on the filesystem in the clear. | True for the CA key in `tpm` mode, ECDSA P-384 or RSA. Every key in `nodeid` and `kms` mode is a software key stored inside the encrypted volume. |
+| RSA CA keys in the TPM. | Built, for RSA-3072 and RSA-4096 on a TPM that implements the size. Many TPM 2.0 parts implement only RSA-2048, which is below the RSA-3072 floor, and on those the node refuses rather than fall back. |
 | The CA key's use is bound to the booted image. | Indirectly. The key object has no PCR policy and an empty auth value; the binding comes from the wrapped blob living only inside the PCR-sealed volume. A PolicyPCR on the key object itself is not in the code. |
 | The seal uses `TPM2_PolicyAuthorize`, so a signed new image doesn't need a reseal. | The code uses a plain `TPM2_PolicyPCR`. Every new image needs a reseal, which the upgrade path does. |
 | A hardware presence check before a Root key unseals. | Not built. |
