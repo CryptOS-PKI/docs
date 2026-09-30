@@ -13,7 +13,7 @@ CryptOS exposes two gRPC services. The protobuf definitions in the [CryptOS-PKI/
 | Service | Package | Served by | What it covers |
 |---|---|---|---|
 | `NodeService` | `cryptos.v1` | each CryptOS node, over mTLS on port 443 and the local UNIX socket | one node: config, status, ceremony, issuance, revocation, key backup and rotation, image upgrades |
-| `FleetService` | `cryptos.fleet.v1` | the Fleet Manager, as a Connect endpoint | many nodes: inventory, the profile catalog, enrollment, the audit log, operator credentials, MCP agent keys |
+| `FleetService` | `cryptos.fleet.v1` | the Fleet Manager, as a Connect endpoint | many nodes: inventory, the profile catalog, enrollment, the audit log, operator credentials, MCP agent keys, step-up approvals |
 
 > The rest of the RPCs are not written up here yet. Until they are, read the comments in `proto/cryptos/v1/node.proto` and `proto/cryptos/fleet/v1/fleet.proto`. 🚧
 
@@ -118,6 +118,69 @@ The metadata of one key. It never carries the key or its hash. Timestamps are RF
 | `last_used_at` (8) | `string` | when the key last authenticated a request; empty if never |
 | `revoked_at` (9) | `string` | when the key was revoked; empty while it is active |
 
+## Step-up approvals
+
+Some MCP tool calls are too risky for an agent to run on its own: revocation, profile and adapter changes, and issuance from a CA profile or the root node. When an agent makes one of these calls, the manager doesn't run it. It raises an **approval** instead and returns its id to the agent. A person then decides the approval with their operator certificate, and the agent calls the tool again, with the same arguments plus the `approval_id`, to run it.
+
+An approval covers one exact request: the tool, the `request_digest` of its arguments and the MCP key that raised it. It runs at most once, and a pending or approved approval that isn't used lapses 15 minutes after it was raised.
+
+### Access rules
+
+- **Operator certificate only.** Both RPCs need an operator client certificate. A call that arrives with an MCP key is refused with `PERMISSION_DENIED`: an agent can never list or decide approvals.
+- **`ListApprovals`** is open to any operator certificate.
+- **`DecideApproval`** needs the deciding certificate's level to be at least the approval's `required_level`; a lower level is refused with `PERMISSION_DENIED` and the refusal is audited. The operator whose key raised the request may decide it themselves, because the agent holds only the key.
+- When the manager's MCP endpoint is disabled, both RPCs return `FAILED_PRECONDITION`.
+
+### `ListApprovals`
+
+| Request field | Type | Meaning |
+|---|---|---|
+| `status` (1) | `string` | keep only approvals in this state: `pending`, `approved`, `denied`, `expired` or `used`; empty lists all |
+
+| Response field | Type | Meaning |
+|---|---|---|
+| `items` (1) | `repeated Approval` | the approvals, newest first |
+
+Any other `status` value returns `INVALID_ARGUMENT`.
+
+### `DecideApproval`
+
+:::danger[✋ You are authorizing the agent]
+Approving lets the agent run that exact call once, with your approval on its audit entry. Revoking a certificate can't be undone, and issuing from a CA profile or the root node creates a CA. Read the approval's `tool` and `summary`, and check `requested_by_cn` and `key_id` name a key you expect, before you approve. If anything is unexpected, deny it and revoke the key with `RevokeMcpKey`.
+:::
+
+| Request field | Type | Meaning |
+|---|---|---|
+| `id` (1) | `string` | the `Approval.id` to decide |
+| `approve` (2) | `bool` | `true` approves the request, `false` denies it |
+
+| Response field | Type | Meaning |
+|---|---|---|
+| `approval` (1) | `Approval` | the approval after the decision, with `status` and the `decided_by` fields set |
+
+An unknown id returns `NOT_FOUND`. An approval that is no longer pending (already decided, expired or used) returns `FAILED_PRECONDITION`.
+
+### `Approval`
+
+Timestamps are RFC 3339 strings; an unset one is empty.
+
+| Field | Type | Meaning |
+|---|---|---|
+| `id` (1) | `string` | stable identifier, used by `DecideApproval` and the audit `approval_id` |
+| `tool` (2) | `string` | the MCP tool the request would run |
+| `summary` (3) | `string` | one line for a person to read, describing the action |
+| `request_digest` (4) | `string` | lowercase hex SHA-256 of the canonical request, so the approval covers exactly the request that raised it |
+| `requested_by_cn` (5) | `string` | subject CN of the operator certificate behind the requesting MCP key |
+| `requested_by_serial` (6) | `string` | hex serial of that certificate |
+| `key_id` (7) | `string` | the `McpKey.id` that made the request |
+| `required_level` (8) | `string` | the lowest level that may decide it: `viewer`, `operator` or `admin` |
+| `created_at` (9) | `string` | when the approval was raised |
+| `expires_at` (10) | `string` | when a pending or approved approval lapses to `expired` |
+| `status` (11) | `string` | `pending`, `approved`, `denied`, `expired` or `used` |
+| `decided_by_cn` (12) | `string` | subject CN of the deciding operator certificate; empty until decided |
+| `decided_by_serial` (13) | `string` | hex serial of that certificate; empty until decided |
+| `decided_at` (14) | `string` | when it was decided; empty until decided |
+
 ## Fleet Manager audit events
 
 `FleetService.ListAudit` returns `cryptos.fleet.v1.AuditEvent` entries. This is the manager's log, separate from the hash-chained `cryptos.v1.AuditEvent` log each node keeps (see [Audit log format](./audit-log.md)).
@@ -126,10 +189,11 @@ The metadata of one key. It never carries the key or its hash. Timestamps are RF
 |---|---|---|
 | `id` (1) | `string` | entry id |
 | `at` (2) | `string` | when it happened |
-| `kind` (3) | `string` | what happened, e.g. `issued`, `revoked`, `config-applied`, `profile-updated`, `mcp-key-created`, `mcp-key-first-used`, `mcp-key-rejected`, `mcp-key-revoked` |
+| `kind` (3) | `string` | what happened, e.g. `issued`, `revoked`, `config-applied`, `profile-updated`, `node-renamed`, `mcp-key-created`, `mcp-key-first-used`, `mcp-key-rejected`, `mcp-key-revoked`, `approval-requested`, `approval-approved`, `approval-denied`, `approval-decide-refused`, `approval-used` |
 | `summary` (4) | `string` | one line for a person to read |
-| `target_kind` (5) | `string` | `cert`, `enrollment`, `mcp-key`, `node`, `profile` or `protocol` |
+| `target_kind` (5) | `string` | `approval`, `cert`, `enrollment`, `mcp-key`, `node`, `profile` or `protocol` |
 | `target_path` (6) | `string` | the object acted on |
+| `node_id` (17) | `string` | the stable id (`NodeSummary.id`) of the node the entry concerns; empty when it concerns no node. For entries recorded before node ids, the manager fills it from the name the node held at the time |
 
 ### Actor fields
 
@@ -145,11 +209,11 @@ Fields 7 onward say who acted and through which surface. They are empty on entri
 | `tool` (12) | `string` | the MCP tool name when `via` is `mcp`; empty otherwise |
 | `request_digest` (13) | `string` | lowercase hex SHA-256 of the canonical request, so an entry can be matched to the exact request without storing its body |
 | `outcome` (14) | `string` | `ok`, `denied`, `pending` or `error` |
-| `approval_id` (15) | `string` | reserved for step-up approval |
-| `approver_serial` (16) | `string` | reserved for step-up approval |
+| `approval_id` (15) | `string` | the `Approval.id` on entries in an approval's lifecycle and on the action an approval authorized; empty otherwise |
+| `approver_serial` (16) | `string` | hex serial of the operator certificate that decided the approval; set on `approval-approved`, `approval-denied` and `approval-used` entries and on the approved action's own entry; empty otherwise |
 
-:::note[🧭 Step-up approval]
-`approval_id` and `approver_serial` are always empty for now. Once the manager ships step-up approval, they will name the approval that authorized the action and carry the hex serial of the approving operator's certificate.
+:::info[🧭 Following an approved action]
+An agent's approved action leaves a trail you can join on `approval_id`: `approval-requested` (outcome `pending`) when the agent asked, `approval-approved` or `approval-denied` when a person decided, then `approval-used` and the action's own entry when the agent ran it. See [Step-up approvals](#step-up-approvals).
 :::
 
 Because an MCP key is always bound to a certificate, an action an agent takes is still attributed to a person: `actor_cn` and `actor_serial` name the operator, and `key_id` names the key they gave the agent.
