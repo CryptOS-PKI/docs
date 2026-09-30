@@ -84,6 +84,20 @@ The node serves all three paths over anonymous HTTP on `revocation_http_port`. B
 With this set, the node stamps CRL and OCSP pointers that may never resolve, and every certificate issued meanwhile keeps them for life. On a Root, every subordinate it signs inherits the pointer. `cryptosctl config apply` stops and asks you to type the Root CA's common name exactly (or `yes` on an intermediate or issuing node) before it sends such a config; `--yes` skips the prompt. Fix DNS and reachability instead wherever you can.
 :::
 
+## 🕰️ Clock gate
+
+| Field | Type | Default | Meaning |
+|---|---|---|---|
+| `pki.allow_unsynced_clock` | boolean | `false` | Lets the node sign certificates while its clock hasn't synced with its time source this boot. For an isolated lab only. |
+
+When the node has a time source (`network.ntp_servers`, or NTP servers from its DHCP lease) and its clock hasn't synced yet this boot, it refuses subordinate CA signing and every leaf path, ACME and EST included, with `node: the clock has not synced with its configured time source yet; signing is refused (set pki.allow_unsynced_clock to override)`. The gate opens at the first good sync and stays open for the rest of the boot. A node with no time source is never gated, and CRL and OCSP are never gated. See [Keep the clock in sync](../using/time-sync.md).
+
+The node reads this field on every signing request, so it takes effect without a reboot.
+
+:::danger[allow_unsynced_clock stamps dates you can't trust]
+A node whose time source never answered may be far off, and every certificate it signs with this set carries dates from that clock for its whole life: not yet valid, expiring early, or valid long after it should have expired. On a Root that includes every subordinate it signs. Each one is logged as `signed on an unsynced clock`, but the certificate can't be fixed afterwards. Leave it off and fix the time source instead.
+:::
+
 ## 🌳 Leaf issuance from a Root
 
 | Field | Type | Default | Meaning |

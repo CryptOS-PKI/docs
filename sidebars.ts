@@ -89,6 +89,7 @@ const sidebars: SidebarsConfig = {
         'using/status',
         'using/identity',
         'using/config-apply',
+        'using/time-sync',
         'using/enrol-devices-scep',
       ],
     },

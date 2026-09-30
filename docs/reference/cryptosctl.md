@@ -53,7 +53,7 @@ Makes the bootstrap admin identity on your workstation: an ECDSA P-256 key and a
 
 ### `status`
 
-Shows the node's role, identity state, TPM and etcd health, boot count and software version, plus the revocation check and DNS resolver when they apply. No flags.
+Shows the node's role, identity state, TPM and etcd health, boot count and software version, plus the revocation check, DNS resolver and clock sync when they apply. No flags.
 
 ### `version`
 
