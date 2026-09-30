@@ -12,7 +12,7 @@ Get the command-line tool that talks to the node.
 
 `cryptosctl` is the only way to manage a standalone CryptOS node. Every command goes to the node's API over mutual TLS: you prove who you are with your admin identity, and `cryptosctl` checks the node against a certificate you pinned. There is no login and no shell behind it.
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
 You need the `cryptos` checkout and Go from [What you need](./requirements.md). If you followed [Boot it in QEMU](./boot-qemu.md), your admin identity is already in `~/.cryptos/`, and the node is running in another terminal.
