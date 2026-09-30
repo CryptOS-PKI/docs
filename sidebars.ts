@@ -91,6 +91,7 @@ const sidebars: SidebarsConfig = {
         'using/status',
         'using/identity',
         'using/config-apply',
+        'using/enrol-devices-scep',
       ],
     },
     {
@@ -132,6 +133,8 @@ const sidebars: SidebarsConfig = {
       label: 'Reference',
       items: [
         'reference/machine-config',
+        'reference/machine-config-pki',
+        'reference/machine-config-enrollment',
         'reference/cryptosctl',
         'reference/grpc-api',
         'reference/root-cert-profile',
@@ -152,7 +155,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'About',
-      items: ['about/repos', 'about/license'],
+      items: ['about/repos', 'about/license', 'about/cncf'],
     },
   ],
 };
