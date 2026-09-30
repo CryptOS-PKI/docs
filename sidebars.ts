@@ -99,6 +99,7 @@ const sidebars: SidebarsConfig = {
         'fleet-manager/overview',
         'fleet-manager/helm',
         'fleet-manager/web-ui',
+        'fleet-manager/approvals',
       ],
     },
     {
