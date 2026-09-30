@@ -200,7 +200,7 @@ The operator certificates the manager knows about, with level, serial, expiry an
 The denylist stops the certificate at the Fleet Manager only. Revoke it at your operator CA as well and publish a new CRL.
 :::
 
-The manager doesn't issue operator certificates: your operator CA signs them. Certificates the manager recorded before operator CAs became external are listed as `legacy_node` and can't log in.
+The manager doesn't issue operator certificates: your operator CA signs them. To add an operator, see [Operator credentials after day zero](./operator-credentials.md). Certificates the manager recorded before operator CAs became external are listed as `legacy_node` and can't log in.
 
 {/* screenshot: fleet-manager/operators-not-configured.png: the Operators page with no operator CA configured */}
 
