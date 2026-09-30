@@ -27,11 +27,15 @@ The node's **state-key mode** (`state_key.mode` in the machine config, or the de
 | | `tpm` mode | `nodeid` or `kms` mode |
 |---|---|---|
 | Where the key lives | Inside the TPM (a vTPM on a VM) | In software, on the LUKS-encrypted state partition |
-| Key algorithm | ECDSA P-384 | ECDSA P-384, RSA-3072 or RSA-4096 |
+| Key algorithm | ECDSA P-384, or RSA-3072 or RSA-4096 if the TPM implements that size | ECDSA P-384, RSA-3072 or RSA-4096 |
 | Can it be backed up? | No. `ca export-key` is refused | Yes, with `ca export-key` to a passphrase-sealed file |
 | Protected by hardware? | Yes | No |
 
-An RSA CA key can't be held in the TPM. If something you must chain to only accepts RSA, the whole chain above it has to be RSA, and today that means the software modes.
+If something you must chain to only accepts RSA, the whole chain above it has to be RSA, the Root included. A TPM can hold an RSA Root key, but only at a size it implements.
+
+:::caution[Check the TPM supports your RSA size before the ceremony]
+The TPM 2.0 spec only requires RSA-2048, and many TPMs and vTPMs stop there, below the RSA-3072 floor. On such a TPM the ceremony stops with `FailedPrecondition` and an error containing `tpm: key algorithm not supported by this TPM: RSA-3072`, and no key is created. It never falls back to a smaller size or a software key. Check the TPM's datasheet or your hypervisor's vTPM, run the ceremony again with an algorithm it has, or use a software mode.
+:::
 
 :::danger[A TPM-held Root can't be backed up]
 In `tpm` mode the Root key never leaves the TPM, by design. `cryptosctl ca export-key` answers `this node's CA key is non-exportable (TPM-backed)`. If that TPM or vTPM is lost, for example when the VM is deleted or its encryption keys are gone, the Root is gone. Every subordinate then has to be re-issued under a new Root, and every client has to trust the new one. Plan for that before the ceremony. Keep the VM, its vTPM and the host keys that protect it backed up by your platform.
