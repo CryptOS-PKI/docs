@@ -98,6 +98,7 @@ const sidebars: SidebarsConfig = {
       label: 'Fleet Manager',
       items: [
         'fleet-manager/overview',
+        'fleet-manager/node-trust',
         'fleet-manager/helm',
         'fleet-manager/web-ui',
         'fleet-manager/approvals',

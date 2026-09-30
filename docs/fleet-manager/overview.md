@@ -18,7 +18,7 @@ The Fleet Manager is one Go program, [`manager`](https://github.com/CryptOS-PKI/
 
 - **Serves the web UI.** The browser app from the [`web`](https://github.com/CryptOS-PKI/web) repo is built into the manager binary, so there is nothing else to install. See [The web UI](./web-ui.md).
 - **Answers the Fleet API.** The web UI calls it. The API is defined as `FleetService` in the [`api`](https://github.com/CryptOS-PKI/api) repo.
-- **Talks to your nodes.** For every node it manages, the manager dials the node's management API over mutual TLS, the same API `cryptosctl` uses.
+- **Talks to your nodes.** For every node it manages, the manager dials the node's management API over mutual TLS, the same API `cryptosctl` uses. It checks the node's server certificate when you pin it; see [Pinning a node's certificate](./node-trust.md).
 
 Two small routes answer without a login: `/healthz` for health checks (`200` when the manager can serve and reach its Postgres, `503` when it can't) and `/version` for the build details.
 
