@@ -46,6 +46,16 @@ Mgmt SHA-256   2D71 1642 B726 B044 0162 7CA9 FBAC 32F5
 
 The fingerprint is shown in the same form after the ceremony, on the serving dashboard. It changes on every boot, like the certificate.
 
+The title and hint follow the node's state until it has its CA:
+
+| Node | Title | Hint |
+|---|---|---|
+| Root waiting for its ceremony | `Awaiting ceremony` | `Fetch trust, then start the ceremony` |
+| Root whose ceremony has started | `Ceremony in progress` | `Wait, or start it again if it failed` |
+| Intermediate or issuing node waiting for its parent | `Awaiting parent certificate` | `Fetch trust, then get the CSR signed` |
+
+The fingerprint is on all three screens, so you check the pin the same way on a subordinate.
+
 ### Fetch the certificate
 
 :::danger[Verify the fingerprint before the first ceremony]
@@ -146,6 +156,8 @@ Step by step, the node:
 4. writes a signed **ceremony manifest** that records what happened, for audit;
 5. makes your bootstrap identity the node's standing administrator.
 
+While it runs, the console shows `Ceremony in progress`. A run that fails before `COMPLETE` leaves that screen up; fix the cause and run `ceremony start` again.
+
 The ceremony runs once. After it succeeds, running it again fails with `IDENTITY_EXISTS`, and only one ceremony can run at a time. It is only for the `root` role: an `intermediate` or `issuing` node refuses it, because a subordinate CA must be signed by its parent instead.
 
 ## Check the Root
@@ -159,7 +171,11 @@ cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem identity validate
 
 ## Subordinate nodes
 
-An `intermediate` or `issuing` node skips the ceremony. On its first boot it creates its CA key and a certificate signing request (CSR) by itself, and `status` shows `Identity: AWAITING_CERT`. You then carry the CSR to the parent and the signed chain back:
+An `intermediate` or `issuing` node skips the ceremony. On its first boot it creates its CA key and a certificate signing request (CSR) by itself, and `status` shows `Identity: AWAITING_CERT`. Its console shows `Awaiting parent certificate` and its management certificate SHA-256 until the chain is committed. You then carry the CSR to the parent and the signed chain back:
+
+:::caution[Check the pin before you fetch the CSR]
+Fetch the new node's pin with `trust fetch --expect-sha256` and the value on its console, as [above](#fetch-the-certificate). An unchecked pin could hand you a CSR from a machine that isn't your node, and the parent would then sign a CA for it.
+:::
 
 1. `cryptosctl ca get-subordinate-csr` on the new node.
 2. `cryptosctl ca sign-subordinate --csr <file> --profile <profile>` on the parent.
