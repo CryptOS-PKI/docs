@@ -50,6 +50,14 @@ With `authBypass: false`, the default, the chart refuses to render without `tls.
 When the manager adopts a node, it writes that node's admin key to the claim, and the installed node trusts only that key. If the claim is deleted, the manager can no longer manage any node it adopted. The only way back is a reset from each node's console, which erases the node's key material. `helm uninstall` leaves the claim in place on purpose (`helm.sh/resource-policy: keep`). Back it up along with the database, and don't delete it by hand. See [Re-adopting a node](./overview.md#re-adopting-a-node).
 :::
 
+## Before you upgrade
+
+:::warning[Unpinned nodes are refused after the upgrade]
+Before upgrading to this version, make sure every node is either pinned (`server.crt`, or the fingerprint recorded at adoption) or has a recorded CA chain. Unpinned nodes are refused after the upgrade. [Before you upgrade](./node-trust.md#before-you-upgrade) lists the nodes that would be refused and how to pin each one.
+:::
+
+After an install or upgrade, the chart's notes print the command that lists how each node is verified, and a warning for every node with `insecureSkipNodeVerify`.
+
 ## The values that matter
 
 The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/CryptOS-PKI/manager/blob/main/chart/fleet-manager/values.yaml).
@@ -75,6 +83,7 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `nodeCreds.size` | `1Gi` | Size of the created claim. |
 | `nodes` | `[]` | Nodes to load into an empty database on first start. |
 | `nodes[].adminCredsSecret` | unset | A Secret with the node's admin credentials. See [Node admin credentials from a Secret](#node-admin-credentials-from-a-secret). |
+| `nodes[].insecureSkipNodeVerify` | unset | `true` turns off the check of the node's server certificate. Lab testing only; see [Skipping verification in a lab](./node-trust.md#skipping-verification-in-a-lab). |
 
 :::caution[More than one pod needs shared storage]
 Every pod must hold the admin key of every adopted node, so a `ReadWriteOnce` claim supports one pod only. The chart refuses to render with `replicaCount` above `1` unless `nodeCreds.accessModes` includes `ReadWriteMany`. With a `ReadWriteOnce` claim the Deployment uses the `Recreate` strategy, so an upgrade stops the old pod before it starts the new one and the UI is briefly unavailable.
@@ -82,13 +91,15 @@ Every pod must hold the admin key of every adopted node, so a `ReadWriteOnce` cl
 
 ## Node admin credentials from a Secret
 
-A node you list in `nodes` needs the admin certificate and key the manager presents to it, and the node's CA chain. Put them in a Secret, one per node, and name it in the node's `adminCredsSecret`. The chart mounts the Secret read-only at `/etc/cryptos/fleet/node-admin/<name>` and points the node's `adminCertPath`, `adminKeyPath` and `caCertPath` at it, so no key material goes in your values or the ConfigMap.
+A node you list in `nodes` needs the admin certificate and key the manager presents to it, and what the manager verifies the node against: the node's CA chain, its pinned server certificate, or both. Put them in a Secret, one per node, and name it in the node's `adminCredsSecret`. The chart mounts the Secret read-only at `/etc/cryptos/fleet/node-admin/<name>` and points the node's `adminCertPath`, `adminKeyPath` and `caCertPath` at it, so no key material goes in your values or the ConfigMap.
 
-1. Create the Secret in the release namespace, with the keys `admin.crt`, `admin.key` and `ca.pem`. `kubectl` works the same on Linux, macOS and Windows:
+1. Create the Secret in the release namespace, with the keys `admin.crt` and `admin.key`, plus `ca.pem` (the node's CA chain) once the node has its CA, and `server.crt` (its [pinned certificate](./node-trust.md#pin-a-node)) before that. `kubectl` works the same on Linux, macOS and Windows:
 
    ```bash
-   kubectl create secret generic pki-root-admin --from-file=admin.crt --from-file=admin.key --from-file=ca.pem
+   kubectl create secret generic pki-root-admin --from-file=admin.crt --from-file=admin.key --from-file=ca.pem --from-file=server.crt
    ```
+
+   The manager reads `ca.pem` and `server.crt` on every connection, so an updated Secret takes effect once Kubernetes refreshes the mount, without a restart.
 
 2. Name it in the node's entry:
 
