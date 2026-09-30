@@ -16,20 +16,16 @@ CryptOS is open source under the **Apache License, Version 2.0**. You can use it
 | [web](https://github.com/CryptOS-PKI/web) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/web/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/web/blob/main/NOTICE) |
 | [helm](https://github.com/CryptOS-PKI/helm) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/helm/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/helm/blob/main/NOTICE) |
 | [docs](https://github.com/CryptOS-PKI/docs) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/docs/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/docs/blob/main/NOTICE) |
-| [lab](https://github.com/CryptOS-PKI/lab) | No license file yet | none |
-| [.github](https://github.com/CryptOS-PKI/.github) | No license file yet | none |
+| [lab](https://github.com/CryptOS-PKI/lab) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/lab/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/lab/blob/main/NOTICE) |
+| [.github](https://github.com/CryptOS-PKI/.github) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/.github/blob/main/LICENSE) |
 
-The `LICENSE` file is the same in every repo that has one: the full Apache License 2.0 text, with the appendix filled in as `Copyright 2026 Shane`.
-
-:::caution[lab has no license yet]
-The `lab` repo has no `LICENSE` file, so no license has been granted for its scripts yet. Ask before you reuse them outside CryptOS testing.
-:::
+Every repo carries the Apache License 2.0 in its `LICENSE` file.
 
 ## Copyright
 
 Copyright 2026 Shane.
 
-Each licensed repo has a `NOTICE` file in this form, with its own repo name on the first line:
+Each code repo has a `NOTICE` file in this form, with its own repo name on the first line:
 
 ```text
 CryptOS-PKI / cryptos
