@@ -85,19 +85,25 @@ An adopted node's pin lives on the node credentials claim, which you can only re
 When you [adopt a node](./overview.md#adopting-a-new-node), the manager records what it needs to verify the node afterwards:
 
 1. The fingerprint you confirm in the wizard pins the node's maintenance-mode certificate for the install steps.
-2. The installed node boots with a new management certificate. When it comes back, the manager saves that certificate as the node's `server.crt` and shows its fingerprint in the adoption progress:
+2. The installed node boots with a new management certificate. Nothing links it to the maintenance certificate you confirmed, so the adoption pauses on `awaiting-fingerprint-confirmation` and shows the fingerprint the node presents:
 
    ```text
-   node is back in running mode; pinned its management certificate sha256 5a0e...c3. Check it against the Mgmt SHA-256 line on the node's console
+   the node is back in running mode and presents certificate sha256 5a0e...c3. Compare it with the Mgmt SHA-256 line on the node's console and confirm it to continue
    ```
 
    :::caution[Check the installed node's fingerprint on its console]
-   This pin is trust on first use: nothing links the installed node's new certificate to the maintenance certificate you confirmed. Compare the fingerprint with the `Mgmt SHA-256` line on the node's console. If they differ, something other than your node answered on its address; stop and find out what before you use the node.
+   Compare the fingerprint with the `Mgmt SHA-256` line on the node's console before you confirm it. If they differ, something other than your node answered on its address: cancel the adoption and find out what answered before you adopt again.
+   :::
+
+   When you confirm it, the manager saves that certificate as the node's `server.crt` and connects to the node, verified against it. The comparison ignores case, colons and spaces. The adoption stops with nothing pinned, recorded or registered when the fingerprint you confirm differs (`InvalidArgument`), when nobody confirms within 15 minutes (`DeadlineExceeded`), or when you cancel. The admin credential made for the adoption stays, so adopting again resumes. The audit log records each confirmation as `node-adoption-fingerprint-confirmed` and each refused fingerprint as `node-adoption-fingerprint-rejected`, with who sent it.
+
+   :::warning[Confirm on the replica that runs the adoption]
+   The waiting adoption lives in the manager replica that runs it. With more than one replica, a confirmation that reaches another replica fails with `NotFound`. Send it again, or adopt with a single replica.
    :::
 
 3. A Root gets its CA in the first-boot ceremony, and the manager saves the node's CA chain as `ca.crt` next to its admin certificate. An Intermediate or Issuing node gets its CA when its subordinate enrollment is approved, and the manager saves the signed chain the same way.
 
-A retried adoption replaces the node's old `server.crt` with the certificate the re-installed node presents.
+A retried adoption asks you to confirm the certificate the node presents again, then replaces the node's old `server.crt` with it.
 
 ## When the node gets its CA
 

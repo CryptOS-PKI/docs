@@ -153,9 +153,11 @@ The Adopt page (`admin` only) turns a node in maintenance mode into a working CA
 1. **Step 1 — maintenance endpoint.** Enter the node's `host:port` and select **Preview**. Check the `subject` and `sha256` against the node, then select **Confirm fingerprint**.
 2. **Step 2 — initial config.** Enter the node name and choose the role (root, intermediate or issuing). A subordinate needs a parent: pick an established CA under **Parent CA (signs this node)**. Then fill in the CA's common name, the network (interface, address, gateway, DNS), the **Install disk** from the list the node reports, and the key protection tier.
 3. Select **Adopt node** and watch the phases.
+4. **Confirm the installed node.** After the node reboots, the wizard stops on `awaiting-fingerprint-confirmation` and shows the `sha256` the installed node presents, in pairs. Compare it with the `Mgmt SHA-256` line on the node's console, then select **Fingerprint matches the console**. If it doesn't match, select **Does not match: cancel adoption**.
 
 {/* screenshot: fleet-manager/adopt-fingerprint.png: Step 1 after Preview, with the First contact warning, subject and sha256, and the Confirm fingerprint button */}
 {/* screenshot: fleet-manager/adopt-config.png: Step 2 filled in for an issuing node, with a parent chosen and a disk picked from the list */}
+{/* screenshot: fleet-manager/adopt-confirm-installed.png: the wizard paused on awaiting-fingerprint-confirmation, with the installed node's sha256 and the two buttons */}
 
 :::tip[Expected output]
 A Root ends with `{name} is established and linked to the fleet.` A subordinate ends with `{name} is provisioned and awaiting a parent-signed certificate.`, and you finish it with a subordinate enrollment on the Enrollment page.
