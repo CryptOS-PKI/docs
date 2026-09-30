@@ -23,13 +23,15 @@ Every repo's `LICENSE` file is the Apache License 2.0 text exactly as published 
 
 ## Copyright
 
-Copyright 2026 Shane.
+Copyright The CryptOS Authors.
+
+This follows the CNCF's recommended form ([copyright notices](https://github.com/cncf/foundation/blob/main/copyright-notices.md)): no year and no single holder name, so the notice stays the same as contributors join.
 
 Each code repo has a `NOTICE` file in this form, with its own repo name on the first line:
 
 ```text
 CryptOS-PKI / cryptos
-Copyright 2026 Shane
+Copyright The CryptOS Authors.
 
 This product includes software developed as part of the CryptOS-PKI project
 (https://github.com/CryptOS-PKI).
@@ -39,12 +41,10 @@ Section 4 of the license asks you to keep this notice when you redistribute the 
 
 ## License headers in source files
 
-Source files carry a short Apache 2.0 header. In Go files it is a block comment after the `package` line; in YAML it is a `#` comment block:
+Source files carry the notice from the appendix of the Apache License 2.0, word for word, with the CryptOS copyright line. In Go files it is a block comment after the `package` line; in YAML it is a `#` comment block:
 
 ```text
-Apache License 2.0
-
-Copyright 2026 Shane
+Copyright The CryptOS Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-The headers are managed with [golic](https://github.com/Bugs5382/golic). Each repo's `.golic.yaml` and `.licignore` say which files get one, and `task license` puts them back. If you contribute, run `task license` before you push; each repo's CI checks the headers on pull requests.
+The headers are managed with [golic](https://github.com/Bugs5382/golic). Each repo's `.golic.yaml` and `.licignore` say which files get one, `task license` checks every header and that `LICENSE` is the verbatim text, and `task license:fix` adds any missing header. If you contribute, run `task license:fix` before you push; each repo's CI runs `task license` on pull requests.
 
 ## Third-party code
 
