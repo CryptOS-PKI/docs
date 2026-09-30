@@ -21,7 +21,7 @@ permissions:
   contents: read
 jobs:
   build:
-    name: 🏗️ Build site
+    name: 🏗️ Build site${{ github.event.action == 'edited' && github.event.changes.base == null && ' (edit, not run)' || '' }}
     if: github.event.pull_request.draft == false && (github.event.action != 'edited' || github.event.changes.base != null)
     runs-on: ubuntu-latest
     timeout-minutes: 20
