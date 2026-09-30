@@ -19,7 +19,7 @@ task build        # writes bin/cryptosctl (plus bin/init, bin/cryptos-install, b
 bin/cryptosctl version
 ```
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 ## 2. Make your bootstrap admin identity
 

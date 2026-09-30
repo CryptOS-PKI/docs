@@ -139,7 +139,7 @@ cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem image stage --image 
 
 An image signed by any other key is refused before anything is written. The [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/image-upgrade.md) covers staging, activating and rolling back.
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 ## Look after the key
 

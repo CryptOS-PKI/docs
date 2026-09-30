@@ -49,7 +49,7 @@ cryptosctl --insecure --endpoint 192.0.2.50:443 status
 
 `--insecure` is only for maintenance mode. A node that is fully installed requires mutual TLS and rejects a client that sends no certificate.
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 ## Next step
 

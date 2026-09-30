@@ -65,7 +65,7 @@ Keep two things in mind:
 
 ## Check the node
 
-`cryptosctl` runs on Linux and macOS today. A Windows build is coming.
+`cryptosctl` runs on Linux and macOS.
 
 ```bash
 cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem status
