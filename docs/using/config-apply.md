@@ -41,14 +41,14 @@ Change only what you mean to. The fields are described in the [machine config re
 The node stores the file you send as its entire config, not as a patch. A section you delete from the file is gone from the node at the next reboot. Always edit the output of `config get`, never a partial file.
 :::
 
-To switch ACME or EST on, add its `pki.acme` or `pki.est` section. To switch it off, delete the section. The fields are in the [machine config reference](../reference/machine-config.md).
+To switch ACME or EST on, add its `pki.acme` or `pki.est` section. To switch it off and keep its settings for later, add `enabled: false` to the section; to switch it back on, change that to `enabled: true` or delete the line. Deleting the whole section switches it off and drops its settings. The fields are in the [machine config reference](../reference/machine-config.md).
 
 :::caution[A Root refuses acme and est]
-ACME and EST run on an intermediate or issuing node only. A Root's config with either section is refused with `config: pki.acme: must not be set on a root node` (or `pki.est`), and nothing is saved.
+ACME and EST run on an intermediate or issuing node only. A Root's config with either section switched on is refused with `config: pki.acme: must not be set on a root node` (or `pki.est`), and nothing is saved. A section with `enabled: false` is accepted and never served.
 :::
 
 :::warning[Switching ACME or EST needs a reboot in a maintenance window]
-Every change to `acme` or `est`, switching it on or off included, reports `requires_reboot=true`. The protocol starts, stops or changes only at the next reboot (step 4), and the node stops issuing while it restarts. Plan the reboot for a maintenance window.
+Every change to a switched-on `acme` or `est` section, switching it on or off included, reports `requires_reboot=true`. Changing only the settings of a section with `enabled: false` doesn't. The protocol starts, stops or changes only at the next reboot (step 4), and the node stops issuing while it restarts. Plan the reboot for a maintenance window.
 :::
 
 ## 3. Send it

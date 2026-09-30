@@ -53,7 +53,7 @@ Makes the bootstrap admin identity on your workstation: an ECDSA P-256 key and a
 
 ### `status`
 
-Shows the node's role, identity state, TPM and etcd health, boot count and software version, plus the revocation check, DNS resolver and clock sync when they apply. No flags.
+Shows the node's role, identity state, TPM and etcd health, boot count and software version, plus the revocation check, DNS resolver, enrolment protocols, a pending config reboot and clock sync when they apply. No flags.
 
 ### `version`
 
@@ -94,7 +94,7 @@ It prints `applied: generation=<n> requires_reboot=<true|false> digest=<sha256>`
 
 ### `config get`
 
-Prints the node's current machine config as YAML, ready to edit and send back with `config apply -f`. The `acme` and `est` sections are left out because they hold secrets; the node keeps them from its existing config when you apply the edited file. No flags.
+Prints the node's current machine config as YAML, ready to edit and send back with `config apply -f`. It includes the `acme` and `est` blocks, and a switched-off block is printed with `enabled: false` and its settings. Their secrets, `hmac_key_base64` and `password_sha256`, are write-only and print blank: leave a blank value as it is and `config apply` keeps the one the node stores for that `key_id` or username, or set it to replace it. A new `key_id` or username needs its secret. No flags.
 
 ### `ceremony start`
 
