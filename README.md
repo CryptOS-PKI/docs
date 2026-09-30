@@ -45,7 +45,8 @@ The site carries its own theme, taken from the Fleet Manager web UI ([`web`](htt
 
 - 🎨 **Palette:** the web UI's Shield Blue on a graphite ramp, as `--cryptos-*` custom properties mapped onto Docusaurus's Infima variables in `src/css/theme.css`. Change a colour in the web UI first, then mirror it here.
 - 🔤 **Type:** Inter for text and JetBrains Mono for code, the navbar, tabs and the sidebar, both self-hosted through `@fontsource` (no font CDN).
-- ♿ **Contrast:** body text, links, callouts, tabs, tables, code tokens and the sidebar meet WCAG AA in both modes. Check any new colour against its real background before adding it.
+- ♿ **Contrast:** body text, links, callouts, tabs, tables, code tokens and the sidebar meet WCAG AA in both modes, and every caret and chevron (sidebar, hide-sidebar button, breadcrumbs, TOC, details, navbar) takes a palette colour at 3:1 or better. Check any new colour against its real background before adding it.
+- ©️ **Footer:** the copyright line follows the CNCF convention, "Copyright © 2026 The CryptOS Authors", with the docs licence (Apache 2.0) under it.
 - 🧩 **No swizzled components:** everything is CSS on top of the classic theme. The landing page is `src/pages/index.tsx`.
 
 Page-level tweaks go in `src/css/custom.css`, using the tokens from `theme.css`.

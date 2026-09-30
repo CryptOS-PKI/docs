@@ -242,6 +242,114 @@ body {
   --ifm-menu-color-active: var(--ifm-color-primary-darkest);
 }
 
+/* Carets and chevrons. Infima and Docusaurus draw them as fixed-colour SVGs
+   (a grey arrow, a half-transparent black chevron, and an invert() filter in
+   dark mode), so none of them follow the palette. Each is redrawn here as a
+   mask filled with a palette colour: muted at rest, the foreground on hover,
+   and the active colour on the open section. Every one clears 3:1 against the
+   surface it sits on in both modes. */
+:root {
+  --cryptos-chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z'/></svg>");
+  --cryptos-breadcrumb-chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><polygon points='79.093,0 48.907,30.187 146.72,128 48.907,225.813 79.093,256 207.093,128'/></svg>");
+  --docusaurus-collapse-button-bg: transparent;
+  --docusaurus-collapse-button-bg-hover: var(--cryptos-muted);
+}
+
+[data-theme='dark']:root {
+  --docusaurus-collapse-button-bg: transparent;
+  --docusaurus-collapse-button-bg-hover: var(--cryptos-muted);
+}
+
+.menu__link--sublist-caret::after,
+.menu__caret::before,
+[class*='tocCollapsibleButton_']::after {
+  background: currentColor;
+  filter: none;
+  -webkit-mask: var(--cryptos-chevron) 50% / 2rem 2rem no-repeat;
+  mask: var(--cryptos-chevron) 50% / 2rem 2rem no-repeat;
+}
+
+.menu__caret {
+  color: var(--ifm-menu-color);
+}
+
+.menu__list-item-collapsible--active .menu__caret {
+  color: var(--ifm-menu-color-active);
+}
+
+[class*='tocCollapsibleButton_'] {
+  color: var(--cryptos-muted-foreground);
+}
+
+[class*='tocCollapsibleButton_']:hover {
+  color: var(--cryptos-foreground);
+}
+
+/* The hide button also carries .button--outline.button--secondary, whose
+   foreground colour would otherwise win. */
+.button.button--outline[class*='collapseSidebarButton_'],
+[class*='expandButton_'] {
+  color: var(--cryptos-muted-foreground);
+}
+
+.button.button--outline[class*='collapseSidebarButton_']:hover,
+.button.button--outline[class*='collapseSidebarButton_']:focus,
+[class*='expandButton_']:hover,
+[class*='expandButton_']:focus {
+  color: var(--cryptos-foreground);
+}
+
+[class*='collapseSidebarButtonIcon_'] g,
+[class*='expandButtonIcon_'] g {
+  fill: currentColor;
+}
+
+.dropdown > .navbar__link::after {
+  border-top-color: var(--cryptos-muted-foreground);
+}
+
+.dropdown > .navbar__link:hover::after,
+.dropdown:hover > .navbar__link::after {
+  border-top-color: var(--cryptos-foreground);
+}
+
+.navbar__toggle,
+.navbar-sidebar__close {
+  color: var(--cryptos-foreground);
+}
+
+.breadcrumbs__item:not(:last-child)::after {
+  background: var(--cryptos-muted-foreground);
+  filter: none;
+  opacity: 1;
+  -webkit-mask: var(--cryptos-breadcrumb-chevron) center / 100% 100% no-repeat;
+  mask: var(--cryptos-breadcrumb-chevron) center / 100% 100% no-repeat;
+}
+
+/* The Details box borrows Infima's info alert, whose fixed teal tint is not
+   in the palette; it takes the callout notice pattern so its arrow sits on a
+   palette surface. */
+details.alert {
+  --ifm-alert-foreground-color: var(--cryptos-foreground);
+  --ifm-alert-background-color: rgba(var(--cryptos-primary-rgb), 0.1);
+  --ifm-alert-border-color: rgba(var(--cryptos-primary-rgb), 0.4);
+  box-shadow: none;
+}
+
+details.alert > summary::before {
+  border-left-color: var(--cryptos-primary);
+}
+
+[class*='backToTopButton_'] {
+  background-color: var(--cryptos-muted);
+}
+
+[class*='backToTopButton_']::after {
+  background-color: var(--cryptos-foreground);
+  -webkit-mask: var(--cryptos-chevron) 50% / 2rem 2rem no-repeat;
+  mask: var(--cryptos-chevron) 50% / 2rem 2rem no-repeat;
+}
+
 /* Tabs follow the same pattern as the top nav. */
 .tabs {
   border-bottom: 1px solid var(--cryptos-border);

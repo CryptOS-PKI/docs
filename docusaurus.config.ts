@@ -166,7 +166,12 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Shane · <a href="https://therabbithole.com">the rabbit hole</a>`,
+      // CNCF convention: copyright to the project authors, never a company
+      // (cncf/foundation copyright-notices.md). The LF Projects trademark lines
+      // from the CNCF website guidelines apply only once the project is accepted.
+      copyright:
+        'Copyright © 2026 The CryptOS Authors<br />' +
+        'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/docs/blob/main/LICENSE">Apache License 2.0</a>',
     },
     prism: {
       theme: prismLight,
