@@ -5,7 +5,7 @@ Guidance for coding agents working in this repo.
 ## What this is
 
 The CryptOS documentation site: Docusaurus 3 + TypeScript, using the shared
-`@the-rabbit-hole-tech/docs-theme`. Content lives in `docs/`; the sidebar order
+`@the-rabbit-hole/docs-theme`. Content lives in `docs/`; the sidebar order
 is defined in `sidebars.ts`; the landing page is `src/pages/index.tsx`.
 
 ## Commands

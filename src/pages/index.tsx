@@ -15,7 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import Landing from '@the-rabbit-hole-tech/docs-theme/landing';
+import Landing from '@the-rabbit-hole/docs-theme/landing';
 
 export default function Home() {
   return (
