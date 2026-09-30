@@ -13,9 +13,26 @@ ACME (RFC 8555, `http-01` only) and EST (RFC 7030) both work in the alpha. SCEP 
 
 The `pki.acme` and `pki.est` blocks of the [machine config](./machine-config.md). Each enrolment protocol is off unless its block is present: a protocol is opened on purpose, never by forgetting to close it. Both issue from a leaf profile defined under [`pki.profiles`](./machine-config-pki.md#-certificate-profiles).
 
-:::caution[Set these blocks in YAML, not through an apply]
-`pki.acme` and `pki.est` have no field in the API's `MachineConfig` message, because they hold secrets that no API response should carry. `cryptosctl config apply` and the Fleet Manager can't add, change or remove them: the node keeps whatever blocks the config on disk already has. `cryptosctl ceremony start --config` sends your YAML file as-is, so blocks in that file are kept.
+:::caution[A Root never serves ACME or EST]
+A Root keeps every enrolment protocol off. A config that sets `pki.acme` or `pki.est` on a Root is refused by `cryptosctl config apply`, by the maintenance-mode install and by `cryptosctl ceremony start --config`, and nothing is stored. Serve ACME and EST from an intermediate or issuing node.
 :::
+
+## 🔀 Switching a protocol on or off
+
+To switch a protocol on, add its block and run `cryptosctl config apply`. To switch it off, remove the block and apply again. Changing a setting works the same way. In the API's `MachineConfig` the blocks are `Pki.acme` and `Pki.est`, each with an `enabled` flag: `enabled: false` switches the protocol off, and an `ApplyConfig` that leaves a block out keeps what the node has.
+
+:::warning[A switch takes effect at the next reboot]
+`config apply` stores the change and prints `requires_reboot=true`. The listener starts, stops or picks up the new settings only when the node boots again, and the node stops issuing while it restarts. Plan the reboot for a maintenance window, then run `cryptosctl reboot`.
+:::
+
+Until the reboot, `cryptosctl status` shows the stored state against what is running:
+
+```text
+Protocols:       ACME on (not running, reboot pending), EST off
+Reboot:          pending (the stored config changes take effect at the next boot)
+```
+
+The secrets are write-only: `hmac_key_base64` for ACME and `password_sha256` for EST. `cryptosctl config get` prints them blank, next to their `key_id` or `username`. Leave a blank value as it is and `config apply` keeps the one the node stores for that identifier; set a value to replace it. A new `key_id` or `username` needs its value, or the apply is refused. Removing an entry revokes it.
 
 ## 🤖 ACME
 
@@ -59,6 +76,8 @@ pki:
 | Key with no ID, or a repeated ID | `config: pki.acme.external_account_keys[<i>].key_id: required` or `... key_id: "<id>" is duplicated` |
 | Secret not base64url without padding | `config: pki.acme.external_account_keys[<i>].hmac_key_base64: must be base64url without padding` |
 | Secret shorter than 32 bytes | `config: pki.acme.external_account_keys[<i>].hmac_key_base64: must decode to at least 32 bytes, got <n>` |
+| Blank secret for a `key_id` the node doesn't have | `config: pki.acme.external_account_keys[<i>].hmac_key_base64: empty, and the node has no stored key for key_id "<id>" to keep; send the secret for a new key` |
+| Set on a Root | `config: pki.acme: must not be set on a root node; a root serves no enrolment protocol, so serve ACME from an intermediate or issuing node` |
 
 One way to make a 32-byte key:
 
@@ -122,6 +141,8 @@ pki:
 | Credential with no username, or a repeated one | `config: pki.est.enroll_credentials[<i>].username: required` or `... username: "<name>" is duplicated` |
 | Bad password digest | `config: pki.est.enroll_credentials[<i>].password_sha256: must be 64 lowercase hex characters (a SHA-256 digest)` |
 | Credentials without a name restriction | `config: pki.est.allowed_identifier_suffixes: required when pki.est.enroll_credentials is set, unless pki.est.allow_any_identifier is true; simpleenroll has no proof of control` |
+| Blank digest for a `username` the node doesn't have | `config: pki.est.enroll_credentials[<i>].password_sha256: empty, and the node has no stored credential for username "<name>" to keep; send the digest for a new credential` |
+| Set on a Root | `config: pki.est: must not be set on a root node; a root serves no enrolment protocol, so serve EST from an intermediate or issuing node` |
 
 :::caution[Only a generated password is safe here]
 The node stores only a SHA-256 of each password, which protects a long random value but not a chosen word: a plain digest of a dictionary word falls in seconds. Generate the password (for example with the key command above) and give its digest to the node.

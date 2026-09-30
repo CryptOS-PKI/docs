@@ -245,17 +245,16 @@ applied: generation=<n> requires_reboot=<true|false> digest=<sha256 of the store
 :::
 
 - **Live, no reboot:** a change to `pki.profiles` or `pki.root_leaf_issuance` only. The signer reads both from the stored config on every request.
-- **Reboot needed:** everything else, including network, role, state key, revocation settings and `management`. These are read once at boot.
+- **Reboot needed:** everything else, including network, role, state key, revocation settings, `management`, and switching ACME or EST on or off or changing their settings. These are read once at boot. Until the reboot, `cryptosctl status` prints `Reboot: pending`.
 
 `cryptosctl config apply` also prints a `WARNING:` line for each profile whose `validity_days` already runs past the node's own CA certificate. It's a warning; the config is still applied.
 
 :::caution[What an apply can't carry]
-`cryptosctl config apply` and the Fleet Manager send the config as the API's `MachineConfig` message, which doesn't cover every YAML field:
-
-- **`pki.acme` and `pki.est`** have no field in the message. An apply can't add, change or remove them; the node keeps the blocks already on disk. See [Machine config: ACME and EST](./machine-config-enrollment.md).
-- **A profile's `subject.province` and `subject.locality`** are dropped, because the profile subject in the message carries only `common_name`, `organization` and `country`. The CA's own `root_subject` keeps all five.
+`cryptosctl config apply` and the Fleet Manager send the config as the API's `MachineConfig` message, which doesn't cover every YAML field. **A profile's `subject.province` and `subject.locality`** are dropped, because the profile subject in the message carries only `common_name`, `organization` and `country`. The CA's own `root_subject` keeps all five.
 
 `cryptosctl ceremony start --config machine.yaml` sends your file as-is, so those fields survive there.
 :::
+
+`pki.acme` and `pki.est` travel in the message, with their secrets write-only: `cryptosctl config get` prints them blank and an apply that leaves them blank keeps the stored ones. See [Machine config: ACME and EST](./machine-config-enrollment.md).
 
 The `MachineConfig` message also has a `storage` field (`state_partition_label`, `first_boot`) that the node ignores. For the message itself, see the [gRPC API reference](./grpc-api.md).
