@@ -143,7 +143,7 @@ Every `StartCeremony` call is recorded in the audit log as one entry when the st
 | M-of-N: the ceremony waits for M administrators to authorize it. | 1-of-1. The manifest's `operator_signatures` list is shaped for more entries, but only one is ever written. |
 | The operator signs the manifest with their own key. | The node signs with its HKDF-derived ceremony key, and the admin identity is bound into the signed bytes. |
 | The operator enrolls a long-term admin certificate and the bootstrap certificate is revoked. | Not built; see `ADMIN_ROTATED` above. |
-| You can fetch and verify the manifest offline. | Not yet. `ceremony.VerifyManifest` exists in the code, but no RPC returns a stored manifest or the ceremony verifying key, and `cryptosctl` has no command for it. |
+| You can fetch and verify the manifest offline. | Not available. `ceremony.VerifyManifest` exists in the code, but no RPC returns a stored manifest or the ceremony verifying key, and `cryptosctl` has no command for it. |
 | The key creation evidence proves the key came from a genuine TPM. | The creation data and ticket are recorded, but nothing certifies them (no `TPM2_CertifyCreation`, no endorsement key certificate), and nothing checks them. |
 | Each manifest names the node that ran it. | `node_id` is the constant `cryptos` on every node. |
 | An interrupted ceremony resumes on the next boot. | The operator runs it again; see above. |

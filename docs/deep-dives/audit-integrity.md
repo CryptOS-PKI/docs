@@ -10,8 +10,8 @@ Why a changed or missing entry cannot hide.
 Every gRPC call a serving node receives is appended to a signed, hash-chained log on the encrypted state volume, and the code can verify the whole chain.
 :::
 
-:::info[Planned]
-Reading the log through the API, publishing its verifying key, and shipping it off the node are not in the alpha. Today the log stays on the node, and there is no supported way for you to fetch it or run the verifier. See [Where it falls short](#where-it-falls-short).
+:::info[The log stays on the node]
+Reading the log through the API, publishing its verifying key, and shipping it off the node are not available. The log stays on the node, and there is no supported way for you to fetch it or run the verifier. See [Where it falls short](#where-it-falls-short).
 :::
 
 This page explains what the log records, how each entry is bound to the one before it, what a verifier checks, and which kinds of tampering that catches and which it can't. The code is `internal/audit/audit.go` and the audit interceptors in `internal/grpc/server.go`. The entry fields are in the [audit log reference](../reference/audit-log.md).
@@ -96,7 +96,7 @@ What keeps the seed and the files out of reach is the state volume. On a `tpm` n
 |---|---|
 | Operators fetch the log and verify it offline. | No RPC returns the log, and no RPC or command publishes the audit public key. `VerifyChain` is a library function with no `cryptosctl` command around it. The `Audit.StreamEvents` RPC in the design is not in the API. |
 | The log is shipped to the Fleet Manager and to a SIEM. | Not built. The log exists only on the node. |
-| Truncation and whole-log deletion are detectable. | Not detectable (table above); it needs an external anchor, which comes with shipping the log off the node. |
+| Truncation and whole-log deletion are detectable. | Not detectable (table above); it needs an external anchor off the node, which the alpha doesn't have. |
 | A node that can't write its audit log says so. | `Append` errors are ignored so a failed write doesn't change the RPC's result, and the code comment says `GetStatus` reports audit health instead, but `NodeStatus` has no audit field. A failing log is not visible to you today. |
 | Every action on the node is audited. | Only gRPC calls on a serving node (see the caution above). |
 | Timestamps are trustworthy. | `ts` comes from the node's clock, and the alpha has no time sync client. Use `seq` for ordering, not `ts`. |
