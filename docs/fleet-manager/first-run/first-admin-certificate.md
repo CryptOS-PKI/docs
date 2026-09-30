@@ -119,6 +119,10 @@ The manager refuses, with 1610 and a sub-reason, a certificate that:
 | `KEY_MISMATCH` | The key isn't the CSR's. |
 | `EXPIRING` | Less than a day is left. |
 | `REVOKED` | It is on the manager's denylist or in the CA's CRL. |
+| `REVOKED_OCSP` | The CA's OCSP responder says it is revoked. |
+| `OCSP_UNKNOWN` | The CA's OCSP responder doesn't know it, which counts as revoked. |
+
+The OCSP checks apply where OCSP is configured for the certificate: the CA was registered in `url` mode, or in `aia` mode and the certificate names a responder. If no fresh revocation data is available (the responder doesn't answer and there is no current CRL), `operatorRevocationPolicy: soft` accepts the certificate, and `hard` refuses it with 1608 `STALE_OCSP` or `STALE_CRL`.
 
 A refused CSR gets 1606 (`SIGNATURE`, `SUBJECT_MISMATCH`, `KEY_TYPE`, `SIZE`). If the session hasn't confirmed the registered CA, the call fails with 1605 `NOT_CONFIRMED`; confirm it as in [stage 3.4](./register-operator-ca.md#34-a-new-session-confirms-again).
 
