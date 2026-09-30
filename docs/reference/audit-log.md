@@ -5,7 +5,7 @@ title: "📚 Audit log format"
 # 📚 Audit log format
 
 :::tip[Works today]
-The node writes and chains its audit log today. Reading it from outside the node is not available; see [What you can't do today](#-what-you-cant-do-today).
+The node writes and chains its audit log today, and `cryptosctl audit list` and `audit verify` read and check it (see [Check the audit log](../using/audit-log.md)). Exporting the raw files for verification off the node is not available; see [What you can't do today](#-what-you-cant-do-today).
 :::
 
 How the tamper-evident log is structured and verified.
@@ -70,6 +70,7 @@ The `details` keys the node writes today:
 
 | Key | Written by | Value |
 |---|---|---|
+| `serial_hex` | `RevokeCertificate` | The serial the call named, in the node's form: lower-case hex with no leading zeros. Recorded once the caller is authorized, whether or not the revocation succeeds. |
 | `request_dns_names` | `IssueLeaf`, when the caller passes DNS names (`cryptosctl ca issue-leaf --dns`) | The names, comma-separated. Recorded once the caller is authorized, whether or not the signer accepts them. |
 | `requested_not_after` | `IssueLeaf` or `SignSubordinateCSR`, when the certificate was capped at the issuer's notAfter | The notAfter the profile asked for, RFC 3339 UTC. |
 | `effective_not_after` | Same | The notAfter the certificate received, RFC 3339 UTC. |
@@ -83,7 +84,7 @@ A verifier checks every file in date order (the file names sort by date) and eve
 3. **Check the sequence:** the first entry across all files is `1`, and each entry is one more than the last.
 4. **Check the link:** `prevEntrySha256` must equal the SHA-256 of the previous line's JSON bytes. For the very first entry it's the SHA-256 of empty input, which is `47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=` in base64 (`e3b0c442...b855` in hex).
 
-Stop at the first failure and note its file and line: every entry after it is unproven.
+Stop at the first failure and note its file and line: every entry after it is unproven. `cryptosctl audit verify` runs these checks on the node and reports the first failure's sequence number (the one the failing entry holds, or the one expected at its place when the line can't be read), its file and line, and the reason.
 
 :::caution[Hash the bytes as written, never a re-encoded copy]
 Protobuf JSON output isn't byte-stable: the spacing and order can differ between encoder versions and runs. The signature and the chain cover the exact bytes on the line. A verifier that parses an entry and encodes it again will get different bytes and report a false mismatch.
@@ -95,8 +96,8 @@ The audit key is an Ed25519 key derived, not stored. The node generates a 32-byt
 
 ## 🚧 What you can't do today
 
-:::info[No way to read the log off the node]
-The node has no API call that returns its audit log or its audit public key, and it doesn't ship entries to a SIEM. So you can't fetch the files and verify them off the node in this alpha.
+:::info[Verification runs on the node]
+`ListAuditEvents` returns each entry and its SHA-256, and `VerifyAuditChain` checks the chain on the node. Neither returns the entry signatures or the audit public key, and the node doesn't ship entries to a SIEM, so you can't verify the log independently off the node in this alpha.
 :::
 
 :::caution[A failed audit write doesn't fail the call]
@@ -104,7 +105,7 @@ If the node can't append an entry, the API call still returns its normal result 
 :::
 
 :::warning[A reset destroys the audit log]
-`cryptosctl reset` erases the state partition's key material, and the audit log lives on that partition. Since there is no way to export the log, a reset takes the node's audit history with it.
+`cryptosctl reset` erases the state partition's key material, and the audit log lives on that partition, so a reset takes the node's audit history with it. `cryptosctl audit list --all -o json` saves a readable copy first, but that copy can't be verified off the node.
 :::
 
 ## 🧭 The Fleet Manager audit log

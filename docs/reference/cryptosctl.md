@@ -144,6 +144,28 @@ Notes:
 - `ca import-key` asks for the backup's passphrase, and refuses a node that already has an identity.
 - Step-by-step guides in the `cryptos` repository: [subordinating vCenter's VMCA](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/vmca-subordination.md) and [re-certifying a subordinate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/subordinate-recertify.md).
 
+## Audit log
+
+Both commands read the node's hash-chained audit log and change nothing. Over mutual TLS they need the bootstrap admin certificate, like `ca list-issued`. A node in maintenance mode answers `FailedPrecondition`. The walk-through is [Check the audit log](../using/audit-log.md).
+
+### `audit list`
+
+Lists audit entries, oldest first, one page at a time: sequence number, time, actor, call, outcome and a one-line summary. When there are more entries, the last line gives the `--page-token` for the next page. `-o json` and `-o yaml` give the entries as stored, with each entry's SHA-256, target and summary.
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--since` | none | only entries at or after this time: RFC 3339, or a duration back from now such as `24h` |
+| `--until` | none | only entries before this time, in the same forms |
+| `--type` | none | only this call, by method name (`RevokeCertificate`) or full method (`/cryptos.v1.NodeService/RevokeCertificate`) |
+| `--actor` | none | only entries whose actor subject contains this text; case-sensitive |
+| `--page-size` | `0` (the node's default, 100) | entries per page; the node caps a page at 1000 |
+| `--page-token` | none | continue from a previous page, with the same filters |
+| `--all` | off | fetch every page |
+
+### `audit verify`
+
+Checks every entry's signature, that the sequence numbers run from 1 with no gaps, and that each entry carries the hash of the one before it. It prints `audit chain intact: <n> entries verified`, or where the chain broke and why, and then exits non-zero. `-o json` and `-o yaml` give `entry_count`, `intact`, `first_broken_sequence` and `reason`, with the same exit status. No flags.
+
 ## Image upgrades
 
 These replace the node's CryptOS image without reinstalling it. The encrypted state (CA key, issued history, identity) is never touched. The node must have been built with an upgrade anchor; see [Secure Boot enrollment](../install-deploy/secure-boot.md).

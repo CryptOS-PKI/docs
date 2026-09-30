@@ -12,7 +12,7 @@ CryptOS exposes two gRPC services. The protobuf definitions in the [CryptOS-PKI/
 
 | Service | Package | Served by | What it covers |
 |---|---|---|---|
-| `NodeService` | `cryptos.v1` | each CryptOS node, over mTLS on port 443 and the local UNIX socket | one node: config, status, ceremony, issuance, revocation, key backup and rotation, image upgrades |
+| `NodeService` | `cryptos.v1` | each CryptOS node, over mTLS on port 443 and the local UNIX socket | one node: config, status, ceremony, issuance, revocation, key backup and rotation, image upgrades, the audit log |
 | `FleetService` | `cryptos.fleet.v1` | the Fleet Manager, as a Connect endpoint | many nodes: inventory, the profile catalog, enrollment, the audit log, operator credentials, MCP agent keys, step-up approvals |
 
 > The rest of the RPCs are not written up here yet. Until they are, read the comments in `proto/cryptos/v1/node.proto` and `proto/cryptos/fleet/v1/fleet.proto`. 🚧
@@ -180,6 +180,47 @@ Timestamps are RFC 3339 strings; an unset one is empty.
 | `decided_by_cn` (12) | `string` | subject CN of the deciding operator certificate; empty until decided |
 | `decided_by_serial` (13) | `string` | hex serial of that certificate; empty until decided |
 | `decided_at` (14) | `string` | when it was decided; empty until decided |
+
+## Node audit log
+
+Two `NodeService` calls read the node's hash-chained audit log (see [Audit log format](./audit-log.md)). They are authorized like `ListIssued`: the local socket, or the bootstrap admin certificate over mTLS; any other certificate gets `PERMISSION_DENIED`. A node in maintenance mode answers `FAILED_PRECONDITION`. Both calls are recorded in the log like any other.
+
+### `ListAuditEvents`
+
+Returns entries oldest first (ascending `seq`), a page at a time. Every filter is optional, and they combine.
+
+| Request field | Type | Meaning |
+|---|---|---|
+| `page_size` (1) | `int32` | most entries to return; `0` means 100, larger values are capped at 1000, negative is `INVALID_ARGUMENT` |
+| `page_token` (2) | `string` | the previous response's `next_page_token`, sent with the same filters; empty starts at the oldest match |
+| `from_time` (3) | `string` | RFC 3339; keeps entries whose `ts` is at or after it |
+| `to_time` (4) | `string` | RFC 3339; keeps entries whose `ts` is before it |
+| `event_type` (5) | `string` | the full `rpc_method` (`/cryptos.v1.NodeService/RevokeCertificate`) or its method name alone (`RevokeCertificate`) |
+| `actor` (6) | `string` | keeps entries whose `actor_subject` contains it; case-sensitive |
+
+A time that isn't RFC 3339, a `to_time` earlier than `from_time`, and a `page_token` the node didn't issue or that was issued for other filters are `INVALID_ARGUMENT`.
+
+The response holds `entries` and a `next_page_token` that is empty on the last page. Each `AuditLogEntry` carries:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `event` (1) | `AuditEvent` | the entry exactly as stored, signed and chained |
+| `entry_sha256` (2) | `bytes` | SHA-256 of the entry's bytes on disk: the value the next entry's `prev_entry_sha256` holds. Re-encoding `event` doesn't reproduce those bytes, so use this value |
+| `target` (3) | `string` | what the call acted on when the entry records it, such as the serial on `RevokeCertificate` or the asserted names on `IssueLeaf`; empty otherwise |
+| `summary` (4) | `string` | one line for a person to read, such as `revoked a certificate: 4f1a09c2` |
+
+`target` and `summary` are worked out when the entry is read and aren't part of the chain. Don't parse `summary`.
+
+### `VerifyAuditChain`
+
+Takes no fields and walks the whole stored log. A broken chain is a result, not an error; the call fails only when the log can't be read.
+
+| Field | Type | Meaning |
+|---|---|---|
+| `entry_count` (1) | `uint64` | entries in the log, counted past a break |
+| `intact` (2) | `bool` | every entry verified |
+| `first_broken_sequence` (3) | `uint64` | the `seq` the first failing entry holds, or the one expected at its place when the line can't be read; `0` when intact |
+| `reason` (4) | `string` | the file, line and failure (a signature mismatch, a sequence gap, a `prev_entry_sha256` mismatch, or a line that is malformed or does not parse); empty when intact |
 
 ## Fleet Manager audit events
 
