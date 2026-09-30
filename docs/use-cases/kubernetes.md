@@ -43,6 +43,8 @@ cert-manager also has to trust the CryptOS chain for the HTTPS connection to the
 
 :::info[Tested in CI with kind and cert-manager]
 Every `cryptos` pull request that touches the ACME code runs cert-manager in a [kind](https://kind.sigs.k8s.io/) cluster against a CryptOS intermediate. cert-manager registers with External Account Binding and proves the name with `http-01` through the cluster's ingress. The test checks that an ECDSA P-384 Certificate goes Ready, that its chain verifies to the CryptOS root, that the node recorded the serial, and that a forced renewal returns a new serial. The node in that test runs from the `cryptos` code on the CI runner with software keys, not from the OS image with a TPM. See [`ci-kind-acme.yml`](https://github.com/CryptOS-PKI/cryptos/blob/main/.github/workflows/ci-kind-acme.yml) and `task e2e:kind` to run it yourself on Linux.
+
+A second, slower test runs the same enrolment against the real OS image. Every night, and on `cryptos` pull requests that touch the image build, the boot or the protocol and config code, the image boots in QEMU as a Root and an Intermediate with a TPM (swtpm). The Intermediate's CSR is signed by the Root, and ACME is switched on the production way: `config apply` with `pki.acme`, then a reboot. cert-manager in kind then gets and renews a Certificate from the booted Intermediate over `http-01`, and `cryptosctl ca list-issued` on the node shows both serials. See [`ci-e2e-image.yml`](https://github.com/CryptOS-PKI/cryptos/blob/main/.github/workflows/ci-e2e-image.yml) and `task e2e:image`.
 :::
 
 ## An intermediate for the cluster
