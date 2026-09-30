@@ -74,10 +74,41 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `nodeCreds.accessModes` | `["ReadWriteOnce"]` | Access modes for the created claim. |
 | `nodeCreds.size` | `1Gi` | Size of the created claim. |
 | `nodes` | `[]` | Nodes to load into an empty database on first start. |
+| `nodes[].adminCredsSecret` | unset | A Secret with the node's admin credentials. See [Node admin credentials from a Secret](#node-admin-credentials-from-a-secret). |
 
 :::caution[More than one pod needs shared storage]
 Every pod must hold the admin key of every adopted node, so a `ReadWriteOnce` claim supports one pod only. The chart refuses to render with `replicaCount` above `1` unless `nodeCreds.accessModes` includes `ReadWriteMany`. With a `ReadWriteOnce` claim the Deployment uses the `Recreate` strategy, so an upgrade stops the old pod before it starts the new one and the UI is briefly unavailable.
 :::
+
+## Node admin credentials from a Secret
+
+A node you list in `nodes` needs the admin certificate and key the manager presents to it, and the node's CA chain. Put them in a Secret, one per node, and name it in the node's `adminCredsSecret`. The chart mounts the Secret read-only at `/etc/cryptos/fleet/node-admin/<name>` and points the node's `adminCertPath`, `adminKeyPath` and `caCertPath` at it, so no key material goes in your values or the ConfigMap.
+
+1. Create the Secret in the release namespace, with the keys `admin.crt`, `admin.key` and `ca.pem`. `kubectl` works the same on Linux, macOS and Windows:
+
+   ```bash
+   kubectl create secret generic pki-root-admin --from-file=admin.crt --from-file=admin.key --from-file=ca.pem
+   ```
+
+2. Name it in the node's entry:
+
+   ```yaml
+   nodes:
+     - name: pki-root
+       endpoint: "pki-root.example.org:443"
+       role: root
+       adminCredsSecret: pki-root-admin
+   ```
+
+:::caution[Use the Secret or the paths, not both]
+The chart fails the render if a node sets `adminCredsSecret` together with `adminCertPath`, `adminKeyPath` or `caCertPath`, or has no `name`. A node without `adminCredsSecret` keeps the paths you give it.
+:::
+
+:::caution[The list only reaches an empty database]
+With Postgres, the manager copies `nodes` into the database on its first start only. A node you add to the list later does not appear. See [Listed in the config file](./overview.md#listed-in-the-config-file).
+:::
+
+This is for nodes you list yourself. Nodes the manager adopts keep the admin key it makes for them on the node credentials claim.
 
 ## Render the chart and check it
 
