@@ -100,6 +100,17 @@ const sidebars: SidebarsConfig = {
       items: [
         'fleet-manager/overview',
         'fleet-manager/node-trust',
+        {
+          type: 'category',
+          label: 'First run',
+          link: {type: 'doc', id: 'fleet-manager/first-run/index'},
+          items: [
+            'fleet-manager/first-run/create-operator-ca',
+            'fleet-manager/first-run/start-first-run',
+            'fleet-manager/first-run/register-operator-ca',
+            'fleet-manager/first-run/first-admin-certificate',
+          ],
+        },
         'fleet-manager/operator-ca',
         'fleet-manager/operator-credentials',
         'fleet-manager/migrating-from-operator-ca-node',
