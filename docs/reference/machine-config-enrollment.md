@@ -14,12 +14,24 @@ ACME (RFC 8555, `http-01` only) and EST (RFC 7030) both work in the alpha. SCEP 
 The `pki.acme` and `pki.est` blocks of the [machine config](./machine-config.md). Each enrolment protocol is off unless its block is present: a protocol is opened on purpose, never by forgetting to close it. Both issue from a leaf profile defined under [`pki.profiles`](./machine-config-pki.md#-certificate-profiles).
 
 :::caution[A Root never serves ACME or EST]
-A Root keeps every enrolment protocol off. A config that sets `pki.acme` or `pki.est` on a Root is refused by `cryptosctl config apply`, by the maintenance-mode install and by `cryptosctl ceremony start --config`, and nothing is stored. Serve ACME and EST from an intermediate or issuing node.
+A Root keeps every enrolment protocol off. A config that switches `pki.acme` or `pki.est` on at a Root is refused by `cryptosctl config apply`, by the maintenance-mode install and by `cryptosctl ceremony start --config`, and nothing is stored. A block with `enabled: false` is accepted and never served. Serve ACME and EST from an intermediate or issuing node.
 :::
 
 ## 🔀 Switching a protocol on or off
 
-To switch a protocol on, add its block and run `cryptosctl config apply`. To switch it off, remove the block and apply again. Changing a setting works the same way. In the API's `MachineConfig` the blocks are `Pki.acme` and `Pki.est`, each with an `enabled` flag: `enabled: false` switches the protocol off, and an `ApplyConfig` that leaves a block out keeps what the node has.
+To switch a protocol on, add its block and run `cryptosctl config apply`. Changing a setting works the same way. To switch it off and keep its settings, set `enabled: false` in the block and apply again. To switch it back on, set `enabled: true` or remove the line: a block without `enabled` is on. Removing the whole block switches the protocol off and drops its settings.
+
+```yaml
+pki:
+  acme:
+    enabled: false
+    base_url: https://ca.example.org/acme
+    profile: leaf-server
+```
+
+The node keeps a switched-off block's settings, and `cryptosctl config get` prints the block with `enabled: false`, so flipping `enabled` alone switches it back on. Nothing reads a switched-off block at boot, so changing only its settings doesn't need a reboot.
+
+In the API's `MachineConfig` the blocks are `Pki.acme` and `Pki.est`, each with an `enabled` flag. `enabled: false` switches the protocol off and keeps the settings sent with it, an `enabled: false` block with no settings drops them, and an `ApplyConfig` that leaves a block out keeps what the node has, on or off.
 
 :::warning[A switch takes effect at the next reboot]
 `config apply` stores the change and prints `requires_reboot=true`. The listener starts, stops or picks up the new settings only when the node boots again, and the node stops issuing while it restarts. Plan the reboot for a maintenance window, then run `cryptosctl reboot`.
@@ -32,7 +44,7 @@ Protocols:       ACME on (not running, reboot pending), EST off
 Reboot:          pending (the stored config changes take effect at the next boot)
 ```
 
-The secrets are write-only: `hmac_key_base64` for ACME and `password_sha256` for EST. `cryptosctl config get` prints them blank, next to their `key_id` or `username`. Leave a blank value as it is and `config apply` keeps the one the node stores for that identifier; set a value to replace it. A new `key_id` or `username` needs its value, or the apply is refused. Removing an entry revokes it.
+The secrets are write-only, in a switched-off block too: `hmac_key_base64` for ACME and `password_sha256` for EST. `cryptosctl config get` prints them blank, next to their `key_id` or `username`. Leave a blank value as it is and `config apply` keeps the one the node stores for that identifier; set a value to replace it. A new `key_id` or `username` needs its value, or the apply is refused. Removing an entry revokes it.
 
 ## 🤖 ACME
 
