@@ -83,8 +83,6 @@ cryptosctl --endpoint 192.0.2.10:443 trust fetch --expect-sha256 <fingerprint fr
 With `--expect-sha256`, `trust fetch` refuses any certificate that does not match. Without it, it saves whatever certificate it is handed. Always pass it, and read the fingerprint from the node's console, not from the network, so that nobody in between can hand you their own certificate.
 :::
 
-## What is not built yet
+## What is not available today
 
-:::info[Planned]
-**Extensions**: signed add-ons such as hypervisor guest agents or extra hardware drivers, overlaid on the read-only image and measured into the TPM. Until they land, the image is exactly what was built, with nothing added at boot.
-:::
+There are no extensions or add-ons, such as hypervisor guest agents or extra hardware drivers. The image is exactly what was built, with nothing added at boot.

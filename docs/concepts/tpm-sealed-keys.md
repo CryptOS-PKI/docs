@@ -56,7 +56,7 @@ Consequences:
 If the TPM or its vTPM state is lost (the VM's vTPM is removed, the VM is re-created, or the motherboard is replaced), the CA key is gone. There is no export to restore from. Certificates it signed stay valid, but nothing can renew or revoke them. Protect the VM and its vTPM state, and keep your hierarchy able to replace a subordinate CA.
 :::
 
-:::caution[RSA CA keys are not supported in TPM mode yet]
+:::caution[RSA CA keys are not supported in TPM mode]
 The TPM backend creates ECDSA P-384 keys only. A node whose `pki.root_key_alg` is `RSA-3072` or `RSA-4096` needs one of the software-backed modes below.
 :::
 
@@ -96,10 +96,8 @@ The `kms` mode is in the code, but no reference deployment has run it, and the i
 The node reads `state_key.mode` from the staged config on its first boot only. On every later boot the staged config is gone and the node uses the image's build-time default. Leave `state_key.mode` empty, or set it to the mode the image was built for, so that every boot unlocks the disk the same way.
 :::
 
-## What is not built yet
+## What is not available today
 
-:::info[Planned]
-- **RSA keys inside the TPM.** Today an RSA CA needs a software-backed mode.
-- **HA key sharing.** For a two-node pair, the standby will hold a copy of the CA key duplicated from the primary's TPM into its own, under a PCR policy, so either node can sign without the key ever being in the clear.
-- **Hardware presence check** before a Root key is unsealed.
-:::
+- **RSA keys inside the TPM.** An RSA CA needs a software-backed mode.
+- **Sharing a TPM key between nodes.** The key is created so it can't be duplicated to another TPM, so there is no second node that can sign with the same key.
+- **A hardware presence check** before a Root key is unsealed.

@@ -141,10 +141,10 @@ With `pki.allow_unverified_revocation_url: true`, the node issues certificates w
 
 `config apply` also prints a warning, without stopping, when a profile's `validity_days` runs past the node's own CA certificate. Certificates from that profile will be cut short to the CA's `notAfter`.
 
-## Parts the API does not carry yet
+## Parts the API does not carry
 
 :::caution[The acme and est blocks do not travel over the API]
-`pki.acme` and `pki.est` hold secrets (account binding keys and enrolment passwords) and are not part of the API's config message yet. `config get` leaves them out, and `config apply` keeps whatever blocks the node already has. You cannot turn ACME or EST on, off or change them through `config apply` today.
+`pki.acme` and `pki.est` hold secrets (account binding keys and enrolment passwords) and are not part of the API's config message. `config get` leaves them out, and `config apply` keeps whatever blocks the node already has. You cannot turn ACME or EST on, off or change them through `config apply` today.
 :::
 
 ## The Fleet Manager uses the same file

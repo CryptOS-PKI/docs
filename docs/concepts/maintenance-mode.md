@@ -126,7 +126,7 @@ After a reset the node takes its address from DHCP again. On a network segment w
 ## Known limits
 
 :::caution[Current limits of the install path]
-- **DHCP is required for maintenance.** The maintenance and re-provision stages always take their address from DHCP. There is no static-IP install path yet. Use a DHCP reservation if the node needs a fixed address during install. After install, the node uses the address in `network.address`.
+- **DHCP is required for maintenance.** The maintenance and re-provision stages always take their address from DHCP. There is no static-IP install path. Use a DHCP reservation if the node needs a fixed address during install. After install, the node uses the address in `network.address`.
 - **Booting the ISO does not re-provision an installed node.** Maintenance starts only when no `cryptos-state` partition exists, so booting the ISO on an installed node does not bring up maintenance. Use a reset, or give the VM a fresh disk.
 :::
 

@@ -106,10 +106,8 @@ Because the image and the state partition are separate, a node can change images
 
 `cryptosctl image status` shows the running and staged images. The state partition (CA key, issued history, identity) is never opened by an upgrade. In the reference deployment an upgrade cost about 8 to 11 seconds of downtime per node. `cryptosctl` runs on Linux and macOS today. A Windows build is coming.
 
-## What is not built yet
+## What is not available today
 
-:::info[Planned]
-- **A hosted image factory**, where you pick a platform and variant and download a built image, instead of building it yourself.
-- **More platform profiles**, for example bare metal. Only `vmware` exists today.
-- **arm64 releases.** The pipeline takes an architecture, but only amd64 has been booted and released.
-:::
+- There is no hosted image factory or download. You build the image yourself.
+- `vmware` is the only platform profile.
+- Only amd64 images have been booted. The pipeline takes an architecture, but there is no arm64 image.

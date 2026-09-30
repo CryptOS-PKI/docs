@@ -5,7 +5,7 @@ title: "🏛️ CA roles: Root, Intermediate, Issuing"
 # 🏛️ CA roles: Root, Intermediate, Issuing
 
 :::tip[Works today]
-All three roles are in the alpha. A two-tier hierarchy (a Root plus an Intermediate, both RSA-4096 on VMware) has been run end to end, including leaf issuance from the Intermediate.
+Root, Intermediate and Issuing are all in the alpha. A two-tier hierarchy (a Root plus an Intermediate, both RSA-4096 on VMware) runs today, with leaf issuance from the Intermediate and a VMware VMCA signed by that Intermediate as a subordinate CA.
 :::
 
 The three kinds of CA node and how they stack. If the terms are new, read [The Root CA and the chain of trust](./chain-of-trust.md) first.
@@ -114,26 +114,22 @@ A subordinate issues leaf certificates from leaf profiles (`is_ca: false`) in it
 - `cryptosctl ca issue-leaf --csr <file> --profile <name>` for a one-off certificate;
 - the ACME (RFC 8555) and EST (RFC 7030) endpoints, when they are turned on in `pki.acme` or `pki.est`.
 
-SCEP and WSTEP are not implemented yet.
+SCEP and WSTEP are not available.
 
 ## Key algorithms
 
 `pki.root_key_alg` sets the node's own CA key: `ECDSA-P384`, `RSA-3072` or `RSA-4096`. Despite the name, it applies to every role. The CA key also decides the signature algorithm on everything the node signs, so a platform that only accepts RSA signatures needs an RSA key at every level of its chain.
 
-:::caution[RSA CA keys are not held in the TPM yet]
+:::caution[RSA CA keys are not held in the TPM]
 The TPM backend creates ECDSA P-384 keys only. An RSA CA key needs a software state-key mode, where the key is kept on the encrypted state partition instead of inside the TPM. [The TPM and sealed keys](./tpm-sealed-keys.md) explains the difference.
 :::
 
-## What is not built yet
+## What is not available today
 
-:::info[Planned]
-These parts of the role design are specified but not in the alpha:
-
-- **Root Mode**: shutting down every service listener on a Root and limiting management to a dedicated interface, with a hardware presence check before the Root key unseals.
-- **M-of-N quorum**: Root operations locked until several administrators sign off.
-- **HA pairs**: an optional second node for any role, active/passive, with at most two nodes.
-- **Cross-signing between Roots**: out of scope until there is a real need. Each Root stays its own sovereign tree.
-:::
+- A Root has no hardware presence check before its key unseals.
+- One admin certificate authorizes every operation, Root operations included. There is no multi-person quorum.
+- Each CA runs on a single node. There are no HA pairs.
+- Roots are not cross-signed. Each Root is its own tree.
 
 ## Next
 
