@@ -5,7 +5,7 @@ title: "🚢 Fleet Manager overview"
 # 🚢 Fleet Manager overview
 
 :::tip[Works today]
-The Fleet Manager and its web UI are part of the alpha. They have run a two-tier hierarchy (a Root and an Intermediate) on VMware, with both nodes reported as established and healthy. There is no published container image or chart yet, so you build it yourself; see [Deploy with Helm](./helm.md) for where each install path stands.
+The Fleet Manager and its web UI are part of the alpha. They have run a two-tier hierarchy (a Root and an Intermediate) on VMware, with both nodes reported as established and healthy. There is no published container image or chart, so you build it yourself; see [Deploy with Helm](./helm.md) for where each install path stands.
 :::
 
 A single CryptOS node is managed with `cryptosctl`, one node at a time. Once you have several nodes, a Root and the CAs under it, you want one place to see all of them. That place is the **Fleet Manager**.
@@ -139,18 +139,16 @@ A `LINK` enrollment brings in a node that is already installed and running, whic
 
 A `SUBORDINATE` enrollment gives an adopted Intermediate or Issuing node its CA certificate. You name the child node, the parent CA by its common name, and the profile to sign under. On approval (`operator` or above), the manager asks the child for its certificate request, has the parent sign it, and hands the signed chain back to the child.
 
-## What is not built yet
+## What is not available today
 
-:::info[Planned]
-The design has a node start its own enrollment: it would call the manager with its TPM endorsement key certificate and an attestation quote, and the manager would give it a 90-day peer certificate. None of that is in the code yet. Today the manager starts every link, adoption and enrollment, and the challenge in a `LINK` is signed by the node's CA identity key, not the TPM endorsement key.
-:::
+- A node can't start its own enrollment. The manager starts every link, adoption and enrollment, and the challenge in a `LINK` is signed by the node's CA identity key, not the TPM endorsement key.
 
 - Switching a protocol adapter on in the manager only records the intent. ACME and EST are served by the nodes themselves and set in each node's config; SCEP and Windows autoenrollment are not built.
-- The manager records the read-only flag on a linked node, but the node does not yet enforce it.
+- The manager records the read-only flag on a linked node, but the node does not enforce it.
 
 ## Where to go next
 
 - [The web UI](./web-ui.md): the pages and what you can do on each.
-- [Deploy with Helm](./helm.md): the supported chart, and what to use until it is published.
+- [Deploy with Helm](./helm.md): the supported chart, and what to use today.
 - [Machine config](../reference/machine-config.md): the node config the adopt wizard fills in.
 - [cryptosctl](../reference/cryptosctl.md): managing a node without the Fleet Manager.

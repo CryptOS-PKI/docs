@@ -186,7 +186,7 @@ The catalog of certificate templates: key algorithm, validity, subject, CA or no
 
 The enrollment protocols the fleet means to offer, with an **Enable** or **Disable** switch (`admin`).
 
-:::info[Planned]
+:::info[Records intent only]
 This page records intent only. ACME (RFC 8555) and EST (RFC 7030) are served by the nodes themselves, set per node under `pki.acme` and `pki.est`. SCEP and Windows autoenrollment are not built, and enabling them here does nothing.
 :::
 

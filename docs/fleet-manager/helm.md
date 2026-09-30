@@ -4,15 +4,21 @@ title: "☸️ Deploy with Helm"
 
 # ☸️ Deploy with Helm
 
-:::info[Planned]
-No chart or container image has been published yet. The release that publishes them pushes the chart to `oci://ghcr.io/cryptos-pki/charts/fleet-manager` and the image to `ghcr.io/cryptos-pki/manager`. Until then you can render the chart from the [`manager`](https://github.com/CryptOS-PKI/manager) repo and install it with an image you built yourself, or use one of the paths in [What to use today](#what-to-use-today).
+:::info[No published chart or image]
+No chart or container image is published. Render the chart from the [`manager`](https://github.com/CryptOS-PKI/manager) repo and install it with an image you built yourself, or use one of the paths in [What to use today](#what-to-use-today).
 :::
 
 The supported chart is `chart/fleet-manager` in the [`manager`](https://github.com/CryptOS-PKI/manager) repo. It ships from the same repo and the same release as the manager, so the chart and the config file it renders always match the manager they run. If you are new to the Fleet Manager, read the [Fleet Manager overview](./overview.md) first.
 
 ## What the chart deploys
 
-Chart version `0.1.0`, app version `0.1.0`. The release sets both to the tag it publishes. It renders four objects:
+Chart version `0.1.0`, app version `0.1.0`. The release sets both to the tag it publishes.
+
+:::info[Alpha: 0.x]
+Every CryptOS release before `1.0.0` is a `0.x` alpha. `1.0.0` will be the first GA release, once the whole system lands. It isn't out yet.
+:::
+
+The chart renders four objects:
 
 | Object | What it is for |
 |---|---|
@@ -130,13 +136,13 @@ You can render the chart without a cluster and read what it would create. `git` 
    ```
    :::
 
-## The `helm` repo's chart is being retired
+## The `helm` repo's chart is not supported
 
-The [`helm`](https://github.com/CryptOS-PKI/helm) repo also carries a chart, `charts/manager`. It is being retired and is not a supported install. It sets environment variables the manager doesn't read and never gives it the `config.yaml` it needs, so its pod exits at startup. Use `chart/fleet-manager` from the `manager` repo instead.
+The [`helm`](https://github.com/CryptOS-PKI/helm) repo also carries a chart, `charts/manager`. It is not a supported install. It sets environment variables the manager doesn't read and never gives it the `config.yaml` it needs, so its pod exits at startup. Use `chart/fleet-manager` from the `manager` repo instead.
 
 ## What to use today
 
-Until a release publishes the image and the chart, the manager's own docs cover the two deployments that run without a registry:
+No image or chart is published, so the manager's own docs cover the two deployments that run without a registry:
 
 - **Docker Compose on one host**, with the manager and its own Postgres: [Single host with `docker compose`](https://github.com/CryptOS-PKI/manager#single-host-with-docker-compose).
 - **A plain Linux host with systemd** and a local Postgres: [Deploying the Fleet Manager standalone](https://github.com/CryptOS-PKI/manager/blob/main/docs/deploying-standalone.md).
