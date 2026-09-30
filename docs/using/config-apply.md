@@ -42,7 +42,7 @@ The node stores the file you send as its entire config, not as a patch. A sectio
 :::
 
 :::caution[acme and est cannot be changed this way]
-The API does not carry the `acme` and `est` sections yet, so `cryptosctl` does not send them even when they are in your file. The node keeps what it already has. Changing ACME or EST settings through `config apply` does not work today.
+The API does not carry the `acme` and `est` sections, so `cryptosctl` does not send them even when they are in your file. The node keeps what it already has. Changing ACME or EST settings through `config apply` does not work today.
 :::
 
 ## 3. Send it

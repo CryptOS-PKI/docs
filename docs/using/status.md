@@ -67,7 +67,7 @@ A TPM image that cannot open its TPM, or whose TPM lacks ECDSA P-384, does not f
 
 ### etcd
 
-The node's internal database. It reads `OK` on a serving node; the alpha does not report `DEGRADED` yet.
+The node's internal database. It reads `OK` on a serving node; the alpha does not report `DEGRADED`.
 
 ### Boot count
 

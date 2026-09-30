@@ -56,8 +56,8 @@ The options, with their defaults, are in the [cryptosctl command reference](../r
 - `--out-dir` writes the files somewhere other than `~/.cryptos/`.
 - `--validity` sets how long the certificate lasts, as a duration such as `8760h` (one year, the default) or `17520h`.
 
-:::caution[The certificate expires]
-The node checks your certificate like any other: once `--validity` runs out, it refuses the connection. The alpha has no documented, tested way to swap in a new admin certificate on a running node yet, so pick a lifetime that covers how long you will run the node.
+:::danger[The admin certificate expires, and an expired one locks you out]
+The node checks your certificate like any other: once `--validity` (365 days by default) runs out, it refuses the connection. The alpha has no documented, tested way to swap in a new admin certificate on a running node, so pick a lifetime that covers how long you will run the node. After expiry the only way back in is the console reset (**Ctrl-R**), which wipes the node's CA identity. The CA key survives a reset only if you exported it beforehand with `cryptosctl ca export-key`, and a node that keeps its key in the TPM refuses that export.
 :::
 
 :::danger[identity.key is the key to the node]
