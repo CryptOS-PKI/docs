@@ -2,6 +2,8 @@
 title: "⌨️ cryptosctl command reference"
 ---
 
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
+
 # ⌨️ cryptosctl command reference
 
 :::tip[✅ Works today]
@@ -167,6 +169,8 @@ Lists audit entries, oldest first, one page at a time: sequence number, time, ac
 Checks every entry's signature, that the sequence numbers run from 1 with no gaps, and that each entry carries the hash of the one before it. It prints `audit chain intact: <n> entries verified`, or where the chain broke and why, and then exits non-zero. `-o json` and `-o yaml` give `entry_count`, `intact`, `first_broken_sequence` and `reason`, with the same exit status. No flags.
 
 ## Image upgrades
+
+<Pre10Notice />
 
 These replace the node's CryptOS image without reinstalling it. The encrypted state (CA key, issued history, identity) is never touched. The node must have been built with an upgrade anchor; see [Secure Boot enrollment](../install-deploy/secure-boot.md).
 

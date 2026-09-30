@@ -21,3 +21,8 @@
   margin-right: 0.4em;
   background: url('/img/integrations/vmware.svg') center / contain no-repeat;
 }
+
+/* Text on the amber announcement bar: dark ink reads on both warning shades. */
+:root {
+  --cryptos-warning-foreground: #0e1526;
+}

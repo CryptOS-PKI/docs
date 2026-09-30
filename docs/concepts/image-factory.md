@@ -2,6 +2,8 @@
 title: "🏭 Platform profiles and the image factory"
 ---
 
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
+
 # 🏭 Platform profiles and the image factory
 
 :::tip[Works today]
@@ -97,6 +99,8 @@ An unsigned image boots only with Secure Boot off, and a node installed from one
 :::
 
 ## Upgrading in place
+
+<Pre10Notice />
 
 Because the image and the state partition are separate, a node can change images without losing its CA:
 

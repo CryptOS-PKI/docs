@@ -4,6 +4,7 @@ title: "🛡️ Secure Boot enrollment"
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
 
 # 🛡️ Secure Boot enrollment
 
@@ -212,6 +213,8 @@ sbverify --cert "$SB_CERT" build/out/cryptos-amd64.uki
 ```
 
 ## 5. Upgrade with the same key
+
+<Pre10Notice />
 
 A node accepts a new image only if the image's `.sig` verifies against the anchor in the image it is **running**. Build every later version with the same key, then stage it:
 

@@ -3,11 +3,15 @@ title: "🔐 What is CryptOS?"
 slug: "/"
 ---
 
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
+
 # 🔐 What is CryptOS?
 
 :::tip[✅ Works today]
 The core described here is built and tested. Booting it end-to-end on real hardware is still in progress — see [Project status and roadmap](./status-roadmap.md).
 :::
+
+<Pre10Notice />
 
 CryptOS is a computer with **one job**: to be a certificate authority (CA).
 

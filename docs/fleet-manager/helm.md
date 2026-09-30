@@ -2,11 +2,15 @@
 title: "☸️ Deploy with Helm"
 ---
 
+import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
+
 # ☸️ Deploy with Helm
 
 :::info[No published chart or image]
 No chart or container image is published. Render the chart from the [`manager`](https://github.com/CryptOS-PKI/manager) repo and install it with an image you built yourself, or use one of the paths in [What to use today](#what-to-use-today).
 :::
+
+<Pre10Notice />
 
 The supported chart is `chart/fleet-manager` in the [`manager`](https://github.com/CryptOS-PKI/manager) repo. It ships from the same repo and the same release as the manager, so the chart and the config file it renders always match the manager they run. If you are new to the Fleet Manager, read the [Fleet Manager overview](./overview.md) first.
 

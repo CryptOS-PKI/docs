@@ -104,6 +104,15 @@ const config: Config = {
       defaultMode: 'dark',
       respectPrefersColorScheme: false,
     },
+    announcementBar: {
+      id: 'pre-1-0',
+      content:
+        'CryptOS is pre-1.0: until v1.0.0, any release may change fundamentally. ' +
+        '<a href="/docs/introduction/status-roadmap">Read this before you run it in production</a>.',
+      backgroundColor: 'var(--cryptos-warning)',
+      textColor: 'var(--cryptos-warning-foreground)',
+      isCloseable: true,
+    },
     docs: {
       sidebar: {
         hideable: true,
