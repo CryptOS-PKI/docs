@@ -91,6 +91,7 @@ const sidebars: SidebarsConfig = {
         'using/status',
         'using/identity',
         'using/config-apply',
+        'using/enrol-devices-scep',
       ],
     },
     {
