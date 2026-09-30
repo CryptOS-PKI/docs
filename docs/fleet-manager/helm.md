@@ -77,7 +77,7 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `authBypass` | `false` | Development only. Turns off client-certificate login and TLS. |
 | `tls.certSecret` | `""` | The TLS Secret. |
 | `operatorCA.configMap` | `""` | The ConfigMap with `operator-ca.pem`. |
-| `operatorCANode` | `""` | The node that acts as the operator CA, for issuing and revoking operator certificates. |
+| `operatorCANode` | `""` | Removed. A CryptOS node can't be the operator CA; setting it fails the render. See [Migrating from operator_ca_node](./migrating-from-operator-ca-node.md). |
 | `mcp.enabled` / `mcp.publicURL` | `false` / `""` | The MCP endpoint for AI agents. See the manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md#with-the-helm-chart). |
 | `database.existingSecret` | `""` | The Secret with the Postgres connection string. |
 | `database.secretKey` | `database-url` | The key inside that Secret. |
