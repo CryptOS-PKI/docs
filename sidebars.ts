@@ -105,7 +105,26 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Integrations',
-      items: ['integrations/vmware-vmca-subordination'],
+      items: [
+        {
+          type: 'category',
+          label: 'vSphere: subordinate VMCA',
+          link: {type: 'doc', id: 'integrations/vmware-vmca/index'},
+          items: [
+            'integrations/vmware-vmca/safety-gate',
+            'integrations/vmware-vmca/profile',
+            'integrations/vmware-vmca/generate-csr',
+            'integrations/vmware-vmca/sign-and-chain',
+            'integrations/vmware-vmca/cluster-prep',
+            'integrations/vmware-vmca/import',
+            'integrations/vmware-vmca/esxi-hosts',
+            'integrations/vmware-vmca/restore',
+            'integrations/vmware-vmca/verify',
+            'integrations/vmware-vmca/rollback',
+            'integrations/vmware-vmca/troubleshooting',
+          ],
+        },
+      ],
     },
     {
       type: 'category',
