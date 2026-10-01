@@ -112,6 +112,7 @@ const sidebars: SidebarsConfig = {
           ],
         },
         'fleet-manager/operator-ca',
+        'fleet-manager/rotating-the-operator-ca',
         'fleet-manager/operator-credentials',
         'fleet-manager/migrating-from-operator-ca-node',
         'fleet-manager/helm',
