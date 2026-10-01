@@ -42,13 +42,32 @@ The probes:
 
 The chart creates no secrets. Before an install you need these in the release namespace:
 
-- **A TLS Secret** with `tls.crt` and `tls.key`, the manager's server certificate. Name it in `tls.certSecret`.
-- **A ConfigMap with `operator-ca.pem`**, the CA that operator certificates chain to. Name it in `operatorCA.configMap`. The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/operator-pki.md) shows how to make one.
 - **A Postgres database** the cluster can reach, and a Secret holding its connection string, such as `postgres://manager:<password>@db:5432/manager`, under the key `database-url` (or the key you set in `database.secretKey`). Name it in `database.existingSecret`. The chart passes it to the manager as the `MANAGER_DATABASE_URL` environment variable, so the password never appears in the ConfigMap.
 - **Storage for the node credentials.** The default claim asks the cluster's default storage class for `1Gi`, `ReadWriteOnce`.
 - **The manager image.** Until a release publishes it, build it and push it to a registry your cluster can pull from, then set `image.repository` and `image.tag`. The manager README covers [building the image yourself](https://github.com/CryptOS-PKI/manager#building-the-image-yourself).
 
-With `authBypass: false`, the default, the chart refuses to render without `tls.certSecret`, `operatorCA.configMap` and `database.existingSecret`.
+With `authBypass: false`, the default, the chart refuses to render without `database.existingSecret`.
+
+Two more are optional. Leave both out for day zero:
+
+- **A TLS Secret** with `tls.crt` and `tls.key`, the manager's server certificate, named in `tls.certSecret`. Without it the manager serves a self-signed certificate, kept in Postgres so every pod serves the same one, and logs its fingerprint. Add the Secret once you have a real certificate.
+- **A ConfigMap with `operator-ca.pem`**, named in `operatorCA.configMap`. Without it the operator CA is registered through [first run](./first-run/index.md), and `firstRun` (`auto` or `disabled`) says whether first run may open. With it, that file is the only operator CA source and first run doesn't apply.
+
+## Day zero
+
+Install with only the database Secret:
+
+```bash
+helm install fm manager/chart/fleet-manager --set database.existingSecret=fm-postgres
+```
+
+The install notes print the commands that find the self-signed certificate's fingerprint and the bootstrap token in the log. Then follow [Start first run](./first-run/start-first-run.md).
+
+:::caution[The token is in the pod log]
+Until first run closes, anyone who can run `kubectl logs` on the manager can start first run. Limit who can read the pod logs in this namespace, including any log shipping, as tightly as access to the manager.
+:::
+
+Once you have a real server certificate, set `tls.certSecret` in an upgrade. The pod rolls and the manager drops the stored self-signed certificate.
 
 :::danger[The node credentials claim is not replaceable]
 When the manager adopts a node, it writes that node's admin key to the claim, and the installed node trusts only that key. If the claim is deleted, the manager can no longer manage any node it adopted. The only way back is a reset from each node's console, which erases the node's key material. `helm uninstall` leaves the claim in place on purpose (`helm.sh/resource-policy: keep`). Back it up along with the database, and don't delete it by hand. See [Re-adopting a node](./overview.md#re-adopting-a-node).
@@ -77,8 +96,9 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `service.httpPort` / `service.httpTargetPort` | `80` / `8080` | The redirect-to-HTTPS port and its listener. |
 | `httpRedirectListen` | `0.0.0.0:8080` | The redirect listener. Empty turns it off. |
 | `authBypass` | `false` | Development only. Turns off client-certificate login and TLS. |
-| `tls.certSecret` | `""` | The TLS Secret. |
-| `operatorCA.configMap` | `""` | The ConfigMap with `operator-ca.pem`. |
+| `tls.certSecret` | `""` | The TLS Secret. Empty serves a self-signed certificate. |
+| `operatorCA.configMap` | `""` | The ConfigMap with `operator-ca.pem`. Empty registers the operator CA through first run. |
+| `firstRun` | `auto` | `auto` or `disabled`. Applies when `operatorCA.configMap` is empty; `disabled` keeps first run shut, so only an operator CA already registered in the database is trusted. |
 | `operatorCRL.urls` | `[]` | http or https URLs of the operator CA's CRLs. |
 | `operatorCRL.configMap` / `operatorCRL.files` | `""` / `[]` | A ConfigMap of CRL files (DER or PEM) and the keys in it to load. The chart mounts it read-only at `/etc/cryptos/fleet/operator-crl`, and the manager re-reads the files on every refresh. Set both or neither. |
 | `operatorRevocationPolicy` | `""` | `soft` (the default when empty) or `hard`: what the web API does when no fresh revocation data is available. |
@@ -96,7 +116,7 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `nodes[].insecureSkipNodeVerify` | unset | `true` turns off the check of the node's server certificate. Lab testing only; see [Skipping verification in a lab](./node-trust.md#skipping-verification-in-a-lab). |
 
 :::caution[The revocation values need an operator CA]
-`operatorCRL`, `operatorRevocationPolicy` and `operatorOCSP` apply to the operator CA in `operatorCA.configMap`. The chart refuses to render any of them with `authBypass: true`, and refuses a bad value (a policy other than `soft` or `hard`, an unknown OCSP mode, a CRL URL that isn't http or https) instead of letting the manager fail at start.
+`operatorCRL` and `operatorOCSP` apply to the operator CA in `operatorCA.configMap`, and the chart refuses to render them without it: a CA registered through first run keeps its CRL and OCSP settings on its own record. `operatorRevocationPolicy` applies to either source. The chart refuses to render any of them with `authBypass: true`, and refuses a bad value (a policy other than `soft` or `hard`, an unknown OCSP mode, a CRL URL that isn't http or https) instead of letting the manager fail at start.
 :::
 
 :::caution[More than one pod needs shared storage]
@@ -152,12 +172,10 @@ You can render the chart without a cluster and read what it would create. `git` 
    ```
 
    :::tip[Expected output]
-   The chart passes. Lint renders it with the default values, so it warns about the three values you supply at install, and notes that it has no icon.
+   The chart passes. Lint renders it with the default values, so it warns about the database Secret you supply at install, and notes that it has no icon.
 
    ```text
    level=WARN msg="missing required values" message="database.existingSecret is required when authBypass is false (without it the manager runs its in-memory demo store)"
-   level=WARN msg="missing required values" message="tls.certSecret is required when authBypass is false"
-   level=WARN msg="missing required values" message="operatorCA.configMap is required when authBypass is false"
    ==> Linting manager/chart/fleet-manager
    [INFO] Chart.yaml: icon is recommended
 
@@ -165,7 +183,7 @@ You can render the chart without a cluster and read what it would create. `git` 
    ```
    :::
 
-3. Render the Deployment with the three names filled in:
+3. Render the Deployment with the names filled in:
 
    ```bash
    helm template fm manager/chart/fleet-manager --set tls.certSecret=fm-tls --set operatorCA.configMap=fm-operator-ca --set database.existingSecret=fm-postgres --show-only templates/deployment.yaml
@@ -200,7 +218,7 @@ The [`helm`](https://github.com/CryptOS-PKI/helm) repo also carries a chart, `ch
 
 No image or chart is published, so the manager's own docs cover the two deployments that run without a registry:
 
-- **Docker Compose on one host**, with the manager and its own Postgres: [Single host with `docker compose`](https://github.com/CryptOS-PKI/manager#single-host-with-docker-compose).
+- **Docker Compose on one host**, with the manager and its own Postgres: [Single host with `docker compose`](https://github.com/CryptOS-PKI/manager#single-host-with-docker-compose) The compose file starts for day zero with only `config.yaml` and the Postgres password: its `tls`, `operator-ca` and `operator-crl` read-only mounts are commented out until you uncomment each one with its key in `config.yaml`.
 - **A plain Linux host with systemd** and a local Postgres: [Deploying the Fleet Manager standalone](https://github.com/CryptOS-PKI/manager/blob/main/docs/deploying-standalone.md).
 
 Every deployment needs an operator certificate before anyone can log in. The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/operator-pki.md) shows how to mint one.
