@@ -82,6 +82,8 @@ An admin records the certificate with `RecordOperatorCredential`: exactly one ce
 - **With the request's ID**, the request must still be `pending`, and the certificate's level, email and public key must match it. The credential is recorded as `requested`, and the request becomes `completed`.
 - **Without an ID**, the manager imports a certificate made entirely at the CA. It reads the level from the certificate and records it as `recorded`. A full name is optional.
 
+A full name, when you give one, follows the same rule as for a request. One that is longer than 128 characters or holds a control character is refused with 1610 `FULL_NAME`, and nothing is recorded.
+
 Either way, the certificate must pass the same checks as any operator certificate, must not be on the denylist or in the CA's CRL, and must not be recorded already. The manager records `operator-credential-recorded` in the audit log and returns any warnings, such as a validity over 400 days.
 
 :::caution[Only the active operator CA]
