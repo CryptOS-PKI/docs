@@ -46,7 +46,7 @@ You boot the node from the CryptOS ISO (see [Platform profiles and the image fac
 - listens for the management API on port 443, TLS 1.3, with a throwaway self-signed certificate for the name `localhost`;
 - asks for **no client certificate**;
 - opens no TPM, no encrypted disk, no database and no ceremony, because none of them exist yet;
-- shows **MAINTENANCE MODE** and **Awaiting configuration** on its console.
+- shows **MAINTENANCE MODE** and **Awaiting configuration** on its console, with its DHCP address under **Address** and the throwaway certificate's SHA-256 under **Mgmt SHA-256**, so you can check that the node you reach over the network is the one in front of you.
 
 In this mode the API answers only three questions: the node's status, the disks it could install to, and "here is a config, install it". Because the node has no identity yet and trusts no one, you connect with `--insecure`, which skips server verification and sends no client identity:
 

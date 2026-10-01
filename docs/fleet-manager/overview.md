@@ -79,7 +79,7 @@ Adoption takes a node that has just booted into [maintenance mode](../concepts/m
 1. **You give the node's address.** The manager connects without trusting anything yet, reads the certificate the node presents, and shows you its SHA-256 fingerprint and subject.
 
    :::caution[Check the fingerprint before you confirm it]
-   The manager trusts whatever certificate it sees on first contact, so confirming is the only check that you reached your node and not something in between. Compare the fingerprint with one you got from the node itself. The node's console shows a `Mgmt SHA-256` line, in capitals and in groups of four characters.
+   The manager trusts whatever certificate it sees on first contact, so confirming is the only check that you reached your node and not something in between. Compare the fingerprint with one you got from the node itself. The node's maintenance console shows a `Mgmt SHA-256` line, in capitals and in groups of four characters, under the node's `Address`.
    :::
 
 2. **You confirm the fingerprint.** From here on, the manager only talks to a node that presents that exact certificate.
