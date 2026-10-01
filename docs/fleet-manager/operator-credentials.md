@@ -19,8 +19,8 @@ Adding an operator takes four steps:
 You need an admin certificate from the operator CA, and the manager needs `database_url`: requests and recorded credentials live in Postgres. Without it every step fails with error 1603 (`DATABASE_REQUIRED`). With no operator CA configured at all, requesting, listing and recording fail with error 1400.
 :::
 
-:::info[Not in the web UI yet]
-The web UI's screens for requesting and recording credentials are not in this release. Until they are, call the `FleetService` RPCs named below with your admin certificate.
+:::tip[In the web UI]
+The web UI's **Operators** page does each step below: see [Adding operators in the web UI](./web-operator-credentials.md). This page names the `FleetService` RPCs behind it, for scripting.
 :::
 
 ## 1. Request a credential
