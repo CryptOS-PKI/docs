@@ -23,7 +23,7 @@ First run is open only when all of these hold:
 1. **A Fleet Manager** configured as above, reachable over HTTPS, and access to its log.
 2. **An external operator CA.** An OpenSSL CA on an offline machine is the simplest; [stage 1](./create-operator-ca.md) creates one. An enterprise or offline CA also works if it can issue the operator certificate profile. A CryptOS node can't be the operator CA.
 3. **The CA certificate file**, and a way to get a certificate signed by the CA.
-4. **`openssl`** and **`curl`** (Linux or macOS) or **PowerShell 7** (Windows) on the machine you work from. Every step here calls the manager's `BootstrapService` API, so it can be scripted.
+4. **`openssl`** and **`curl`** (Linux or macOS) or **PowerShell 7** (Windows) on the machine you work from. Every step here calls the manager's `BootstrapService` API, so it can be scripted. The [web UI's wizard](./web-wizard.md) makes the same calls and needs only a browser.
 
 :::caution[The token is in the log]
 Anyone who can read the manager's log until first run closes can start first run and register a CA they control. Keep log access, including any log shipping, as tight as access to the manager itself.
@@ -37,6 +37,8 @@ Work through the stages in order.
 2. [Start first run](./start-first-run.md): check the certificate, find the token, start a session.
 3. [Register the operator CA](./register-operator-ca.md)
 4. [Get the first admin certificate](./first-admin-certificate.md), and sign in, which closes first run.
+
+In a browser, the web UI's wizard does stages 2 to 4 for you, with the key made in the browser: see [First run in the web UI](./web-wizard.md).
 
 ## The API
 
