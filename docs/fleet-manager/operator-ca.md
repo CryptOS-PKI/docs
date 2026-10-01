@@ -18,6 +18,8 @@ The source depends only on what is configured:
 | Registered | No `operatorCAPath`, `database_url` set, `firstRun` not `disabled` | The operator CAs stored in Postgres | The denylist, plus each CA's own CRL source, plus OCSP as that CA's OCSP mode says |
 | None | No `operatorCAPath`, and no `database_url` or `firstRun: disabled` | Nothing | Nothing. Every API call is refused. |
 
+Registered operator CAs come from [first run](./first-run/index.md): the holder of the bootstrap token registers the CA's certificate.
+
 The config file wins: while `operatorCAPath` is set, any operator CA stored in the database is ignored, and the manager logs that at start.
 
 :::caution[The operator CA can't be a node's CA]
