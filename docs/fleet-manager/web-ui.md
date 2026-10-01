@@ -72,7 +72,7 @@ If the manager turns you away, the page says why and offers **Try again**:
 
 ## Finding your way around
 
-The header holds the CryptOS mark (back to the Dashboard), your certificate's name, **Copy diagnostics** and a light and dark theme switch. The bar under it has every section: Dashboard, Fleet, Root, Nodes, Adopt, Certificates, Enrollment, Profiles, Protocols, Operators, Agent keys, Approvals and Audit.
+The header holds the CryptOS mark (back to the Dashboard), your certificate's name, **Copy diagnostics** and a light and dark theme switch. The bar under it has every section: Dashboard, Fleet, Root, Nodes, Adopt, Certificates, Enrollment, Profiles, Protocols, Operator CAs, Operators, Agent keys, Approvals and Audit. **Operator CAs** is its own task: see [Managing operator CAs in the web UI](./web-operator-cas.md).
 
 Lists refresh every 10 seconds. Every table has filters and a search box.
 
