@@ -160,7 +160,7 @@ Invoke-RestMethod -Method Post -Uri "$fm/cryptos.fleet.v1.FleetService/WhoAmI" -
 </Tabs>
 
 :::warning[First run closes for good]
-Closing ends every bootstrap session and deletes every token. The manager logs `first run CLOSED by <cn> (<serial>)` and records `bootstrap-closed`, and never prints a token again. There is no way to reopen first run from the web UI or the API. Make sure the certificate you sign in with is the one you mean to keep.
+Closing ends every bootstrap session and deletes every token. The manager logs `first run CLOSED by <cn> (<serial>)` and records `bootstrap-closed`, and never prints a token again. There is no way to reopen first run from the web UI or the API; only the offline [break-glass reset](./break-glass.md) does. Make sure the certificate you sign in with is the one you mean to keep.
 :::
 
 If you skipped the submit step, signing in records the certificate as the first admin anyway. A viewer or operator certificate doesn't close first run; neither does a revoked admin certificate.

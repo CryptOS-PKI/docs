@@ -109,6 +109,7 @@ const sidebars: SidebarsConfig = {
             'fleet-manager/first-run/start-first-run',
             'fleet-manager/first-run/register-operator-ca',
             'fleet-manager/first-run/first-admin-certificate',
+            'fleet-manager/first-run/break-glass',
           ],
         },
         'fleet-manager/operator-ca',
