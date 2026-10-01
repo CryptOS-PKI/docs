@@ -86,8 +86,14 @@ Adoption takes a node that has just booted into [maintenance mode](../concepts/m
 3. **You pick the install disk** from the list the node reports, and fill in the node's config.
 4. **The manager makes an admin credential for the node** and writes its certificate into the config, so the installed node trusts only that credential. It keeps the key in `MANAGER_NODE_CREDS_DIR`.
 5. **The node installs and reboots.** The manager applies the config, then waits up to 180 seconds for the node to come back on its installed system.
-6. **A Root runs its first-boot ceremony.** The manager starts it and shows each step. An Intermediate or Issuing node skips this: it waits for a certificate from its parent, which you give it with a subordinate enrollment (below).
-7. **The node is registered** in the inventory, and the audit log gets a `node-adopted` entry.
+6. **You confirm the installed node's fingerprint.** The installed node presents a new management certificate, and nothing links it to the maintenance certificate you confirmed in step 2. The adoption pauses and shows that certificate's SHA-256. Compare it with the `Mgmt SHA-256` line on the node's console and confirm it. Only then does the manager pin the certificate and connect to the node.
+
+   :::caution[Confirm only a fingerprint that matches the console]
+   If the fingerprint differs from the console, something other than your node answered on its address. Choose **Does not match: cancel adoption** and find out what answered before you adopt again. Nothing is pinned or recorded for the node.
+   :::
+
+7. **A Root runs its first-boot ceremony.** The manager starts it and shows each step. An Intermediate or Issuing node skips this: it waits for a certificate from its parent, which you give it with a subordinate enrollment (below).
+8. **The node is registered** in the inventory, and the audit log gets a `node-adopted` entry.
 
 The web UI shows the progress as phases:
 
@@ -96,6 +102,7 @@ The web UI shows the progress as phases:
 | `applying-config` | Connecting to the node and checking whether it is already installed. |
 | `installing` | The config is applied and the node is installing to disk. |
 | `awaiting-reboot` | Waiting for the node to come back on its installed system. |
+| `awaiting-fingerprint-confirmation` | The node is back. The adoption waits up to 15 minutes for you to confirm the fingerprint it presents. |
 | `ceremony` | A Root is running its first-boot ceremony. |
 | `established` | Done. The Root is adopted and working. |
 | `awaiting-certificate` | Done. The subordinate node is adopted and waits for its parent to sign it. |
@@ -109,10 +116,11 @@ The node installs itself to the disk you pick, and that disk is overwritten. Che
 
 ### Re-adopting a node
 
-An adoption can stop partway: the network drops, or the node takes longer than 180 seconds to come back. Run the adoption again with the same node name. It is safe to retry.
+An adoption can stop partway: the network drops, the node takes longer than 180 seconds to come back, or nobody confirms its fingerprint within 15 minutes. Run the adoption again with the same node name. It is safe to retry.
 
 - The manager reuses the admin credential it stored for that node name on the earlier attempt. It only makes a new one when none is stored.
 - It asks the node for its status first. If the node already booted its installed system, the manager skips the install and goes straight to waiting for the node.
+- You confirm the fingerprint the node presents again. A Root that already finished its ceremony presents a certificate signed by its CA by then; compare it with the console the same way.
 - A Root that already finished its ceremony skips it. Otherwise the ceremony runs.
 - The node is registered as before, and the `node-adopted` audit entry says `(resumed an earlier partial adoption)`.
 
