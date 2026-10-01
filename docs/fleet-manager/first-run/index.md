@@ -75,4 +75,4 @@ Every client then reaches the manager from the proxy's address, so the per-addre
 
 ## After first run
 
-Once closed, first run stays closed. The API refuses every session procedure with 1601, and the manager never prints a token again. Revoking or retiring every admin certificate doesn't reopen it. From then on an admin adds operators with credential requests, as in [Operator credentials after day zero](../operator-credentials.md), and the operator CA is managed as described in [The operator CA and revocation](../operator-ca.md).
+Once closed, first run stays closed. The API refuses every session procedure with 1601, and the manager never prints a token again. Revoking or retiring every admin certificate doesn't reopen it; only the offline [break-glass reset](./break-glass.md) does. From then on an admin adds operators with credential requests, as in [Operator credentials after day zero](../operator-credentials.md), and the operator CA is managed as described in [The operator CA and revocation](../operator-ca.md).
