@@ -227,7 +227,18 @@ With it set, the manager logs a warning for the node at startup and on every con
 
 ## Linking a running node
 
-A [`LINK` enrollment](./overview.md#linking-a-node-that-is-already-running) checks the node another way: at request and at approval, the node proves it holds its CA identity key, and the approval is refused if that key changed in between. This check doesn't use `server.crt`.
+A [`LINK` enrollment](./overview.md#linking-a-node-that-is-already-running) verifies the node's management certificate before it sends anything, at request and again at approval, with the same check as every other connection. The request's `ca_pem` is what the node is checked against. It can be either:
+
+- the CA certificate that signed the node's management certificate, such as the node's root CA certificate from `cryptosctl identity show -o pem`. The certificate the node presents must chain to it and name the address you gave;
+- the node's exact management certificate, for a node still on a self-signed one. It is accepted as an exact copy, like a pin.
+
+:::caution[The node is refused before anything is sent]
+A request with no `ca_pem` is refused with error 1107. A node whose certificate doesn't verify against `ca_pem` is refused with error 1106, before the admin credential or any request reaches it. The manager log names the certificate the node presented by its SHA-256. Compare it with the `Mgmt SHA-256` line on the node's console before you try again.
+:::
+
+The node then proves it holds its CA identity key, and the approval is refused if that key changed in between.
+
+On approval the node joins the inventory. Its name comes from its CA's common name, in lowercase with other characters turned into hyphens (`Example Root CA G1` becomes `example-root-ca-g1`); rename it afterwards if you want another. The manager saves the admin certificate and key in the node's credentials folder, and `ca_pem` next to them as `ca.crt`, the recorded CA chain, or as `server.crt` when it is the node's own certificate. Every later connection verifies the node with them. A node already in the inventory at the same address keeps its entry. The approval is refused with error 1102 when another node already has the name.
 
 ## Where to go next
 

@@ -174,7 +174,7 @@ Every certificate across the fleet, with its issuer, kind, profile, expiry and s
 Join requests and their status (`PENDING`, `APPROVED` or `REJECTED`). **New enrollment** (`operator`) opens either kind:
 
 - **Subordinate (CSR):** the child node, the parent CA's common name and the profile.
-- **Link (agentless):** the node's endpoint and an admin certificate, key and CA chain it trusts.
+- **Link (agentless):** the node's endpoint, an admin certificate and key the node trusts, and the CA certificate that signed the node's management certificate. The manager refuses a node whose certificate doesn't verify against it.
 
 On a request's page, **Approve** runs it. A subordinate needs `operator`; a link needs `admin` and asks for the connection details again. **Reject** needs a reason.
 
