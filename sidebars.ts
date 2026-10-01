@@ -108,6 +108,7 @@ const sidebars: SidebarsConfig = {
         'fleet-manager/web-operator-credentials',
         'fleet-manager/make-a-credential-request',
         'fleet-manager/approvals',
+        'fleet-manager/web-operator-cas',
       ],
     },
     {
