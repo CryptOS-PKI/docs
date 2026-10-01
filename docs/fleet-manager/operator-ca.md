@@ -6,7 +6,7 @@ title: "🪪 The operator CA and revocation"
 
 Operators log in to the Fleet Manager with a client certificate. The CA that signs those certificates, the **operator CA**, is always **external**: an offline OpenSSL CA, or an enterprise or offline CA that can issue the operator profile. It is **never a CryptOS node**. The manager learns only the CA's certificate, the trust anchor. It never holds the CA's key and never signs an operator credential.
 
-This page covers where the manager gets the anchor, how revocation works, and the config keys. Moving a manager off `operator_ca_node` is on its own page: [Migrating from operator_ca_node](./migrating-from-operator-ca-node.md). So is adding operators once the manager is running: [Operator credentials after day zero](./operator-credentials.md).
+This page covers where the manager gets the anchor, how revocation works, and the config keys. Moving a manager off `operator_ca_node` is on its own page: [Migrating from operator_ca_node](./migrating-from-operator-ca-node.md). So is adding operators once the manager is running: [Operator credentials after day zero](./operator-credentials.md). Replacing a registered CA with a new one is in [Rotating the operator CA](./rotating-the-operator-ca.md).
 
 ## Where the anchor comes from
 
