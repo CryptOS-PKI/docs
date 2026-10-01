@@ -150,7 +150,7 @@ To confirm, type the node's Root CA common name exactly and tick `I understand t
 
 The Adopt page (`admin` only) turns a node in maintenance mode into a working CA. The [overview](./overview.md#adopting-a-new-node) explains what happens; this is what you fill in.
 
-1. **Step 1 — maintenance endpoint.** Enter the node's `host:port` and select **Preview**. Check the `subject` and `sha256` against the node, then select **Confirm fingerprint**.
+1. **Step 1 — maintenance endpoint.** Enter the node's `host:port` and select **Preview**. Check the `sha256` against the `Mgmt SHA-256` line on the node's maintenance console (the `subject` is `localhost`), then select **Confirm fingerprint**.
 2. **Step 2 — initial config.** Enter the node name and choose the role (root, intermediate or issuing). A subordinate needs a parent: pick an established CA under **Parent CA (signs this node)**. Then fill in the CA's common name, the network (interface, address, gateway, DNS), the **Install disk** from the list the node reports, and the key protection tier.
 3. Select **Adopt node** and watch the phases.
 4. **Confirm the installed node.** After the node reboots, the wizard stops on `awaiting-fingerprint-confirmation` and shows the `sha256` the installed node presents, in pairs. Compare it with the `Mgmt SHA-256` line on the node's console, then select **Fingerprint matches the console**. If it doesn't match, select **Does not match: cancel adoption**.
