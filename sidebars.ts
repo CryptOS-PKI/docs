@@ -105,6 +105,8 @@ const sidebars: SidebarsConfig = {
         'fleet-manager/migrating-from-operator-ca-node',
         'fleet-manager/helm',
         'fleet-manager/web-ui',
+        'fleet-manager/web-operator-credentials',
+        'fleet-manager/make-a-credential-request',
         'fleet-manager/approvals',
       ],
     },

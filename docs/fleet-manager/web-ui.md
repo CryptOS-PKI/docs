@@ -15,7 +15,7 @@ This page walks through the Fleet Manager's web UI: how you log in, what each pa
 
 ## Logging in
 
-You log in with an operator certificate, not a password. Your fleet admin gives it to you as a `.p12` file with a passphrase.
+You log in with an operator certificate, not a password. Your fleet admin gives it to you as a `.p12` file with a passphrase. If you don't have one yet, [make a credential request](./make-a-credential-request.md).
 
 1. Install the `.p12` file in your browser's certificate store. The page shows the same commands when it can't find a certificate.
 
@@ -192,17 +192,19 @@ This page records intent only. ACME (RFC 8555) and EST (RFC 7030) are served by 
 
 ## Operators
 
-The operator certificates the manager knows about, with level, serial, expiry and status. It needs an operator CA (see [The operator CA and revocation](./operator-ca.md)). Without one the page says no operator CA is configured.
+The operator certificates the manager knows about: recorded ones and ones it has only seen logging in, with their holder, level, kind, operator CA, serial, expiry, whether they are denylisted or CRL-revoked, and when they were last seen. A **Pending requests** tab lists the credential requests waiting for a signed certificate. The page needs an operator CA (see [The operator CA and revocation](./operator-ca.md)). Without one it says no operator CA is configured.
 
-**Revoke…** (`admin`) puts a certificate on the manager's denylist: the manager refuses it from its next request. It needs `database_url`.
+`admin` gets **Request credential…**, **Record certificate…**, **Complete…** and **Cancel** on a request, and **Deny…** on a credential. Each is a step in [Adding operators in the web UI](./web-operator-credentials.md). **Deny…** puts a certificate on the manager's denylist: the manager refuses it from its next request. It needs `database_url`.
 
-:::warning[Revoking here doesn't revoke at your CA]
+:::warning[Denying here doesn't revoke at your CA]
 The denylist stops the certificate at the Fleet Manager only. Revoke it at your operator CA as well and publish a new CRL.
 :::
 
 The manager doesn't issue operator certificates: your operator CA signs them. To add an operator, see [Operator credentials after day zero](./operator-credentials.md). Certificates the manager recorded before operator CAs became external are listed as `legacy_node` and can't log in.
 
 {/* screenshot: fleet-manager/operators-not-configured.png: the Operators page with no operator CA configured */}
+
+Someone with no operator certificate yet can make their own key and CSR from the start page: **No operator certificate yet? Make a credential request** opens [Make a credential request](./make-a-credential-request.md), which runs entirely in the browser.
 
 ## Agent keys and MCP sign-in
 
@@ -238,3 +240,4 @@ Some screens still read the web app's built-in demo data instead of the manager:
 - [Fleet Manager overview](./overview.md): what the manager holds and how nodes join.
 - [Deploy with Helm](./helm.md): where each install path stands.
 - [Approving agent requests](./approvals.md): deciding an agent's step-up request.
+- [Adding operators in the web UI](./web-operator-credentials.md): requesting, completing and denying operator certificates.
