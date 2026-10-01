@@ -60,6 +60,8 @@ When the manager adopts a node, it writes that node's admin key to the claim, an
 Before upgrading to this version, make sure every node is either pinned (`server.crt`, or the fingerprint recorded at adoption) or has a recorded CA chain. Unpinned nodes are refused after the upgrade. [Before you upgrade](./node-trust.md#before-you-upgrade) lists the nodes that would be refused and how to pin each one.
 :::
 
+A `helm upgrade` that only changes values in the config still restarts the manager: the pod carries a checksum of its ConfigMap, so the new config is read straight away.
+
 After an install or upgrade, the chart's notes print the command that lists how each node is verified, and a warning for every node with `insecureSkipNodeVerify`.
 
 ## The values that matter
@@ -77,6 +79,10 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `authBypass` | `false` | Development only. Turns off client-certificate login and TLS. |
 | `tls.certSecret` | `""` | The TLS Secret. |
 | `operatorCA.configMap` | `""` | The ConfigMap with `operator-ca.pem`. |
+| `operatorCRL.urls` | `[]` | http or https URLs of the operator CA's CRLs. |
+| `operatorCRL.configMap` / `operatorCRL.files` | `""` / `[]` | A ConfigMap of CRL files (DER or PEM) and the keys in it to load. The chart mounts it read-only at `/etc/cryptos/fleet/operator-crl`, and the manager re-reads the files on every refresh. Set both or neither. |
+| `operatorRevocationPolicy` | `""` | `soft` (the default when empty) or `hard`: what the web API does when no fresh revocation data is available. |
+| `operatorOCSP.mode` / `operatorOCSP.url` | `""` / `""` | `off`, `aia` (the default when empty) or `url`, with `url` required for mode `url` and refused otherwise. |
 | `operatorCANode` | `""` | Removed. A CryptOS node can't be the operator CA; setting it fails the render. See [Migrating from operator_ca_node](./migrating-from-operator-ca-node.md). |
 | `mcp.enabled` / `mcp.publicURL` | `false` / `""` | The MCP endpoint for AI agents. See the manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md#with-the-helm-chart). |
 | `database.existingSecret` | `""` | The Secret with the Postgres connection string. |
@@ -88,6 +94,10 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `nodes` | `[]` | Nodes to load into an empty database on first start. |
 | `nodes[].adminCredsSecret` | unset | A Secret with the node's admin credentials. See [Node admin credentials from a Secret](#node-admin-credentials-from-a-secret). |
 | `nodes[].insecureSkipNodeVerify` | unset | `true` turns off the check of the node's server certificate. Lab testing only; see [Skipping verification in a lab](./node-trust.md#skipping-verification-in-a-lab). |
+
+:::caution[The revocation values need an operator CA]
+`operatorCRL`, `operatorRevocationPolicy` and `operatorOCSP` apply to the operator CA in `operatorCA.configMap`. The chart refuses to render any of them with `authBypass: true`, and refuses a bad value (a policy other than `soft` or `hard`, an unknown OCSP mode, a CRL URL that isn't http or https) instead of letting the manager fail at start.
+:::
 
 :::caution[More than one pod needs shared storage]
 Every pod must hold the admin key of every adopted node, so a `ReadWriteOnce` claim supports one pod only. The chart refuses to render with `replicaCount` above `1` unless `nodeCreds.accessModes` includes `ReadWriteMany`. With a `ReadWriteOnce` claim the Deployment uses the `Recreate` strategy, so an upgrade stops the old pod before it starts the new one and the UI is briefly unavailable.
