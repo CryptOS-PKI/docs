@@ -14,7 +14,7 @@ You need a machine to run the new operator CA on, ideally offline, with OpenSSL.
 
 ## Steps
 
-1. **Create the operator CA.** Make an OpenSSL CA with the operator certificate profile, as in the manager's [standalone deployment guide, section 3](https://github.com/CryptOS-PKI/manager/blob/main/docs/deploying-standalone.md#3-the-operator-ca-is-an-external-ca). Give it `keyCertSign` and `cRLSign`, so the manager can check its CRL.
+1. **Create the operator CA.** Make an OpenSSL CA with the operator certificate profile, as in the manager's [standalone deployment guide, section 3](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/deploying-standalone.md#3-the-operator-ca-is-an-external-ca). Give it `keyCertSign` and `cRLSign`, so the manager can check its CRL.
 
    :::danger[Keep the CA key offline]
    Whoever holds the operator CA key can sign themselves an admin certificate for the Fleet Manager. Keep it on an offline or tightly controlled machine, never on the manager host.

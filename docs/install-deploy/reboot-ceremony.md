@@ -59,7 +59,7 @@ The fingerprint is on all three screens, so you check the pin the same way on a 
 ### Fetch the certificate
 
 :::danger[Verify the fingerprint before the first ceremony]
-The ceremony runs over this pin, and the Root certificate it returns is the one you publish. If you skip the check, whatever answered the fetch could hand you a Root that isn't your node's. Always pass the console's value to `--expect-sha256`, and never run `ceremony start` over a pin you haven't checked. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) in the `cryptos` repository goes through what the pin does and does not prove.
+The ceremony runs over this pin, and the Root certificate it returns is the one you publish. If you skip the check, whatever answered the fetch could hand you a Root that isn't your node's. Always pass the console's value to `--expect-sha256`, and never run `ceremony start` over a pin you haven't checked. The [management trust guide](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/management-trust.md) in the `cryptos-node` repository goes through what the pin does and does not prove.
 :::
 
 ```bash

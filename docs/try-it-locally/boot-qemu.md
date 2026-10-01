@@ -15,10 +15,10 @@ A real node gets its machine config from the installer: you boot the ISO, send t
 :::info[Before you start]
 You need:
 
-- the debug UKI from [Build the image](./build-image.md), at `build/out/cryptos-amd64.uki.unsigned` in your `cryptos` checkout;
+- the debug UKI from [Build the image](./build-image.md), at `build/out/cryptos-amd64.uki.unsigned` in your `cryptos-node` checkout;
 - QEMU, swtpm, OVMF, `sgdisk` and mtools from [What you need](./requirements.md).
 
-Run the commands from the root of the `cryptos` checkout.
+Run the commands from the root of the `cryptos-node` checkout.
 :::
 
 :::info[Why not `task qemu:run`]

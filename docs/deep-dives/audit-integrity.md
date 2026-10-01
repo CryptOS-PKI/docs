@@ -25,7 +25,7 @@ Both management listeners, the mTLS API on port 443 and the local socket `/run/c
 | `seq` | The next sequence number, starting at 1. |
 | `ts` | The node's clock when the entry was written. |
 | `actor_subject` | The subject DN of the verified client certificate. Empty for calls on the local socket. |
-| `rpc_method` | The full gRPC method name, for example `/cryptos.v1.NodeService/IssueLeaf`. |
+| `rpc_method` | The full gRPC method name, for example `/cryptos.node.v1.NodeService/IssueLeaf`. |
 | `request_digest_sha256` | SHA-256 of the request message in deterministic protobuf encoding. Empty for streaming calls. |
 | `outcome` | `OUTCOME_OK`, `OUTCOME_DENIED` (the call returned `PermissionDenied`) or `OUTCOME_ERROR` (any other error). |
 | `prev_entry_sha256` | The hash that chains this entry to the one before it (below). |
@@ -106,7 +106,7 @@ The `AuditEvent` comment in `audit.proto` describes the files as newline-delimit
 
 ## Where this lives in the code
 
-All paths are in [CryptOS-PKI/cryptos](https://github.com/CryptOS-PKI/cryptos) on `main`, except the proto, which is in [CryptOS-PKI/api](https://github.com/CryptOS-PKI/api).
+All paths are in [CryptOS-PKI/cryptos-node](https://github.com/CryptOS-PKI/cryptos-node) on `main`, the proto included.
 
 | Piece | Code |
 |---|---|
@@ -115,4 +115,4 @@ All paths are in [CryptOS-PKI/cryptos](https://github.com/CryptOS-PKI/cryptos) o
 | Maintenance mode drops events | `internal/init/maintenance.go` (`nopAuditor`) |
 | Opening the log at boot | `internal/init/run.go` step 9, `internal/init/boot.go` (`DerivePaths`) |
 | Master seed | `internal/init/seed.go` (`LoadOrCreateSeed`) |
-| Entry schema | `proto/cryptos/v1/audit.proto` in `api` |
+| Entry schema | `proto/cryptos/node/v1/audit.proto` |

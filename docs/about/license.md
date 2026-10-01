@@ -10,13 +10,13 @@ CryptOS is open source under the **Apache License, Version 2.0**. You can use it
 
 | Repo | License | Files |
 |---|---|---|
-| [cryptos](https://github.com/CryptOS-PKI/cryptos) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/cryptos/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/cryptos/blob/main/NOTICE) |
-| [api](https://github.com/CryptOS-PKI/api) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/api/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/api/blob/main/NOTICE) |
-| [manager](https://github.com/CryptOS-PKI/manager) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/manager/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/manager/blob/main/NOTICE) |
-| [web](https://github.com/CryptOS-PKI/web) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/web/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/web/blob/main/NOTICE) |
-| [helm](https://github.com/CryptOS-PKI/helm) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/helm/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/helm/blob/main/NOTICE) |
-| [docs](https://github.com/CryptOS-PKI/docs) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/docs/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/docs/blob/main/NOTICE) |
-| [lab](https://github.com/CryptOS-PKI/lab) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/lab/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/lab/blob/main/NOTICE) |
+| [cryptos-node](https://github.com/CryptOS-PKI/cryptos-node) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/cryptos-node/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/cryptos-node/blob/main/NOTICE) |
+| [api](https://github.com/CryptOS-PKI/api) (archived) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/api/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/api/blob/main/NOTICE) |
+| [cryptos-manager](https://github.com/CryptOS-PKI/cryptos-manager) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/NOTICE) |
+| [cryptos-web](https://github.com/CryptOS-PKI/cryptos-web) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/cryptos-web/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/cryptos-web/blob/main/NOTICE) |
+| [cryptos-release](https://github.com/CryptOS-PKI/cryptos-release) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/cryptos-release/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/cryptos-release/blob/main/NOTICE) |
+| [website](https://github.com/CryptOS-PKI/website) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/website/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/website/blob/main/NOTICE) |
+| [cryptos-lab](https://github.com/CryptOS-PKI/cryptos-lab) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/cryptos-lab/blob/main/LICENSE), [`NOTICE`](https://github.com/CryptOS-PKI/cryptos-lab/blob/main/NOTICE) |
 | [.github](https://github.com/CryptOS-PKI/.github) | Apache License 2.0 | [`LICENSE`](https://github.com/CryptOS-PKI/.github/blob/main/LICENSE) |
 
 Every repo's `LICENSE` file is the Apache License 2.0 text exactly as published at [apache.org/licenses/LICENSE-2.0.txt](https://www.apache.org/licenses/LICENSE-2.0.txt), with nothing reworded or filled in, so GitHub and other license scanners detect it as `Apache-2.0`. The copyright line lives in `NOTICE`, not in `LICENSE`.

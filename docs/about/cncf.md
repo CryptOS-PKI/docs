@@ -15,7 +15,7 @@ What works with the alpha today:
 - **Workload certificates by CSR.** Make the key and CSR, issue with `cryptosctl ca issue-leaf` or the Fleet Manager, and load the result into a Kubernetes TLS Secret yourself. Renewal is manual. See [Internal TLS and mTLS](../use-cases/internal-tls.md).
 - **cert-manager over ACME.** An intermediate or issuing node serves ACME (RFC 8555) with the `http-01` challenge once you add the `pki.acme` block to its machine config and reboot it. There is no `dns-01` and no wildcard names, and cert-manager's default RSA 2048 key is refused. See [Kubernetes workloads](../use-cases/kubernetes.md) for what to set.
 - **A CA for the cluster.** `cryptosctl ca sign-subordinate` can sign a CA certificate for cert-manager's own CA issuer, so its certificates chain to your CryptOS root. The signing step is the one proven with vCenter's VMCA; it has not been tested with cert-manager.
-- **The Fleet Manager in a cluster.** The Fleet Manager runs in Kubernetes from the chart in the `manager` repo. No chart or container image is published, so you render the chart and build the image yourself. See [Deploy with Helm](../fleet-manager/helm.md).
+- **The Fleet Manager in a cluster.** The Fleet Manager runs in Kubernetes from the chart in the `cryptos-manager` repo. No chart or container image is published, so you render the chart and build the image yourself. See [Deploy with Helm](../fleet-manager/helm.md).
 
 CryptOS does not act as the external CA for the cluster's own PKI: the API server, etcd, kubelet and front-proxy certificates that Kubernetes creates for itself.
 
@@ -40,7 +40,7 @@ A CryptOS image built from `cryptos` includes third-party components built from 
 
 ## Get involved
 
-The code and the source of this site are public on GitHub in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization. See [The four repos](./repos.md) for what each repo holds.
+The code and the source of this site are public on GitHub in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization. See [The repos](./repos.md) for what each repo holds.
 
 :::note[Issues and pull requests are limited to collaborators today]
 Today, opening issues and pull requests and commenting on every CryptOS-PKI repo are limited to the project's collaborators. They will open to the public.

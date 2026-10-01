@@ -89,7 +89,7 @@ The node loads the new key (`LoadKey`) and calls `ca.SelfSignRoot`:
 
 There is no event for these two steps, but they are what makes the ceremony durable.
 
-**The manifest.** The node builds a `CeremonyManifest` (defined in the `api` repo's `ceremony.proto`):
+**The manifest.** The node builds a `CeremonyManifest` (defined in the node API's `ceremony.proto`, in the `cryptos-node` repo):
 
 | Field | Value in the alpha |
 |---|---|
@@ -150,7 +150,7 @@ Every `StartCeremony` call is recorded in the audit log as one entry when the st
 
 ## Where this lives in the code
 
-All paths are in [CryptOS-PKI/cryptos](https://github.com/CryptOS-PKI/cryptos) on `main`, except the proto, which is in [CryptOS-PKI/api](https://github.com/CryptOS-PKI/api).
+All paths are in [CryptOS-PKI/cryptos-node](https://github.com/CryptOS-PKI/cryptos-node) on `main`, the proto included.
 
 | Piece | Code |
 |---|---|
@@ -160,4 +160,4 @@ All paths are in [CryptOS-PKI/cryptos](https://github.com/CryptOS-PKI/cryptos) o
 | etcd keys | `internal/storage/etcd/etcd.go` |
 | Master seed | `internal/init/seed.go` (`LoadOrCreateSeed`) |
 | Client output | `cmd/cryptosctl/ceremony.go` (`formatEvent`) |
-| Messages | `proto/cryptos/v1/ceremony.proto` in `api` |
+| Messages | `proto/cryptos/node/v1/ceremony.proto` |

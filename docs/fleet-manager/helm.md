@@ -7,12 +7,12 @@ import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
 # ☸️ Deploy with Helm
 
 :::info[No published chart or image]
-No chart or container image is published. Render the chart from the [`manager`](https://github.com/CryptOS-PKI/manager) repo and install it with an image you built yourself, or use one of the paths in [What to use today](#what-to-use-today).
+No chart or container image is published. Render the chart from the [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) repo and install it with an image you built yourself, or use one of the paths in [What to use today](#what-to-use-today).
 :::
 
 <Pre10Notice />
 
-The supported chart is `chart/fleet-manager` in the [`manager`](https://github.com/CryptOS-PKI/manager) repo. It ships from the same repo and the same release as the manager, so the chart and the config file it renders always match the manager they run. If you are new to the Fleet Manager, read the [Fleet Manager overview](./overview.md) first.
+The supported chart is `chart/fleet-manager` in the [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) repo. It ships from the same repo and the same release as the manager, so the chart and the config file it renders always match the manager they run. If you are new to the Fleet Manager, read the [Fleet Manager overview](./overview.md) first.
 
 ## What the chart deploys
 
@@ -27,7 +27,7 @@ The chart renders four objects:
 | Object | What it is for |
 |---|---|
 | ConfigMap `fleet-manager-config` | The manager's `config.yaml`, mounted at `/etc/cryptos/fleet/config.yaml`. It holds no secrets. |
-| Deployment `fleet-manager` | One container named `manager`, running `ghcr.io/cryptos-pki/manager`. |
+| Deployment `fleet-manager` | One container named `manager`, running `ghcr.io/cryptos-pki/cryptos-manager`. |
 | Service `fleet-manager` | Port `443` forwarded to `8443` in the container, and port `80` to `8080` for the redirect to HTTPS. |
 | PersistentVolumeClaim `fleet-manager-node-creds` | The node credentials folder. Not created when you name your own claim in `nodeCreds.existingClaim`. |
 
@@ -43,10 +43,10 @@ The probes:
 The chart creates no secrets. Before an install you need these in the release namespace:
 
 - **A TLS Secret** with `tls.crt` and `tls.key`, the manager's server certificate. Name it in `tls.certSecret`.
-- **A ConfigMap with `operator-ca.pem`**, the CA that operator certificates chain to. Name it in `operatorCA.configMap`. The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/operator-pki.md) shows how to make one.
+- **A ConfigMap with `operator-ca.pem`**, the CA that operator certificates chain to. Name it in `operatorCA.configMap`. The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/operator-pki.md) shows how to make one.
 - **A Postgres database** the cluster can reach, and a Secret holding its connection string, such as `postgres://manager:<password>@db:5432/manager`, under the key `database-url` (or the key you set in `database.secretKey`). Name it in `database.existingSecret`. The chart passes it to the manager as the `MANAGER_DATABASE_URL` environment variable, so the password never appears in the ConfigMap.
 - **Storage for the node credentials.** The default claim asks the cluster's default storage class for `1Gi`, `ReadWriteOnce`.
-- **The manager image.** Until a release publishes it, build it and push it to a registry your cluster can pull from, then set `image.repository` and `image.tag`. The manager README covers [building the image yourself](https://github.com/CryptOS-PKI/manager#building-the-image-yourself).
+- **The manager image.** Until a release publishes it, build it and push it to a registry your cluster can pull from, then set `image.repository` and `image.tag`. The manager README covers [building the image yourself](https://github.com/CryptOS-PKI/cryptos-manager#building-the-image-yourself).
 
 With `authBypass: false`, the default, the chart refuses to render without `tls.certSecret`, `operatorCA.configMap` and `database.existingSecret`.
 
@@ -64,12 +64,12 @@ After an install or upgrade, the chart's notes print the command that lists how 
 
 ## The values that matter
 
-The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/CryptOS-PKI/manager/blob/main/chart/fleet-manager/values.yaml).
+The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/chart/fleet-manager/values.yaml).
 
 | Key | Default | What it does |
 |---|---|---|
 | `replicaCount` | `1` | Number of manager pods. See the caution below before raising it. |
-| `image.repository` | `ghcr.io/cryptos-pki/manager` | The manager image. |
+| `image.repository` | `ghcr.io/cryptos-pki/cryptos-manager` | The manager image. |
 | `image.tag` | `""` | Empty means the chart's app version. |
 | `service.port` / `service.targetPort` | `443` / `8443` | The Service port and the container's HTTPS listener. |
 | `service.httpPort` / `service.httpTargetPort` | `80` / `8080` | The redirect-to-HTTPS port and its listener. |
@@ -78,7 +78,7 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | `tls.certSecret` | `""` | The TLS Secret. |
 | `operatorCA.configMap` | `""` | The ConfigMap with `operator-ca.pem`. |
 | `operatorCANode` | `""` | Removed. A CryptOS node can't be the operator CA; setting it fails the render. See [Migrating from operator_ca_node](./migrating-from-operator-ca-node.md). |
-| `mcp.enabled` / `mcp.publicURL` | `false` / `""` | The MCP endpoint for AI agents. See the manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md#with-the-helm-chart). |
+| `mcp.enabled` / `mcp.publicURL` | `false` / `""` | The MCP endpoint for AI agents. See the manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md#with-the-helm-chart). |
 | `database.existingSecret` | `""` | The Secret with the Postgres connection string. |
 | `database.secretKey` | `database-url` | The key inside that Secret. |
 | `nodeCreds.existingClaim` | `""` | Use this claim instead of creating one. |
@@ -129,10 +129,10 @@ This is for nodes you list yourself. Nodes the manager adopts keep the admin key
 
 You can render the chart without a cluster and read what it would create. `git` and `helm` work the same on Linux, macOS and Windows, so these commands are the same everywhere.
 
-1. Clone the manager repo:
+1. Clone the cryptos-manager repo:
 
    ```bash
-   git clone https://github.com/CryptOS-PKI/manager.git
+   git clone https://github.com/CryptOS-PKI/cryptos-manager.git manager
    ```
 
 2. Lint the chart:
@@ -182,18 +182,18 @@ You can render the chart without a cluster and read what it would create. `git` 
    ```
    :::
 
-## The `helm` repo's chart is not supported
+## The `cryptos-release` repo's chart is not supported
 
-The [`helm`](https://github.com/CryptOS-PKI/helm) repo also carries a chart, `charts/manager`. It is not a supported install. It sets environment variables the manager doesn't read and never gives it the `config.yaml` it needs, so its pod exits at startup. Use `chart/fleet-manager` from the `manager` repo instead.
+The [`cryptos-release`](https://github.com/CryptOS-PKI/cryptos-release) repo also carries a chart, `charts/manager`. It is not a supported install. It sets environment variables the manager doesn't read and never gives it the `config.yaml` it needs, so its pod exits at startup. Use `chart/fleet-manager` from the `cryptos-manager` repo instead.
 
 ## What to use today
 
 No image or chart is published, so the manager's own docs cover the two deployments that run without a registry:
 
-- **Docker Compose on one host**, with the manager and its own Postgres: [Single host with `docker compose`](https://github.com/CryptOS-PKI/manager#single-host-with-docker-compose).
-- **A plain Linux host with systemd** and a local Postgres: [Deploying the Fleet Manager standalone](https://github.com/CryptOS-PKI/manager/blob/main/docs/deploying-standalone.md).
+- **Docker Compose on one host**, with the manager and its own Postgres: [Single host with `docker compose`](https://github.com/CryptOS-PKI/cryptos-manager#single-host-with-docker-compose).
+- **A plain Linux host with systemd** and a local Postgres: [Deploying the Fleet Manager standalone](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/deploying-standalone.md).
 
-Every deployment needs an operator certificate before anyone can log in. The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/operator-pki.md) shows how to mint one.
+Every deployment needs an operator certificate before anyone can log in. The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/operator-pki.md) shows how to mint one.
 
 ## Where to go next
 

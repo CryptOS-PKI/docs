@@ -106,4 +106,4 @@ Software that was signed properly before the leak can fail the check too. Whethe
 
 - [Internal TLS and mTLS](./internal-tls.md) uses the same issue-by-CSR flow.
 - [Certificates and CAs 101](../concepts/certificates-101.md) explains key usage and extended key usage.
-- [Certificate profiles](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/certificate-profiles.md) lists every profile field.
+- [Certificate profiles](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/certificate-profiles.md) lists every profile field.

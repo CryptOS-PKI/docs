@@ -1,4 +1,4 @@
-# docs 📚
+# website 📚
 
 > 📖 The documentation site for [CryptOS-PKI](https://github.com/CryptOS-PKI): how to build, install, and run CryptOS, written to be readable by everyone. Built with [Docusaurus](https://docusaurus.io) 3 and a CryptOS theme that matches the Fleet Manager web UI.
 
@@ -43,7 +43,7 @@ After a stacked pull request is retargeted onto `main`, CI starts on its next pu
 
 ## 🎨 Theme
 
-The site carries its own theme, taken from the Fleet Manager web UI ([`web`](https://github.com/CryptOS-PKI/web), `src/index.css`) so the docs and the product look the same:
+The site carries its own theme, taken from the Fleet Manager web UI ([`cryptos-web`](https://github.com/CryptOS-PKI/cryptos-web), `apps/console/src/index.css`) so the docs and the product look the same:
 
 - 🎨 **Palette:** the web UI's Shield Blue on a graphite ramp, as `--cryptos-*` custom properties mapped onto Docusaurus's Infima variables in `src/css/theme.css`. Change a colour in the web UI first, then mirror it here.
 - 🔤 **Type:** Inter for text and JetBrains Mono for code, the navbar, tabs and the sidebar, both self-hosted through `@fontsource` (no font CDN).
@@ -65,11 +65,10 @@ The build phases (project-wide):
 
 ## 🧭 Companion repos
 
-- 🧠 [`cryptos`](https://github.com/CryptOS-PKI/cryptos) — the OS / CA engine (UKI; bare metal or VM).
-- 🛰️ [`manager`](https://github.com/CryptOS-PKI/manager) — Fleet Manager backend.
-- 🎨 [`web`](https://github.com/CryptOS-PKI/web) — Fleet Manager web frontend.
-- 📡 [`api`](https://github.com/CryptOS-PKI/api) — shared `.proto` definitions and generated stubs.
-- ⚓ [`helm`](https://github.com/CryptOS-PKI/helm) — Helm charts for the control plane.
+- 🧠 [`cryptos-node`](https://github.com/CryptOS-PKI/cryptos-node) — the OS / CA engine (UKI; bare metal or VM), and the node API protos.
+- 🛰️ [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) — Fleet Manager backend, and the fleet API protos.
+- 🎨 [`cryptos-web`](https://github.com/CryptOS-PKI/cryptos-web) — Fleet Manager web frontend.
+- ⚓ [`cryptos-release`](https://github.com/CryptOS-PKI/cryptos-release) — the release manifest and the Helm chart for the control plane.
 
 ## 📄 License
 

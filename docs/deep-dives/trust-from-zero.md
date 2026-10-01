@@ -76,7 +76,7 @@ Your client pins that certificate. To check the pin against the node itself, not
 cryptosctl --endpoint 192.0.2.10:443 trust fetch --expect-sha256 "<Mgmt SHA-256 from the console>"
 ```
 
-The full procedure, and why the pin goes stale after every reboot, is in [Trusting a node's management certificate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md).
+The full procedure, and why the pin goes stale after every reboot, is in [Trusting a node's management certificate](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/management-trust.md).
 
 :::caution[Fetch the pin again after every reboot until the ceremony]
 Before the node has its CA, the management certificate changes on every boot. A pin taken before a reboot fails afterwards with `x509: certificate signed by unknown authority`. Run `trust fetch --expect-sha256` again after each reboot, and don't drop `--expect-sha256`, because without it `trust fetch` saves whatever certificate it received.
@@ -122,7 +122,7 @@ These are the places where the alpha is short of the design. Each one is traceab
 
 ## Where this lives in the code
 
-All paths are in [CryptOS-PKI/cryptos](https://github.com/CryptOS-PKI/cryptos) on `main`.
+All paths are in [CryptOS-PKI/cryptos-node](https://github.com/CryptOS-PKI/cryptos-node) on `main`.
 
 | Step | Code |
 |---|---|

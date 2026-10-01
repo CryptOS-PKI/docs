@@ -47,7 +47,7 @@ Subject and issuer are the same because the certificate is self-signed. If the c
 :::
 
 :::caution[The first pin is trust on first use]
-`trust fetch` saves whatever certificate answers on that port. Here the port is a forward to a VM on your own machine, so that is fine. On a real network, compare the SHA-256 with the **Mgmt SHA-256** on the node's console, or pass it as `--expect-sha256` so `cryptosctl` refuses any other certificate. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) explains what the pin proves.
+`trust fetch` saves whatever certificate answers on that port. Here the port is a forward to a VM on your own machine, so that is fine. On a real network, compare the SHA-256 with the **Mgmt SHA-256** on the node's console, or pass it as `--expect-sha256` so `cryptosctl` refuses any other certificate. The [management trust guide](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/management-trust.md) explains what the pin proves.
 :::
 
 ## 2. Check the node is ready

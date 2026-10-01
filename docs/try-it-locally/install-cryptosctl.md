@@ -15,12 +15,12 @@ Get the command-line tool that talks to the node.
 `cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
-You need the `cryptos` checkout and Go from [What you need](./requirements.md). If you followed [Boot it in QEMU](./boot-qemu.md), your admin identity is already in `~/.cryptos/`, and the node is running in another terminal.
+You need the `cryptos-node` checkout and Go from [What you need](./requirements.md). If you followed [Boot it in QEMU](./boot-qemu.md), your admin identity is already in `~/.cryptos/`, and the node is running in another terminal.
 :::
 
 ## 1. Build it
 
-From the root of the `cryptos` checkout:
+From the root of the `cryptos-node` checkout:
 
 ```bash
 task build
@@ -92,7 +92,7 @@ The [cryptosctl command reference](../reference/cryptosctl.md) lists every comma
 
 ## Release downloads
 
-Tagged `cryptos` releases are set up to attach ready-made `cryptosctl` binaries for Linux and macOS, on amd64 and arm64 (`cryptosctl-linux-amd64`, `cryptosctl-darwin-arm64` and so on), with a `SHA256SUMS` file. No release has been published yet, so build from source for now.
+Tagged `cryptos-node` releases are set up to attach ready-made `cryptosctl` binaries for Linux and macOS, on amd64 and arm64 (`cryptosctl-linux-amd64`, `cryptosctl-darwin-arm64` and so on), with a `SHA256SUMS` file. No release has been published yet, so build from source for now.
 
 ## Next step
 

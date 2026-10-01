@@ -144,7 +144,7 @@ Notes:
 - `ca issue-leaf --dns` replaces the profile's DNS names, and only works when the profile sets `allow_request_sans`.
 - `ca export-key` asks for a new passphrase twice and for a confirmation: the Root's common name on a Root, `yes` on a subordinate. `--role root` or `--role subordinate` overrides the role read from the node, and `--yes` skips the confirmation. A TPM-backed node refuses the export, because its CA key cannot leave the TPM.
 - `ca import-key` asks for the backup's passphrase, and refuses a node that already has an identity.
-- Step-by-step guides in the `cryptos` repository: [subordinating vCenter's VMCA](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/vmca-subordination.md) and [re-certifying a subordinate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/subordinate-recertify.md).
+- Step-by-step guides in the `cryptos-node` repository: [subordinating vCenter's VMCA](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/vmca-subordination.md) and [re-certifying a subordinate](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/subordinate-recertify.md).
 
 ## Audit log
 
@@ -158,7 +158,7 @@ Lists audit entries, oldest first, one page at a time: sequence number, time, ac
 |---|---|---|
 | `--since` | none | only entries at or after this time: RFC 3339, or a duration back from now such as `24h` |
 | `--until` | none | only entries before this time, in the same forms |
-| `--type` | none | only this call, by method name (`RevokeCertificate`) or full method (`/cryptos.v1.NodeService/RevokeCertificate`) |
+| `--type` | none | only this call, by method name (`RevokeCertificate`) or full method (`/cryptos.node.v1.NodeService/RevokeCertificate`) |
 | `--actor` | none | only entries whose actor subject contains this text; case-sensitive |
 | `--page-size` | `0` (the node's default, 100) | entries per page; the node caps a page at 1000 |
 | `--page-token` | none | continue from a previous page, with the same filters |
@@ -181,7 +181,7 @@ These replace the node's CryptOS image without reinstalling it. The encrypted st
 | `image activate` | `--confirm` (the CA common name) | reboot into the staged image |
 | `image rollback` | | put the retained previous image back on the boot path; run `image activate` to boot it |
 
-The full procedure is the [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/image-upgrade.md).
+The full procedure is the [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/image-upgrade.md).
 
 ## Power and reset
 

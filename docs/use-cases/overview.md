@@ -19,7 +19,7 @@ A node in the **intermediate** or **issuing** role issues end-entity certificate
 Every certificate a node issues is recorded. `cryptosctl ca list-issued` lists them, `ca revoke` revokes one, and when `pki.revocation_base_url` is set the node serves its CRL at `/crl`, OCSP at `/ocsp` and its own CA certificate at `/ca.cer`.
 :::
 
-The profile decides everything about the certificate except the subject and the public key, which come from the CSR. SANs and EKUs asked for in the CSR are ignored. That is deliberate: a request can never widen what the CA hands out. See [certificate profiles](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/certificate-profiles.md) for every field.
+The profile decides everything about the certificate except the subject and the public key, which come from the CSR. SANs and EKUs asked for in the CSR are ignored. That is deliberate: a request can never widen what the CA hands out. See [certificate profiles](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/certificate-profiles.md) for every field.
 
 A **Root** node refuses to issue leaf certificates unless its config sets `root_leaf_issuance: acknowledged-irreversible`. A Root normally signs only subordinate CAs, and that is how the use cases here are written. See [CA roles](../concepts/ca-roles.md).
 
@@ -34,7 +34,7 @@ Carrying CSRs by hand works, but it does not scale to hundreds of servers or a r
 | ACME (RFC 8555, `http-01`) | certbot, lego, acme.sh, win-acme, cert-manager | Off until you switch it on in the machine config |
 | EST (RFC 7030) | Network gear and devices with an EST client | Off until you switch it on in the machine config |
 
-ACME and EST run on an intermediate or issuing node. You switch each one on by adding its `pki.acme` or `pki.est` block to the node's machine config and running `cryptosctl config apply`, and off by removing the block and applying again. See the [machine config reference](../reference/machine-config.md) and the [ACME](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/acme.md) and [EST](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/est.md) guides.
+ACME and EST run on an intermediate or issuing node. You switch each one on by adding its `pki.acme` or `pki.est` block to the node's machine config and running `cryptosctl config apply`, and off by removing the block and applying again. See the [machine config reference](../reference/machine-config.md) and the [ACME](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/acme.md) and [EST](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/est.md) guides.
 
 :::warning[Switching ACME or EST needs a reboot]
 The listeners start only at boot. `config apply` stores the switch, on or off, and prints `requires_reboot=true`; the protocol starts or stops at the next reboot, and the node stops issuing while it restarts. Plan the reboot for a maintenance window. Until then `cryptosctl status` shows the protocol with `reboot pending`.
@@ -62,10 +62,10 @@ A node certifies only two kinds of subject key: **ECDSA P-384**, and **RSA of 30
 | [Code signing](./code-signing.md) | Certificates your build tools sign with | By CSR today |
 | [Air-gapped Root CA](./air-gapped-root.md) | An offline Root over one or more subordinates | Two-tier works |
 
-Two integrations have their own step-by-step guides in the `cryptos` repo, and both have been run against real systems:
+Two integrations have their own step-by-step guides in the `cryptos-node` repo, and both have been run against real systems:
 
-- [vCenter VMCA as a CryptOS subordinate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/vmca-subordination.md), so every ESXi host chains to your root.
-- [Active Directory domain controllers](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/active-directory.md), with LDAPS and KDC certificates and no AD CS.
+- [vCenter VMCA as a CryptOS subordinate](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/vmca-subordination.md), so every ESXi host chains to your root.
+- [Active Directory domain controllers](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/active-directory.md), with LDAPS and KDC certificates and no AD CS.
 
 ## Where to go next
 

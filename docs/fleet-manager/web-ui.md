@@ -217,7 +217,7 @@ When the manager's MCP endpoint is on, AI agents use **agent keys**. Each key is
 - An MCP client's sign-in opens **Authorize an MCP client** in your browser, where you choose a level ceiling and **Approve** or **Deny**.
 - **Approvals** lists the requests agents raise before a tool that changes the fleet runs, with a count of pending ones in the bar. Deciding them is its own task: see [Approving agent requests](./approvals.md).
 
-The manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md) covers setup.
+The manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md) covers setup.
 
 ## Audit
 
