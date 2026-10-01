@@ -149,6 +149,8 @@ curl -sk "$FM/cryptos.fleet.v1.BootstrapService/RegisterOperatorCA" \
 </TabItem>
 </Tabs>
 
+An empty answer (no `operatorCa`) means no CA is registered yet: register yours as in 3.2 and 3.3.
+
 If it is your CA's fingerprint, confirm it by sending only `{"confirmSha256": "<fingerprint>"}` the same way. Nothing else changes. If it isn't yours, someone else registered a CA: register your own as in 3.2 and 3.3, which retires theirs.
 
 ## Verify before continuing
