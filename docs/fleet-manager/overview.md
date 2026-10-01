@@ -138,10 +138,12 @@ Resetting a node from its console erases its key material and reboots it into se
 
 A `LINK` enrollment brings in a node that is already installed and running, which you manage today with `cryptosctl`.
 
-1. Someone with `operator` opens the request with the node's address, an admin certificate and key the node trusts, and the node's CA chain.
-2. The manager sends the node a random challenge. The node signs it with its CA identity key, and the manager records that key's fingerprint. The request is now `PENDING`.
-3. Someone with `admin` approves it and supplies the connection details again. The manager runs the challenge again and refuses the approval if the fingerprint has changed.
-4. On approval the manager writes a management block into the node's config: the manager's name and a flag that marks the node's own operator surface read-only. It doesn't send the operator CA, so operator certificates never log in to a node directly.
+1. Someone with `operator` opens the request with the node's address, an admin certificate and key the node trusts, and the CA certificate that signed the node's management certificate (`ca_pem`).
+2. The manager connects to the node and verifies its management certificate against `ca_pem` before it sends anything, the same way it verifies every node (see [How the manager trusts its nodes](./node-trust.md#linking-a-running-node)). A node that doesn't verify is refused.
+3. The manager sends the node a random challenge. The node signs it with its CA identity key, and the manager records that key's fingerprint. The request is now `PENDING`.
+4. Someone with `admin` approves it and supplies the connection details again. The manager verifies the node and runs the challenge again, and refuses the approval if the fingerprint has changed.
+5. On approval the manager writes a management block into the node's config: the manager's name and a flag that marks the node's own operator surface read-only. It doesn't send the operator CA, so operator certificates never log in to a node directly.
+6. The node joins the inventory, as an adopted node does, and appears in the fleet view. The manager saves the admin certificate and key and `ca_pem` in the node's credentials folder and verifies the node with them from then on.
 
 ### Signing a subordinate
 
