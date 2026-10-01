@@ -39,6 +39,8 @@ task license     # re-inject Apache 2.0 headers via golic
 task ci          # build the site
 ```
 
+After a stacked pull request is retargeted onto `main`, CI starts on its next push, or when it is toggled to draft and back to ready.
+
 ## 🎨 Theme
 
 The site carries its own theme, taken from the Fleet Manager web UI ([`web`](https://github.com/CryptOS-PKI/web), `src/index.css`) so the docs and the product look the same:
