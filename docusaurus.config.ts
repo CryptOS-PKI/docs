@@ -56,7 +56,7 @@ const config: Config = {
   baseUrl: '/',
 
   organizationName: 'CryptOS-PKI',
-  projectName: 'docs',
+  projectName: 'website',
 
   // Skeleton phase: keep the build resilient while pages are stubs.
   // Restore 'throw' once the content workstream fills the cross-links in.
@@ -167,9 +167,9 @@ const config: Config = {
         {
           title: 'Project',
           items: [
-            {label: 'cryptos (OS/engine)', href: 'https://github.com/CryptOS-PKI/cryptos'},
-            {label: 'api (protos)', href: 'https://github.com/CryptOS-PKI/api'},
-            {label: 'helm (chart)', href: 'https://github.com/CryptOS-PKI/helm'},
+            {label: 'cryptos-node (OS/engine)', href: 'https://github.com/CryptOS-PKI/cryptos-node'},
+            {label: 'cryptos-manager (Fleet Manager)', href: 'https://github.com/CryptOS-PKI/cryptos-manager'},
+            {label: 'cryptos-release (release)', href: 'https://github.com/CryptOS-PKI/cryptos-release'},
           ],
         },
       ],
@@ -178,7 +178,7 @@ const config: Config = {
       // from the CNCF website guidelines apply only once the project is accepted.
       copyright:
         'Copyright © The CryptOS Authors<br />' +
-        'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/docs/blob/main/LICENSE">Apache License 2.0</a>',
+        'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/website/blob/main/LICENSE">Apache License 2.0</a>',
     },
     prism: {
       theme: prismLight,

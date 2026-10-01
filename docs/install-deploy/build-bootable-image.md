@@ -14,7 +14,7 @@ This describes CryptOS as it works right now.
 
 A CryptOS node boots from one file: a **Unified Kernel Image** (UKI). The UKI holds the kernel, a tiny start-up program, and the read-only system image, all in one signed file. To install a node you usually wrap that UKI in an **ISO** and boot the machine or virtual machine from it.
 
-This page shows how to build the ISO from the `cryptos` source code.
+This page shows how to build the ISO from the `cryptos-node` source code.
 
 ## Two choices to make first
 
@@ -38,7 +38,7 @@ A machine UUID is not a secret. Anyone who has both a copy of the disk and the U
 
 The image build runs on a **Linux** build host. You need:
 
-- The `cryptos` source: `git clone https://github.com/CryptOS-PKI/cryptos`.
+- The `cryptos-node` source: `git clone https://github.com/CryptOS-PKI/cryptos-node`.
 - Go, at the version in `go.mod`, and [go-task](https://taskfile.dev) (the `task` command).
 - Docker. The static disk tools (`cryptsetup`, `mkfs.ext4`, `sgdisk`, `mkfs.vfat`) are built from source inside containers.
 - The kernel and image tools. On Debian or Ubuntu:
@@ -93,7 +93,7 @@ This writes `build/out/cryptos-amd64-vmware-unsigned.iso` (or `...-vmware-nodeid
 
 ## Release downloads
 
-Each tagged `cryptos` release attaches ready-made files to its GitHub Release: the unsigned UKIs and ISOs for both `STATEKEY` variants, `cryptosctl` for Linux and macOS on amd64 and arm64, and a `SHA256SUMS` file. They are built exactly like `task iso:unsigned` above, so they are for evaluation with Secure Boot off. For a node you plan to keep, build a signed image yourself.
+Each tagged `cryptos-node` release attaches ready-made files to its GitHub Release: the unsigned UKIs and ISOs for both `STATEKEY` variants, `cryptosctl` for Linux and macOS on amd64 and arm64, and a `SHA256SUMS` file. They are built exactly like `task iso:unsigned` above, so they are for evaluation with Secure Boot off. For a node you plan to keep, build a signed image yourself.
 
 ## Next step
 

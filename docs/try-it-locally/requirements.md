@@ -76,7 +76,7 @@ The Fleet Manager isn't part of this walkthrough. No sizing has been measured fo
 
 ## Build tools
 
-These turn the `cryptos` source into a bootable image.
+These turn the `cryptos-node` source into a bootable image.
 
 - **Git**, to clone the source. Clone the whole history: the build stamps its version from `git describe`.
 - **Go**, at the version in the `cryptos` `go.mod` (Go 1.26 today).

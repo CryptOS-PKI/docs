@@ -43,7 +43,7 @@ Once EST is switched on, it behaves like this:
 - **The profile needs `client_auth`** in `ext_key_usage` for certificates that will renew themselves later. `simplereenroll` checks the certificate for client authentication.
 - **Limits:** wildcards are refused, non-DNS names are refused, there is no server-side key generation, and there is no manual-approval (202 Retry-After) flow.
 
-The [EST guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/est.md) in the `cryptos` repo has the full config block, credential provisioning and `curl` examples.
+The [EST guide](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/est.md) in the `cryptos-node` repo has the full config block, credential provisioning and `curl` examples.
 
 :::danger[An EST enrolment credential can mint a certificate for any allowed name]
 Nothing in `simpleenroll` proves that the device owns the name it asks for. Whoever holds the credential can get a certificate for any name under `allowed_identifier_suffixes`. That is why the node refuses a config with credentials and no suffix list unless `allow_any_identifier` is set by name. Keep the suffix list as narrow as the fleet, generate each password at random (the config stores only its SHA-256), and never reuse one across fleets.

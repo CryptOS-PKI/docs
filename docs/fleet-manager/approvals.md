@@ -8,7 +8,7 @@ title: "✋ Approving agent requests"
 Step-up approvals are part of the alpha. The manager raises them for the MCP tools that change the fleet, and the web UI's **Approvals** page is where a person decides them.
 :::
 
-This page covers one task: deciding a request an AI agent raised through the Fleet Manager's MCP endpoint. How agents get a key and sign in is in [The web UI](./web-ui.md#agent-keys-and-mcp-sign-in) and the manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md).
+This page covers one task: deciding a request an AI agent raised through the Fleet Manager's MCP endpoint. How agents get a key and sign in is in [The web UI](./web-ui.md#agent-keys-and-mcp-sign-in) and the manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md).
 
 ## What a step-up approval is
 
@@ -84,4 +84,4 @@ Every decision and every approved call is written to the [Audit](./web-ui.md#aud
 ## Where to go next
 
 - [The web UI](./web-ui.md): the other pages, including Agent keys.
-- The manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md): which tools need an approval, and the error codes an agent sees.
+- The manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md): which tools need an approval, and the error codes an agent sees.

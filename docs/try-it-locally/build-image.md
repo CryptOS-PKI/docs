@@ -18,11 +18,11 @@ You need a Linux machine with the build tools from [What you need](./requirement
 
 ## 1. Get the source
 
-Clone the `cryptos` repository with its full history, so the build can stamp its version:
+Clone the `cryptos-node` repository with its full history, so the build can stamp its version:
 
 ```bash
-git clone https://github.com/CryptOS-PKI/cryptos.git
-cd cryptos
+git clone https://github.com/CryptOS-PKI/cryptos-node.git
+cd cryptos-node
 ```
 
 Run every command on this page, and the `task` and `go` commands on the next pages, from the root of this checkout.
@@ -51,7 +51,7 @@ The kernel compile is by far the longest step. Its tree is kept under `build/.wo
 The last line names the finished image. `profile=qemu-dev` confirms it is the debug flavour.
 
 ```text
-uki: wrote /path/to/cryptos/build/out/cryptos-amd64.uki.unsigned (profile=qemu-dev, rootfs=squashfs)
+uki: wrote /path/to/cryptos-node/build/out/cryptos-amd64.uki.unsigned (profile=qemu-dev, rootfs=squashfs)
 ```
 
 If the build stops earlier, `task` names the step that failed. When it is one of the Docker steps, check that `docker run --rm hello-world` works without `sudo`.

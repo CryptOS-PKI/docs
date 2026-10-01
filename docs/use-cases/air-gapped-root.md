@@ -81,5 +81,5 @@ With `revocation_base_url` set, the Root refuses to sign while its revocation ch
 
 - [CA roles](../concepts/ca-roles.md) explains root, intermediate and issuing nodes.
 - [TPM-sealed keys](../concepts/tpm-sealed-keys.md) explains what the TPM protects.
-- [Re-certifying a subordinate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/subordinate-recertify.md) walks through a renewal on the same key.
-- [vCenter VMCA as a CryptOS subordinate](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/vmca-subordination.md) is a worked example of a third tier below the Intermediate.
+- [Re-certifying a subordinate](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/subordinate-recertify.md) walks through a renewal on the same key.
+- [vCenter VMCA as a CryptOS subordinate](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/vmca-subordination.md) is a worked example of a third tier below the Intermediate.

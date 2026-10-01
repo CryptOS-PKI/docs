@@ -57,7 +57,7 @@ cryptosctl --endpoint 192.0.2.10:443 audit list \
 |---|---|
 | `--since` | entries at or after a time: RFC 3339 (`2026-09-30T12:00:00Z`) or a duration back from now (`24h`) |
 | `--until` | entries before a time, in the same forms |
-| `--type` | one call, by name (`RevokeCertificate`) or full method (`/cryptos.v1.NodeService/RevokeCertificate`), or a SCEP operation (`PKCSReq`); case-sensitive |
+| `--type` | one call, by name (`RevokeCertificate`) or full method (`/cryptos.node.v1.NodeService/RevokeCertificate`), or a SCEP operation (`PKCSReq`); case-sensitive |
 | `--actor` | entries whose actor subject contains the text; case-sensitive |
 
 :::caution[Keep the filters with a page token]

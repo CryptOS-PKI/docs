@@ -14,15 +14,15 @@ The Fleet Manager is optional. A node never needs it to issue certificates, and 
 
 ## What it is
 
-The Fleet Manager is one Go program, [`manager`](https://github.com/CryptOS-PKI/manager). It does three things on one HTTPS port:
+The Fleet Manager is one Go program, [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager). It does three things on one HTTPS port:
 
-- **Serves the web UI.** The browser app from the [`web`](https://github.com/CryptOS-PKI/web) repo is built into the manager binary, so there is nothing else to install. See [The web UI](./web-ui.md).
-- **Answers the Fleet API.** The web UI calls it. The API is defined as `FleetService` in the [`api`](https://github.com/CryptOS-PKI/api) repo.
+- **Serves the web UI.** The browser app from the [`cryptos-web`](https://github.com/CryptOS-PKI/cryptos-web) repo is built into the manager binary, so there is nothing else to install. See [The web UI](./web-ui.md).
+- **Answers the Fleet API.** The web UI calls it. The API is defined as `FleetService` in the [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager/tree/main/proto/cryptos/fleet/v1) repo.
 - **Talks to your nodes.** For every node it manages, the manager dials the node's management API over mutual TLS, the same API `cryptosctl` uses. It verifies the node's server certificate on every connection, against the node's CA chain or a pinned copy, and refuses a node it can't verify; see [Verifying a node's certificate](./node-trust.md).
 
 Two small routes answer without a login: `/healthz` for health checks (`200` when the manager can serve and reach its Postgres, `503` when it can't) and `/version` for the build details.
 
-It can also serve an MCP endpoint at `/mcp` for AI agents. That is off by default; the manager's [MCP guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/mcp.md) covers it.
+It can also serve an MCP endpoint at `/mcp` for AI agents. That is off by default; the manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md) covers it.
 
 ## What it keeps, and what it never holds
 
@@ -58,7 +58,7 @@ There are three levels. Each includes the one before it.
 | `operator` | Issue and revoke certificates, re-key a subordinate CA, read a node's config, open enrollments and approve subordinate ones, and list operator certificates. |
 | `admin` | Adopt and decommission nodes, approve a node link, edit and apply configs and profiles, turn protocol adapters on or off, switch a node's enrolment protocols, back up and restore CA keys, and revoke operator certificates on the manager's denylist. |
 
-The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/manager/blob/main/docs/operator-pki.md) shows how to mint the first operator certificate.
+The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/operator-pki.md) shows how to mint the first operator certificate.
 
 ## How a node joins the fleet
 

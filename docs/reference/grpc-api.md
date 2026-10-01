@@ -8,14 +8,14 @@ title: "🔌 gRPC API"
 This describes CryptOS as it works right now.
 :::
 
-CryptOS exposes two gRPC services. The protobuf definitions in the [CryptOS-PKI/api](https://github.com/CryptOS-PKI/api) repository are the source of truth; this page explains the parts that need more than the field comments.
+CryptOS exposes two gRPC services. The protobuf definitions are the source of truth: the node API in [`proto/cryptos/node/v1`](https://github.com/CryptOS-PKI/cryptos-node/tree/main/proto/cryptos/node/v1) in the cryptos-node repo, and the Fleet Manager API in [`proto/cryptos/fleet/v1`](https://github.com/CryptOS-PKI/cryptos-manager/tree/main/proto/cryptos/fleet/v1) in the cryptos-manager repo; this page explains the parts that need more than the field comments.
 
 | Service | Package | Served by | What it covers |
 |---|---|---|---|
-| `NodeService` | `cryptos.v1` | each CryptOS node, over mTLS on port 443 and the local UNIX socket | one node: config, status, ceremony, issuance, revocation, key backup and rotation, image upgrades, the audit log |
+| `NodeService` | `cryptos.node.v1` | each CryptOS node, over mTLS on port 443 and the local UNIX socket | one node: config, status, ceremony, issuance, revocation, key backup and rotation, image upgrades, the audit log |
 | `FleetService` | `cryptos.fleet.v1` | the Fleet Manager, as a Connect endpoint | many nodes: inventory, the profile catalog, enrollment, the audit log, operator credentials, MCP agent keys, step-up approvals |
 
-> The rest of the RPCs are not written up here yet. Until they are, read the comments in `proto/cryptos/v1/node.proto` and `proto/cryptos/fleet/v1/fleet.proto`. 🚧
+> The rest of the RPCs are not written up here yet. Until they are, read the comments in `proto/cryptos/node/v1/node.proto` (cryptos-node) and `proto/cryptos/fleet/v1/fleet.proto` (cryptos-manager). 🚧
 
 ## Issuance warnings
 
@@ -195,7 +195,7 @@ Returns entries oldest first (ascending `seq`), a page at a time. Every filter i
 | `page_token` (2) | `string` | the previous response's `next_page_token`, sent with the same filters; empty starts at the oldest match |
 | `from_time` (3) | `string` | RFC 3339; keeps entries whose `ts` is at or after it |
 | `to_time` (4) | `string` | RFC 3339; keeps entries whose `ts` is before it |
-| `event_type` (5) | `string` | the full `rpc_method` (`/cryptos.v1.NodeService/RevokeCertificate`) or its method name alone (`RevokeCertificate`) |
+| `event_type` (5) | `string` | the full `rpc_method` (`/cryptos.node.v1.NodeService/RevokeCertificate`) or its method name alone (`RevokeCertificate`) |
 | `actor` (6) | `string` | keeps entries whose `actor_subject` contains it; case-sensitive |
 
 A time that isn't RFC 3339, a `to_time` earlier than `from_time`, and a `page_token` the node didn't issue or that was issued for other filters are `INVALID_ARGUMENT`.
@@ -224,7 +224,7 @@ Takes no fields and walks the whole stored log. A broken chain is a result, not 
 
 ## Fleet Manager audit events
 
-`FleetService.ListAudit` returns `cryptos.fleet.v1.AuditEvent` entries. This is the manager's log, separate from the hash-chained `cryptos.v1.AuditEvent` log each node keeps (see [Audit log format](./audit-log.md)).
+`FleetService.ListAudit` returns `cryptos.fleet.v1.AuditEvent` entries. This is the manager's log, separate from the hash-chained `cryptos.node.v1.AuditEvent` log each node keeps (see [Audit log format](./audit-log.md)).
 
 | Field | Type | Meaning |
 |---|---|---|

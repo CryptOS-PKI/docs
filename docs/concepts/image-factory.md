@@ -16,7 +16,7 @@ How a bootable image is built for a target such as VMware. The step-by-step buil
 
 A CryptOS node runs a single file, the **Unified Kernel Image (UKI)**. Every CryptOS node on a platform runs the same UKI, whatever its role. What makes one node a Root and another an Issuing CA is its [machine config](./declarative-config.md), which is never part of the image.
 
-The "image factory" is the build pipeline in the `cryptos` repository that turns source into that UKI and wraps it in a bootable ISO. It runs on a Linux build host, driven by [go-task](https://taskfile.dev):
+The "image factory" is the build pipeline in the `cryptos-node` repository that turns source into that UKI and wraps it in a bootable ISO. It runs on a Linux build host, driven by [go-task](https://taskfile.dev):
 
 ```text
 kernel      pinned kernel, hardened config + platform fragment

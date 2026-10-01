@@ -5,7 +5,7 @@ title: "🛰️ Enrol devices with SCEP"
 # 🛰️ Enrol devices with SCEP
 
 :::info[Arrives with cryptos#288]
-This page describes SCEP as [CryptOS-PKI/cryptos#288](https://github.com/CryptOS-PKI/cryptos/pull/288) adds it. It is true once that change is in the image you run.
+This page describes SCEP as [CryptOS-PKI/cryptos-node#288](https://github.com/CryptOS-PKI/cryptos-node/pull/288) adds it. It is true once that change is in the image you run.
 :::
 
 Get a certificate onto a network device that cannot run ACME, such as a Cisco IOS or IOS-XE switch, over SCEP (RFC 8894).
@@ -183,4 +183,4 @@ The switch only learns that the request failed and a short reason code. The node
 - **The key is too small.** The profile's `min_rsa_key_bits` is above the device's key size.
 - **The request carries an IP address.** Set `ip-address none` on the trustpoint.
 
-More detail, including the RA certificate and its rotation, is in [`docs/scep.md`](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/scep.md) in the `cryptos` repository.
+More detail, including the RA certificate and its rotation, is in [`docs/scep.md`](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/scep.md) in the `cryptos-node` repository.

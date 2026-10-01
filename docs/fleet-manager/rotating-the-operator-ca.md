@@ -25,7 +25,7 @@ Every change is audited, applies at once on the manager instance that made it, a
 
 ## 1. Register the new CA
 
-Create the new CA with the same recipe as the first one (the OpenSSL CA in the manager's [standalone deployment guide, section 3](https://github.com/CryptOS-PKI/manager/blob/main/docs/deploying-standalone.md#3-the-operator-ca-is-an-external-ca), with `keyCertSign` and `cRLSign`), then call `FleetService.RegisterOperatorCA` with:
+Create the new CA with the same recipe as the first one (the OpenSSL CA in the manager's [standalone deployment guide, section 3](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/deploying-standalone.md#3-the-operator-ca-is-an-external-ca), with `keyCertSign` and `cRLSign`), then call `FleetService.RegisterOperatorCA` with:
 
 - `ca_cert_der`: the new CA certificate, DER or PEM, exactly one certificate;
 - the CRL source: `url` (http or https), `crl_der` (an initial CRL) or `none` with the `NO_CRL` acknowledgement (in `acknowledgements`);

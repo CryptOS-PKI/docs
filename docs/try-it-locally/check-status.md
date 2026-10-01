@@ -165,7 +165,7 @@ The management certificate has a new key, so the console's SHA-256 differs from 
 
 ## Run the whole flow as a test
 
-The `cryptos` repository runs this same flow automatically: build the debug image, stage a config, boot QEMU with swtpm, run the ceremony, check the Root certificate with zlint, validate the chain and read the status. It skips itself unless every tool is present. From the `cryptos` checkout, after [Build the image](./build-image.md) and `task build`:
+The `cryptos-node` repository runs this same flow automatically: build the debug image, stage a config, boot QEMU with swtpm, run the ceremony, check the Root certificate with zlint, validate the chain and read the status. It skips itself unless every tool is present. From the `cryptos-node` checkout, after [Build the image](./build-image.md) and `task build`:
 
 ```bash
 export OVMF_CODE=/usr/share/OVMF/OVMF_CODE_4M.fd

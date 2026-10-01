@@ -53,9 +53,9 @@ Each line is one entry:
 Three real entries, as the node writes them:
 
 ```text
-{"seq":"1", "ts":"2026-09-30T14:02:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/StartCeremony", "outcome":"OUTCOME_OK", "prevEntrySha256":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="} 1onlVZIwAQNwMLAHuzJr0KRHmTluVSJN+ojWHpWIZTa0aI1IVCnprmMYqD57rt79NkhSVQ0ywmAmA2eFzBnVDg
-{"seq":"2", "ts":"2026-09-30T14:03:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/ApplyConfig", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"JLpgGDBdvilYnnOnzr008RfLokhuE1XRv7POYwYBKyc=", "details":{"config_digest_sha256":"9f2c4e1a7b3d5f6082a4c6e8f0b2d4f6a8c0e2f4b6d8fa1c3e5a7c9eb1d3f5a7", "config_generation":"2", "requires_reboot":"false"}} JMsxHOhrnEsiQxmqQPcAAJrywl3mP0iOt9w68aUFYoCZh6M7v6BzlvOp7YvHfu7gdvaFCxJ+29OVm1bNRVCyDA
-{"seq":"3", "ts":"2026-09-30T14:04:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.v1.NodeService/IssueLeaf", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"X2seRmi7bktrRE7SSz7Oaj0Pj6lVAQ32GUkPruCAfCc=", "details":{"request_dns_names":"web.example.org"}} m1TlQGyzX8MVFlppOCtxzuLE7ZTJY7NtUlaicdXwFWA6Z8YTx24P6DTj2uv+0uu5X3v+H0h/W6mEIUkKxPkIBA
+{"seq":"1", "ts":"2026-09-30T14:02:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.node.v1.NodeService/StartCeremony", "outcome":"OUTCOME_OK", "prevEntrySha256":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="} 1onlVZIwAQNwMLAHuzJr0KRHmTluVSJN+ojWHpWIZTa0aI1IVCnprmMYqD57rt79NkhSVQ0ywmAmA2eFzBnVDg
+{"seq":"2", "ts":"2026-09-30T14:03:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.node.v1.NodeService/ApplyConfig", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"JLpgGDBdvilYnnOnzr008RfLokhuE1XRv7POYwYBKyc=", "details":{"config_digest_sha256":"9f2c4e1a7b3d5f6082a4c6e8f0b2d4f6a8c0e2f4b6d8fa1c3e5a7c9eb1d3f5a7", "config_generation":"2", "requires_reboot":"false"}} JMsxHOhrnEsiQxmqQPcAAJrywl3mP0iOt9w68aUFYoCZh6M7v6BzlvOp7YvHfu7gdvaFCxJ+29OVm1bNRVCyDA
+{"seq":"3", "ts":"2026-09-30T14:04:11.482Z", "actorSubject":"CN=admin", "rpcMethod":"/cryptos.node.v1.NodeService/IssueLeaf", "requestDigestSha256":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=", "outcome":"OUTCOME_OK", "prevEntrySha256":"X2seRmi7bktrRE7SSz7Oaj0Pj6lVAQ32GUkPruCAfCc=", "details":{"request_dns_names":"web.example.org"}} m1TlQGyzX8MVFlppOCtxzuLE7ZTJY7NtUlaicdXwFWA6Z8YTx24P6DTj2uv+0uu5X3v+H0h/W6mEIUkKxPkIBA
 ```
 
 The request digests and the config digest here are placeholder patterns; a real one is the SHA-256 of a real request or config.
@@ -69,7 +69,7 @@ Fields that are empty are left out of the JSON, as protobuf JSON does for defaul
 | `seq` | `seq` (uint64) | The entry's sequence number: 1 for the first entry, then up by exactly one. Written as a JSON string, as protobuf JSON does for 64-bit integers. A gap means entries are missing. |
 | `ts` | `ts` (Timestamp) | When the call was recorded, in RFC 3339 UTC. |
 | `actorSubject` | `actor_subject` | The subject DN of the verified client certificate, for example `CN=admin`. Empty (left out) on the local socket, which has no TLS. |
-| `rpcMethod` | `rpc_method` | The full gRPC method, for example `/cryptos.v1.NodeService/IssueLeaf`. |
+| `rpcMethod` | `rpc_method` | The full gRPC method, for example `/cryptos.node.v1.NodeService/IssueLeaf`. |
 | `requestDigestSha256` | `request_digest_sha256` | The SHA-256 of the request message, in deterministic protobuf binary encoding, as standard base64. It binds every field of the request without storing it. Left out for streaming calls. |
 | `outcome` | `outcome` | `OUTCOME_OK` on success, `OUTCOME_DENIED` when the call was refused with `PermissionDenied`, `OUTCOME_ERROR` for any other failure. |
 | `prevEntrySha256` | `prev_entry_sha256` | The SHA-256 of the previous entry's JSON bytes, as standard base64. See the chain rules below. |

@@ -94,7 +94,7 @@ Pin verified: the SHA-256 matches --expect-sha256.
 If the fingerprint does not match, the command fails with `does not match --expect-sha256` and saves nothing. Stop and find out what is answering on that address.
 :::
 
-Spaces, colons and case in `--expect-sha256` are ignored, so the `AB:CD:...` form openssl prints works too. No client certificate is needed for the fetch. The [management trust guide](https://github.com/CryptOS-PKI/cryptos/blob/main/docs/management-trust.md) in the `cryptos` repository explains what the pin does and does not prove, and how to get the same certificate with openssl.
+Spaces, colons and case in `--expect-sha256` are ignored, so the `AB:CD:...` form openssl prints works too. No client certificate is needed for the fetch. The [management trust guide](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/management-trust.md) in the `cryptos-node` repository explains what the pin does and does not prove, and how to get the same certificate with openssl.
 
 ### Several nodes
 

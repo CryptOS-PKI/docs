@@ -74,7 +74,7 @@ spec:
       type: RuntimeDefault
   containers:
     - name: reset
-      image: ghcr.io/cryptos-pki/manager:0.1.0
+      image: ghcr.io/cryptos-pki/cryptos-manager:0.1.0
       args: ["-config", "/etc/cryptos/fleet/config.yaml", "-reset-first-run"]
       securityContext:
         readOnlyRootFilesystem: true
