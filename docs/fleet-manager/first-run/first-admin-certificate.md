@@ -104,6 +104,8 @@ Invoke-RestMethod -Method Post -Uri "$fm/cryptos.fleet.v1.BootstrapService/Submi
 `serialHex`, `notAfter`, `email` (the CN, in lower case) and `issuerSha256` (your CA's fingerprint), and `warnings` if there are any. The manager logs `first admin certificate recorded` and records `operator-first-admin-recorded` in the audit log.
 :::
 
+A full name that is empty, longer than 128 characters or holds a control character (such as a line break) is refused with 1610 `FULL_NAME` before the certificate is checked.
+
 The manager refuses, with 1610 and a sub-reason, a certificate that:
 
 | Sub-reason | Problem |
