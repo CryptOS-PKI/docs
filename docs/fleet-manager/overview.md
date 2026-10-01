@@ -154,7 +154,7 @@ A `SUBORDINATE` enrollment gives an adopted Intermediate or Issuing node its CA 
 The manager can switch ACME or EST on or off on one node through the Fleet API call `SetNodeProtocol` (`admin` only). The web UI does not call it yet: its Protocols page still records intent only (see [The web UI](./web-ui.md#protocols)).
 
 1. **The manager reads the node's config** and changes one thing: the `enabled` flag of that protocol's block (`pki.acme` or `pki.est`). The block's other settings go back as the node stored them. EAB keys and EST password digests are write-only, so the node returns them blank, the manager sends them back blank, and the node keeps the values it has. The other protocol's block is left out, so the node keeps it as it is.
-2. **The node checks and stores it.** The node keeps a switched-off protocol's settings, so switching it off and back on needs nothing re-entered. Switching on still needs the block the node holds to be complete (for ACME a `base_url`, a `profile` and an External Account Binding key unless anonymous accounts are allowed; for EST `hostnames` and a `profile`), because the manager does not fill in settings: a protocol that was never set up on the node, or whose block was removed, is refused until you add its settings with `cryptosctl config apply`. A Root refuses to switch either protocol on. A refusal comes back with the node's reason, and nothing is audited.
+2. **The node checks and stores it.** The node keeps a switched-off protocol's settings, so switching it off and back on needs nothing re-entered. Switching on still needs the block the node holds to be complete (for ACME a `base_url`, a `profile` and an External Account Binding key unless anonymous accounts are allowed; for EST `hostnames` and a `profile`), because the manager does not fill in settings: a protocol that was never set up on the node, or whose block was removed, is refused until you add its settings with `cryptosctl config apply`. A Root refuses to switch either protocol on. A refusal comes back with the node's reason, and nothing is audited: an invalid config is error 1500 and any other refusal 1108, with the node's own message on the `x-cryptos-node-reason` error metadata. The same applies to `GetNodeConfig` and `ApplyNodeConfig`. A node whose management certificate the manager refuses is error 1106, and one it can't reach 1100.
 3. **The switch waits for the next boot.** The node answers `requires_reboot`, and the protocol's listener starts or stops only when the node boots again.
 4. **The manager shows the reboot as pending.** `ListNodes` and `GetNode` report, per node, each protocol's configured and running state and a `reboot_required` flag. The flag stays set until the node reports the protocol running in its new state and no stored change is waiting.
 5. **The audit log gets one entry per switch,** `protocol-enabled` or `protocol-disabled`, naming who did it, the node and the protocol. A whole-config `ApplyNodeConfig` call that turns a protocol on or off gets the same entry.
@@ -164,6 +164,19 @@ A protocol that is already in the state you asked for is left alone: nothing is 
 :::warning[A switch needs a reboot in a maintenance window]
 Turning a protocol on or off takes effect only at the node's next boot, and rebooting an Issuing CA stops issuance until it is back. The manager can't reboot a node yet, so plan the reboot for a maintenance window and restart it from its hypervisor or its power control.
 :::
+
+## Removing a node that is gone
+
+`RemoveNode` (`admin` only) takes a node out of the inventory without contacting it, for a node that was destroyed, or wiped and isn't coming back. It doesn't reset or unlink the node: that's `DecommissionNode`. You name the node by its ID and confirm with its current name.
+
+:::caution[Remove only a node that is gone]
+A removed node that is still running keeps its management block and still trusts the admin key the manager held for it. The manager stops managing it, and adding it back needs a new adoption or `LINK`. If the node is still running, decommission it first.
+:::
+
+- **What it keeps:** the node's audit entries and name history stay. The node's credentials folder, when the manager created it, is moved to `.removed/<name>-<id>` inside the node credentials folder rather than deleted. Credentials you placed yourself, such as a Secret named in `nodes:`, are left where they are.
+- **When it is refused:** a `confirm_name` that isn't the node's name returns error 1109, and a pending enrollment that names the node returns 1110 until you approve or reject it. An unknown ID returns 1101.
+- **The audit log** gets a `node-removed` entry naming the node, its ID and its address.
+- **Without Postgres** the inventory is rebuilt from `nodes:` at every start, so a removed node listed there comes back. Remove it from the config file too.
 
 ## What is not available today
 

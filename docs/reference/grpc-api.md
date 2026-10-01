@@ -135,7 +135,7 @@ An approval covers one exact request: the tool, the `request_digest` of its argu
 
 | Request field | Type | Meaning |
 |---|---|---|
-| `status` (1) | `string` | keep only approvals in this state: `pending`, `approved`, `denied`, `expired` or `used`; empty lists all |
+| `status` (1) | `string` | keep only approvals in this state: `pending`, `approved`, `denied`, `expired` or `used`; `all` or empty lists all |
 
 | Response field | Type | Meaning |
 |---|---|---|
