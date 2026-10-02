@@ -38,15 +38,16 @@ Maintenance mode accepts connections **without any authentication**. Whoever rea
 
    ```text
    Awaiting configuration
-
    Run: cryptosctl config apply
 
    Address        192.0.2.50
+
    Mgmt SHA-256   2D71 1642 B726 B044 0162 7CA9 FBAC 32F5
                   C853 0FB1 903C C4DB 0225 8717 921A 4881
+                  check 1/2: compare with the web console
    ```
 
-   The two lines appear once DHCP has answered and the management API is up. A node with more than one address lists each one on its own line.
+   The address and the fingerprint appear once DHCP has answered and the management API is up. A node with more than one address lists each one on its own line. **check 1/2** marks the first of the two fingerprint checks in a Fleet Manager adoption; the second is on the installed node's console after it reboots.
 
 There is no TPM, no encrypted disk, no database and no CA key yet. The only useful things the node can do in this state are report its status and accept a config.
 

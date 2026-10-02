@@ -187,7 +187,7 @@ This terminal is now the node's serial console. The flags are the ones the integ
 
 ## 7. Watch the first boot
 
-The console shows the CryptOS banner, then each boot stage as it finishes. The debug image also prints the detailed kernel and init log in between.
+The console shows the CryptOS mark and the version, then each boot stage as it finishes. The debug image also prints the detailed kernel and init log in between.
 
 1. **state volume.** The `cryptos-state` partition is empty, so the node formats it as an encrypted LUKS2 volume, seals the key to the TPM, and creates a filesystem inside it.
 2. **configuration.** The node reads `EFI/cryptos/machine.yaml`, saves it inside the encrypted volume, and deletes the staged copy.
@@ -199,11 +199,23 @@ The console shows the CryptOS banner, then each boot stage as it finishes. The d
 Each stage is marked `[ok]` as it finishes, mixed in with the detailed log lines. When **management API** is marked, the node is up and waiting for its ceremony, and the console moves on to the node's dashboard.
 
 ```text
-   [ok]  state volume
-   [ok]  configuration
-   [ok]  network
-   [ok]  embedded etcd
-   [ok]  management API
+.-----. | .-----.
+|       |       |
+|       |       |
+|    .--+--.    |
+|    |#####|    |
+|    |#####|    |
+|    '-----'    |
+|               |
+'---------------'
+
+CryptOS PKI v0.1.0
+
+[ok]  state volume
+[ok]  configuration
+[ok]  network
+[ok]  embedded etcd
+[ok]  management API
 ```
 
 A stage marked `[!!]` failed. The boot stops there and the node restarts; there is no shell to fall back to.

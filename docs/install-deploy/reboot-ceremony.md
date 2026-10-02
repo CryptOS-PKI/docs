@@ -37,12 +37,15 @@ Once the node is up, its console (the physical screen or the hypervisor console)
 
 ```text
 Awaiting ceremony
-
 Fetch trust, then start the ceremony
 
 Mgmt SHA-256   2D71 1642 B726 B044 0162 7CA9 FBAC 32F5
                C853 0FB1 903C C4DB 0225 8717 921A 4881
+               check 2/2: compare with the web console
+Mgmt cert      self-signed, compare the fingerprint
 ```
+
+**check 2/2** is the second fingerprint check of a Fleet Manager adoption. Without a Fleet Manager, compare the fingerprint with `trust fetch --expect-sha256` as below.
 
 The fingerprint is shown in the same form after the ceremony, on the serving dashboard. It changes on every boot, like the certificate.
 
@@ -175,7 +178,7 @@ That certificate:
 The self-signed pin in `node-trust.pem` no longer matches once the ceremony commits. Any call with it fails with `x509: certificate signed by unknown authority`. Follow the steps below instead of fetching the old certificate again.
 :::
 
-The serving dashboard shows the change under the fingerprint:
+The serving dashboard shows the change under the fingerprint: the **Mgmt cert** line changes from `self-signed, compare the fingerprint` to:
 
 ```text
 Mgmt SHA-256   ....
