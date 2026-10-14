@@ -85,17 +85,18 @@ A node accepts upgrades only from the key its image was built with. If you lose 
 
 ## Unsigned images
 
-`task iso:unsigned` builds the same ISO with no signature and no upgrade anchor, named with `-unsigned`, for example `cryptos-amd64-vmware-unsigned.iso`. The project's public release assets are built this way:
+`task iso:unsigned` builds the same ISO with no signature and no upgrade anchor, named with `-unsigned`, for example `cryptos-amd64-vmware-unsigned.iso`. This is how the public release assets are built: the project never signs an image, so every one it publishes is this unsigned form, built from the exact tagged source:
 
 | Asset | What it is |
 |---|---|
 | `cryptos-amd64-vmware.uki.unsigned`, `cryptos-amd64-vmware-nodeid.uki.unsigned` | the UKI, TPM and nodeid variants |
 | `cryptos-amd64-vmware-unsigned.iso`, `cryptos-amd64-vmware-nodeid-unsigned.iso` | the same UKIs on bootable ISOs |
 | `cryptosctl-{linux,darwin}-{amd64,arm64}` | the CLI |
+| `build-manifest.json` | the build record: commit, dirty state, version and build tag |
 | `SHA256SUMS` | SHA-256 of every asset |
 
-:::caution[Unsigned images are for evaluation]
-An unsigned image boots only with Secure Boot off, and a node installed from one can never be upgraded in place, because it has no anchor to check a new image against. For a CA you intend to keep, build with your own key.
+:::caution[Unsigned images need your signature before Secure Boot]
+An unsigned image boots only with Secure Boot off, and carries no upgrade anchor, so a node installed from one can never be upgraded in place. Every image you run is signed by you: sign the downloaded image with your own Secure Boot key to boot with Secure Boot on (there is no in-place upgrade path from it), or build and sign from source for a CA you intend to keep and upgrade. See [Download the unsigned image](../install-deploy/build-bootable-image.md#download-the-unsigned-image).
 :::
 
 ## Upgrading in place

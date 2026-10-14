@@ -5,12 +5,12 @@ title: "🚢 Fleet Manager overview"
 # 🚢 Fleet Manager overview
 
 :::tip[Works today]
-The Fleet Manager and its web UI are part of the alpha. They have run a two-tier hierarchy (a Root and an Intermediate) on VMware, with both nodes reported as established and healthy. There is no published container image or chart, so you build it yourself; see [Deploy with Helm](./helm.md) for where each install path stands.
+The Fleet Manager and its web UI are part of the alpha. They have run a two-tier hierarchy (a Root and an Intermediate) on VMware, with both nodes reported as established and healthy. A release tag publishes the container image and chart; see [Deploy with Helm](./helm.md) for where each install path stands.
 :::
 
-A single CryptOS node is managed with `cryptosctl`, one node at a time. Once you have several nodes, a Root and the CAs under it, you want one place to see all of them. That place is the **Fleet Manager**.
+A single CryptOS node is managed with `cryptosctl`, one node at a time. Once you have several nodes, a Root and the CAs under it, you want one place to see all of them. That place is the **Fleet Manager**, also called FleetOS Manager.
 
-The Fleet Manager is optional. A node never needs it to issue certificates, and a node that has never been linked to one is managed with `cryptosctl` only.
+The Fleet Manager is optional. A node never needs it to issue certificates, and a node that has never been linked to one is managed with `cryptosctl` only. It runs on Kubernetes or standalone (a VM) -- never the CA itself, which runs only on the CryptOS appliance.
 
 ## What it is
 

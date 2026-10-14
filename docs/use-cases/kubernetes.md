@@ -6,6 +6,8 @@ title: "☸️ Kubernetes workloads"
 
 A Kubernetes cluster uses a lot of certificates, and they come and go fast: ingress certificates for every hostname, certificates for webhooks and controllers, and mTLS between services. Nobody carries CSRs by hand for that. In Kubernetes the job usually goes to **cert-manager**, which asks a CA for certificates and renews them before they expire.
 
+Kubernetes is a certificate **consumer** of CryptOS here, never a place CryptOS's CA runs: the CA runs only on its own appliance (hardware or VM), because a CA in a cluster can't be TPM-sealed and would be a single point of failure. FleetOS Manager, the optional multi-node console, is the part of CryptOS that does run on Kubernetes (or standalone); see the [Fleet Manager overview](../fleet-manager/overview.md).
+
 This page says how far the alpha gets.
 
 There are two separate jobs here, and it helps to keep them apart:

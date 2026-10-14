@@ -4,7 +4,7 @@ title: "🗂️ The repos"
 
 # 🗂️ The repos
 
-CryptOS is built in the open in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization on GitHub. Four repos make up the system itself: `cryptos-node`, `cryptos-appliance`, `cryptos-manager` and `cryptos-web`. A few more hold the things around it: the release manifest and Helm chart, test tooling, this site and the organization profile. Every repo on this page is public.
+CryptOS is built in the open in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization on GitHub. Four repos make up the system itself: `cryptos-node`, `cryptos-appliance`, `cryptos-manager` and `cryptos-web`. A few more hold the things around it: a deprecated Helm chart, test tooling, this site and the organization profile. Every repo on this page is public.
 
 ## How they fit together
 
@@ -67,11 +67,7 @@ What it holds:
 | `test/image/`, `test/integration/` | The QEMU + `swtpm` full-image suites. |
 | `docs/` | Secure Boot and image upgrade guides. |
 
-Each `v*` tag attaches its release assets to the GitHub Release: the unsigned UKI and installer ISO, TPM-backed and `nodeid` variants.
-
-:::caution[Release images are for evaluation]
-The release UKIs and ISOs carry no Secure Boot signature and no upgrade anchor. A node installed from one cannot be upgraded in place. For real use, build the image with your own Secure Boot key. See [Secure Boot](../install-deploy/secure-boot.md).
-:::
+Each `v*` tag attaches the unsigned release assets to the GitHub Release: the UKI and installer ISO (TPM-backed and `nodeid` variants), `cryptosctl` for Linux and macOS on amd64 and arm64, a `build-manifest.json` build record and a `SHA256SUMS` file -- but never a project-signed image. Every image you run is signed by you: enroll your own Secure Boot key and sign the downloaded image, or build and sign from source. See [Download the unsigned image](../install-deploy/build-bootable-image.md#download-the-unsigned-image), [Secure Boot](../install-deploy/secure-boot.md) and [Check the source you built](./verify-source.md).
 
 To write your own Go client for a node, use the stubs as a Go module:
 
@@ -102,7 +98,7 @@ The Fleet Manager is never an issuing authority. Its certificate lacks `keyCertS
 | `Dockerfile` | Builds the single image, with the `cryptos-web` bundle embedded. |
 | `docs/` | Operator guides: operator certificates, standalone deployment, the MCP endpoint and error codes. |
 
-A release tag builds the container image `ghcr.io/cryptos-pki/cryptos-manager` and pushes the chart to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`. Before the first release tag there is no published image, so you build it yourself. The build context is a folder that holds the `cryptos-manager` and `cryptos-web` checkouts side by side, as `manager` and `web`.
+A release tag builds the container image `ghcr.io/cryptos-pki/cryptos-manager` and pushes the chart to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`. Pull either directly, or build the image yourself from a folder that holds the `cryptos-manager` and `cryptos-web` checkouts side by side, as `manager` and `web`.
 
 See the [Fleet Manager overview](../fleet-manager/overview.md).
 
@@ -120,7 +116,7 @@ See [The web UI](../fleet-manager/web-ui.md).
 
 | Repo | What it holds |
 |---|---|
-| ⚓ [cryptos-release](https://github.com/CryptOS-PKI/cryptos-release) | The release manifest (`manifest/release.yaml`, the pinned appliance image, manager image digest and web console of a release) and a deprecated Helm chart, `charts/manager`. See [Deploy with Helm](../fleet-manager/helm.md). |
+| ⚓ [cryptos-release](https://github.com/CryptOS-PKI/cryptos-release) | A deprecated Helm chart, `charts/manager`. See [Deploy with Helm](../fleet-manager/helm.md). |
 | 🧪 [cryptos-lab](https://github.com/CryptOS-PKI/cryptos-lab) | Scripts for testing CryptOS on real and virtual hardware. `esxi/` boots CryptOS on VMware ESXi with `govc`: upload an ISO, create a UEFI VM, boot it and capture the serial console. Bare metal is planned. |
 | 📚 [website](https://github.com/CryptOS-PKI/website) | This site. Docusaurus 3, with the pages under `docs/` and the sidebar in `sidebars.ts`. |
 | 🏠 [.github](https://github.com/CryptOS-PKI/.github) | The organization profile README shown on the CryptOS-PKI GitHub page. |
@@ -128,7 +124,7 @@ See [The web UI](../fleet-manager/web-ui.md).
 The `api` repo, which held both protos before they moved to the services that serve them, is archived.
 
 :::info[Two Fleet Manager charts]
-There are two Helm charts for the Fleet Manager today: `charts/manager` in the `cryptos-release` repo, and `chart/fleet-manager` in the `cryptos-manager` repo. The `cryptos-manager` repo's chart is the one its release tags publish, to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`.
+There are two Helm charts for the Fleet Manager today: `charts/manager` in the `cryptos-release` repo, and `chart/fleet-manager` in the `cryptos-manager` repo. `chart/fleet-manager` is the one its release tags publish, to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`.
 :::
 
 ## Which repo do I need?

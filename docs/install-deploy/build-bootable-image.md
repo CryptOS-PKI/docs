@@ -16,6 +16,8 @@ A CryptOS node boots from one file: a **Unified Kernel Image** (UKI). The UKI ho
 
 This page shows how to build the ISO from the `cryptos-appliance` source code, which pins the `cryptos-node` engine at a version and builds `init`, `cryptosctl` and the console from it by import path.
 
+The CA runs only on the image you build here — its own hardware or VM — never on Kubernetes: a CA there can't be TPM-sealed and would be a single point of failure. FleetOS Manager, the optional multi-node console, runs separately, on Kubernetes or standalone (a VM); see the [Fleet Manager overview](../fleet-manager/overview.md).
+
 ## Two choices to make first
 
 Two settings shape the image. Both are chosen when you build, not later.
@@ -91,9 +93,35 @@ task iso:unsigned PLATFORM=vmware STATEKEY=nodeid
 
 This writes `build/out/cryptos-amd64-vmware-unsigned.iso` (or `...-vmware-nodeid-unsigned.iso`).
 
-## Release downloads
+## Download the unsigned image
 
-Each tagged `cryptos-appliance` release attaches ready-made files to its GitHub Release: the unsigned UKIs and ISOs for both `STATEKEY` variants, `cryptosctl` for Linux and macOS on amd64 and arm64, and a `SHA256SUMS` file. They are built exactly like `task iso:unsigned` above, so they are for evaluation with Secure Boot off. For a node you plan to keep, build a signed image yourself.
+Every image you run is signed by you. The project never signs one: nothing it publishes
+is ready to boot with Secure Boot on until you sign it yourself, or build and sign from
+source.
+
+Each tagged `cryptos-appliance` release attaches an unsigned image built this way from
+that tag: the ISO for both `STATEKEY` variants, the UKI inside it (renamed with the build
+tag), `cryptosctl` for Linux and macOS on amd64 and arm64, a `build-manifest.json` build
+record and a `SHA256SUMS` file. Verify what you downloaded before using it -- either check
+it against the published sums, or rebuild from the same tag and compare:
+
+```bash
+sha256sum -c SHA256SUMS
+```
+
+The build is meant to be bit-for-bit reproducible, so rebuilding `task iso:unsigned` from
+the tagged source and diffing the hash is an equally valid check.
+
+From there you have two paths:
+
+- **Sign it with your own Secure Boot key** so it boots with Secure Boot on; see
+  [Secure Boot](./secure-boot.md).
+- **Build from source** instead (above). This is also the only way to get an in-place
+  upgrade: an image signed after the fact carries no upgrade anchor, so a node installed
+  from the downloaded image can't be upgraded in place until a later release adds signing
+  with the upgrade anchor built in.
+
+Either way, see [Check the source you built](../about/verify-source.md).
 
 ## Next step
 

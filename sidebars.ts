@@ -77,6 +77,7 @@ const sidebars: SidebarsConfig = {
         'install-deploy/install-to-disk',
         'install-deploy/reboot-ceremony',
         'install-deploy/secure-boot',
+        'install-deploy/upgrade-in-place',
       ],
     },
     {
@@ -185,7 +186,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'About',
-      items: ['about/repos', 'about/license', 'about/cncf'],
+      items: ['about/repos', 'about/verify-source', 'about/license', 'about/cncf'],
     },
   ],
 };

@@ -90,10 +90,6 @@ The node in QEMU is reachable as `127.0.0.1:4443`, but its management certificat
 
 The [cryptosctl command reference](../reference/cryptosctl.md) lists every command and flag.
 
-## Release downloads
-
-Tagged `cryptos-node` releases are set up to attach ready-made `cryptosctl` binaries for Linux and macOS, on amd64 and arm64 (`cryptosctl-linux-amd64`, `cryptosctl-darwin-arm64` and so on), with a `SHA256SUMS` file. No release has been published yet, so build from source for now.
-
 ## Next step
 
 Create the Root: [Run the first-boot ceremony](./first-boot-ceremony.md).
