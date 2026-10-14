@@ -12,7 +12,7 @@ import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
 This describes CryptOS as it works right now.
 :::
 
-CryptOS ships **no signing key** and asks you to trust none. You make your own Secure Boot key, build the image with it, and enroll its certificate in the firmware of the machines you run. The same certificate is stamped into the image as its **upgrade anchor**, so the key that makes an image bootable is also the only key that can replace it later.
+Every image you run is signed by you. CryptOS ships **no signing key** and asks you to trust none: the project's images are always unsigned, and nothing it publishes is ready to boot with Secure Boot on until you sign it (or build and sign from source). You make your own Secure Boot key, build the image with it, and enroll its certificate in the firmware of the machines you run. The same certificate is stamped into the image as its **upgrade anchor**, so the key that makes an image bootable is also the only key that can replace it later.
 
 This page is the short version. The full guide, with every verification command, is [Secure Boot: build and sign with your own key](https://github.com/CryptOS-PKI/cryptos-appliance/blob/main/docs/secure-boot.md) in the `cryptos-appliance` repository.
 

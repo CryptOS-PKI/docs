@@ -67,7 +67,7 @@ What it holds:
 | `test/image/`, `test/integration/` | The QEMU + `swtpm` full-image suites. |
 | `docs/` | Secure Boot and image upgrade guides. |
 
-CryptOS ships source only: a `v*` tag is the tag, its release notes and the source archive, with no UKI, ISO or binary attached. Build the image yourself and sign it with your own Secure Boot key; see [Secure Boot](../install-deploy/secure-boot.md) and [Check the source you built](./verify-source.md).
+Each `v*` tag attaches the unsigned release assets to the GitHub Release: the UKI and installer ISO (TPM-backed and `nodeid` variants), `cryptosctl` for Linux and macOS on amd64 and arm64, a `build-manifest.json` build record and a `SHA256SUMS` file -- but never a project-signed image. Every image you run is signed by you: enroll your own Secure Boot key and sign the downloaded image, or build and sign from source. See [Download the unsigned image](../install-deploy/build-bootable-image.md#download-the-unsigned-image), [Secure Boot](../install-deploy/secure-boot.md) and [Check the source you built](./verify-source.md).
 
 To write your own Go client for a node, use the stubs as a Go module:
 

@@ -93,6 +93,36 @@ task iso:unsigned PLATFORM=vmware STATEKEY=nodeid
 
 This writes `build/out/cryptos-amd64-vmware-unsigned.iso` (or `...-vmware-nodeid-unsigned.iso`).
 
+## Download the unsigned image
+
+Every image you run is signed by you. The project never signs one: nothing it publishes
+is ready to boot with Secure Boot on until you sign it yourself, or build and sign from
+source.
+
+Each tagged `cryptos-appliance` release attaches an unsigned image built this way from
+that tag: the ISO for both `STATEKEY` variants, the UKI inside it (renamed with the build
+tag), `cryptosctl` for Linux and macOS on amd64 and arm64, a `build-manifest.json` build
+record and a `SHA256SUMS` file. Verify what you downloaded before using it -- either check
+it against the published sums, or rebuild from the same tag and compare:
+
+```bash
+sha256sum -c SHA256SUMS
+```
+
+The build is meant to be bit-for-bit reproducible, so rebuilding `task iso:unsigned` from
+the tagged source and diffing the hash is an equally valid check.
+
+From there you have two paths:
+
+- **Sign it with your own Secure Boot key** so it boots with Secure Boot on; see
+  [Secure Boot](./secure-boot.md).
+- **Build from source** instead (above). This is also the only way to get an in-place
+  upgrade: an image signed after the fact carries no upgrade anchor, so a node installed
+  from the downloaded image can't be upgraded in place until a later release adds signing
+  with the upgrade anchor built in.
+
+Either way, see [Check the source you built](../about/verify-source.md).
+
 ## Next step
 
 Boot the ISO on the target machine: [Boot and maintenance mode](./boot-maintenance.md).
