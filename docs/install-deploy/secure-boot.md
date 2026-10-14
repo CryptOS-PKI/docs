@@ -222,7 +222,7 @@ A node accepts a new image only if the image's `.sig` verifies against the ancho
 cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem image stage --image build/out/cryptos-amd64.uki
 ```
 
-An image signed by any other key is refused before anything is written. The [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos-appliance/blob/main/docs/image-upgrade.md) covers staging, activating and rolling back.
+An image signed by any other key is refused before anything is written. [Upgrade a node in place](./upgrade-in-place.md) covers staging, activating and rolling back.
 
 `cryptosctl` runs on Linux and macOS.
 

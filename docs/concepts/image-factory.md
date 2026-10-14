@@ -85,14 +85,14 @@ A node accepts upgrades only from the key its image was built with. If you lose 
 
 ## Unsigned images
 
-`task iso:unsigned` builds the same ISO with no signature and no upgrade anchor, named with `-unsigned`, for example `cryptos-amd64-vmware-unsigned.iso`. The project's public release assets are built this way:
+`task iso:unsigned` builds the same ISO with no signature and no upgrade anchor, named with `-unsigned`, for example `cryptos-amd64-vmware-unsigned.iso`. CryptOS ships source only -- no UKI, ISO or `cryptosctl` binary is ever published -- but the release's lab gate builds and boots this unsigned form from the exact tagged source, with a throwaway key, to prove install, boot, upgrade and rollback:
 
-| Asset | What it is |
+| Build output | What it is |
 |---|---|
 | `cryptos-amd64-vmware.uki.unsigned`, `cryptos-amd64-vmware-nodeid.uki.unsigned` | the UKI, TPM and nodeid variants |
 | `cryptos-amd64-vmware-unsigned.iso`, `cryptos-amd64-vmware-nodeid-unsigned.iso` | the same UKIs on bootable ISOs |
 | `cryptosctl-{linux,darwin}-{amd64,arm64}` | the CLI |
-| `SHA256SUMS` | SHA-256 of every asset |
+| `SHA256SUMS` | SHA-256 of every build output |
 
 :::caution[Unsigned images are for evaluation]
 An unsigned image boots only with Secure Boot off, and a node installed from one can never be upgraded in place, because it has no anchor to check a new image against. For a CA you intend to keep, build with your own key.

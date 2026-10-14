@@ -16,6 +16,8 @@ A CryptOS node boots from one file: a **Unified Kernel Image** (UKI). The UKI ho
 
 This page shows how to build the ISO from the `cryptos-appliance` source code, which pins the `cryptos-node` engine at a version and builds `init`, `cryptosctl` and the console from it by import path.
 
+The CA runs only on the image you build here — its own hardware or VM — never on Kubernetes: a CA there can't be TPM-sealed and would be a single point of failure. FleetOS Manager, the optional multi-node console, runs separately, on Kubernetes or standalone (a VM); see the [Fleet Manager overview](../fleet-manager/overview.md).
+
 ## Two choices to make first
 
 Two settings shape the image. Both are chosen when you build, not later.
@@ -90,10 +92,6 @@ task iso:unsigned PLATFORM=vmware STATEKEY=nodeid
 ```
 
 This writes `build/out/cryptos-amd64-vmware-unsigned.iso` (or `...-vmware-nodeid-unsigned.iso`).
-
-## Release downloads
-
-Each tagged `cryptos-appliance` release attaches ready-made files to its GitHub Release: the unsigned UKIs and ISOs for both `STATEKEY` variants, `cryptosctl` for Linux and macOS on amd64 and arm64, and a `SHA256SUMS` file. They are built exactly like `task iso:unsigned` above, so they are for evaluation with Secure Boot off. For a node you plan to keep, build a signed image yourself.
 
 ## Next step
 

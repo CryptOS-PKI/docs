@@ -12,7 +12,7 @@ A maintenance node is waiting for one thing: its **machine config**. That single
 
 ## 1. Get `cryptosctl`
 
-`cryptosctl` is the command-line tool you manage every node with. Download it from a `cryptos-appliance` GitHub Release (`cryptosctl-linux-amd64`, `cryptosctl-darwin-arm64`, and so on, checked against `SHA256SUMS`), or build it from the `cryptos-node` source:
+`cryptosctl` is the command-line tool you manage every node with. CryptOS ships source only, so build it from the `cryptos-node` source:
 
 ```bash
 task build        # writes bin/cryptosctl (plus bin/init and bin/cryptos-install)

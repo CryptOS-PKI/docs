@@ -18,7 +18,7 @@ Every `cryptosctl` command that talks to a node needs to know three things: **wh
 `cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
-- `cryptosctl` on your workstation. Download it from a `cryptos` GitHub Release or build it; see [Bootstrap and apply config](../install-deploy/bootstrap-apply.md).
+- `cryptosctl` on your workstation, built from the `cryptos-node` source; see [Bootstrap and apply config](../install-deploy/bootstrap-apply.md).
 - An installed node and its management IP address (the `network.address` in its machine config).
 - Your bootstrap admin identity. If you don't have one yet, [make it first](./bootstrap.md).
 - Access to the node's console (the screen or the hypervisor console), to read its fingerprint.
