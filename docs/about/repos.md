@@ -93,12 +93,12 @@ The Fleet Manager is never an issuing authority. Its certificate lacks `keyCertS
 | `proto/cryptos/fleet/v1/` | The Fleet Manager API: `FleetService` and `BootstrapService` (`fleet.proto`, `bootstrap.proto`, `operator_ca.proto`, `errors.proto`). |
 | `gen/go/cryptos/fleet/v1/` | The generated Go and connect-go stubs. |
 | `internal/` | The backend itself. |
-| `chart/fleet-manager/` | A Helm chart. No image or chart is ever published; build and push your own. |
+| `chart/fleet-manager/` | A Helm chart, published with the image on each release tag. |
 | `deploy/` | A worked single-host `docker compose` example and its config. |
 | `Dockerfile` | Builds the single image, with the `cryptos-web` bundle embedded. |
 | `docs/` | Operator guides: operator certificates, standalone deployment, the MCP endpoint and error codes. |
 
-CryptOS ships source only, so there is no published `cryptos-manager` image or chart on any release. Build the image yourself from a folder that holds the `cryptos-manager` and `cryptos-web` checkouts side by side, as `manager` and `web`.
+A release tag builds the container image `ghcr.io/cryptos-pki/cryptos-manager` and pushes the chart to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`. Pull either directly, or build the image yourself from a folder that holds the `cryptos-manager` and `cryptos-web` checkouts side by side, as `manager` and `web`.
 
 See the [Fleet Manager overview](../fleet-manager/overview.md).
 
@@ -124,7 +124,7 @@ See [The web UI](../fleet-manager/web-ui.md).
 The `api` repo, which held both protos before they moved to the services that serve them, is archived.
 
 :::info[Two Fleet Manager charts]
-There are two Helm charts for the Fleet Manager today: `charts/manager` in the `cryptos-release` repo, and `chart/fleet-manager` in the `cryptos-manager` repo. `chart/fleet-manager` is the supported one; no chart is published, so render it from a `cryptos-manager` checkout.
+There are two Helm charts for the Fleet Manager today: `charts/manager` in the `cryptos-release` repo, and `chart/fleet-manager` in the `cryptos-manager` repo. `chart/fleet-manager` is the one its release tags publish, to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`.
 :::
 
 ## Which repo do I need?

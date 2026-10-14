@@ -27,7 +27,7 @@ The chart renders four objects:
 | Object | What it is for |
 |---|---|
 | ConfigMap `fleet-manager-config` | The manager's `config.yaml`, mounted at `/etc/cryptos/fleet/config.yaml`. It holds no secrets. |
-| Deployment `fleet-manager` | One container named `manager`, running the image you built and set in `image.repository`. |
+| Deployment `fleet-manager` | One container named `manager`, running `ghcr.io/cryptos-pki/cryptos-manager` by default, or an image you built and pushed yourself. |
 | Service `fleet-manager` | Port `443` forwarded to `8443` in the container, and port `80` to `8080` for the redirect to HTTPS. |
 | PersistentVolumeClaim `fleet-manager-node-creds` | The node credentials folder. Not created when you name your own claim in `nodeCreds.existingClaim`. |
 
@@ -90,7 +90,7 @@ The full list is in [`chart/fleet-manager/values.yaml`](https://github.com/Crypt
 | Key | Default | What it does |
 |---|---|---|
 | `replicaCount` | `1` | Number of manager pods. See the caution below before raising it. |
-| `image.repository` | `registry.invalid/cryptos-manager` (a placeholder) | The manager image you built; set this to where you pushed it. |
+| `image.repository` | `ghcr.io/cryptos-pki/cryptos-manager` | The manager image. Pull the published image at a release tag, or build and push your own and point this at it. |
 | `image.tag` | `""` | Empty means the chart's app version. |
 | `service.port` / `service.targetPort` | `443` / `8443` | The Service port and the container's HTTPS listener. |
 | `service.httpPort` / `service.httpTargetPort` | `80` / `8080` | The redirect-to-HTTPS port and its listener. |
