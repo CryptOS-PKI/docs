@@ -5,7 +5,23 @@
   width: 100%;
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+.feature {
+  display: block;
+  height: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--cryptos-border);
+  border-radius: var(--cryptos-radius);
+  color: inherit;
+  text-decoration: none;
+}
+
+.feature:hover {
+  border-color: var(--cryptos-primary);
+  text-decoration: none;
+  color: inherit;
+}
+
+.feature p {
+  margin-bottom: 0;
+  color: var(--cryptos-muted-foreground);
 }

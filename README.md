@@ -55,7 +55,7 @@ Page-level tweaks go in `src/css/custom.css`, using the tokens from `theme.css`.
 
 ## 🚦 Status
 
-**Pre-alpha.** The full information architecture is in place. The Introduction, Install & Deploy, and `cryptosctl` reference pages are written; the other pages are still stubs being filled in. It stays on `0.x.y` until the whole system lands.
+**Pre-alpha.** The full information architecture is in place and written: Introduction, Core Concepts, Use Cases, Try It Locally, Install & Deploy, Using CryptOS, Fleet Manager, Integrations, Reference, Deep Dives and About. A dedicated visual design pass (hero, logo treatment) comes before the `v0.1.0` tag. It stays on `0.x.y` until the whole system lands.
 
 The build phases (project-wide):
 

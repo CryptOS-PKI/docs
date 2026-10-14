@@ -185,5 +185,7 @@ Power the node off as in step 6, then remove the lab folder. The Root, its key a
 ## Where to go next
 
 - 📖 Understand what just happened: [How keys never leave the TPM](../deep-dives/keys-never-leave-tpm.md) and [The ceremony, step by step](../deep-dives/ceremony-walkthrough.md).
+- 🔏 Issue a certificate: a Root signs subordinate CAs, not leaves; see [CA roles](../concepts/ca-roles.md) and [Internal TLS and mTLS](../use-cases/internal-tls.md) for `ca issue-leaf` from an Intermediate or Issuing node.
+- 🚢 Manage more than one node: the [Fleet Manager overview](../fleet-manager/overview.md).
 - 🏗️ Install a real node: [Build a bootable image](../install-deploy/build-bootable-image.md).
 - ⌨️ Every command: [cryptosctl command reference](../reference/cryptosctl.md).
