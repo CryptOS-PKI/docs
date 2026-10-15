@@ -1,4 +1,4 @@
-# AGENTS.md - website
+# AGENTS.md - docs
 
 Guidance for coding agents working in this repo.
 

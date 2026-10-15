@@ -52,11 +52,11 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://cryptos-pki.github.io',
+  url: 'https://docs.cryptos-pki.com',
   baseUrl: '/',
 
   organizationName: 'CryptOS-PKI',
-  projectName: 'website',
+  projectName: 'docs',
 
   // Skeleton phase: keep the build resilient while pages are stubs.
   // Restore 'throw' once the content workstream fills the cross-links in.
@@ -190,7 +190,7 @@ const config: Config = {
       // from the CNCF website guidelines apply only once the project is accepted.
       copyright:
         'Copyright © The CryptOS Authors<br />' +
-        'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/website/blob/main/LICENSE">Apache License 2.0</a>',
+        'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/docs/blob/main/LICENSE">Apache License 2.0</a>',
     },
     prism: {
       theme: prismLight,
