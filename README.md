@@ -1,4 +1,4 @@
-# website 📚
+# docs 📚
 
 > 📖 The documentation site for [CryptOS-PKI](https://github.com/CryptOS-PKI): how to build, install, and run CryptOS, written to be readable by everyone. Built with [Docusaurus](https://docusaurus.io) 3 and a CryptOS theme that matches the Fleet Manager web UI.
 
