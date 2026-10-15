@@ -72,7 +72,7 @@ export default function Home(): ReactNode {
           </>
         }
         primaryCta={{label: 'Get started', to: '/docs/try-it-locally/requirements'}}
-        secondaryCta={{label: 'What is CryptOS?', to: '/docs/introduction/what-is-cryptos'}}
+        secondaryCta={{label: 'What is CryptOS?', to: '/docs'}}
         terminalTitle="cryptosctl"
         terminalLines={[
           {prompt: 'cryptosctl ca status'},
