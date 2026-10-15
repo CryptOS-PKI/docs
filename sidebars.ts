@@ -179,6 +179,7 @@ const sidebars: SidebarsConfig = {
         'deep-dives/keys-never-leave-tpm',
         'deep-dives/ceremony-walkthrough',
         'deep-dives/audit-integrity',
+        'deep-dives/clock-safety',
       ],
     },
     {
