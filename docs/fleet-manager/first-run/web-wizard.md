@@ -116,5 +116,5 @@ Keep the key backup somewhere safe, or delete it once the certificate is install
 
 ## Where to go next
 
-- [Adding operators in the web UI](../web-operator-credentials.md): give the next people their certificates.
+- [Adding operators](../web-operator-credentials.md): give the next people their certificates.
 - [Managing operator CAs in the web UI](../web-operator-cas.md): CRLs, OCSP and rotating the CA.
