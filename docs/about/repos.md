@@ -117,7 +117,7 @@ See [The web UI](../fleet-manager/web-ui.md).
 | Repo | What it holds |
 |---|---|
 | 🧪 [cryptos-lab](https://github.com/CryptOS-PKI/cryptos-lab) | Scripts for testing CryptOS on real and virtual hardware. `esxi/` boots CryptOS on VMware ESXi with `govc`: upload an ISO, create a UEFI VM, boot it and capture the serial console. Bare metal is planned. |
-| 📚 [website](https://github.com/CryptOS-PKI/website) | This site. Docusaurus 3, with the pages under `docs/` and the sidebar in `sidebars.ts`. |
+| 📚 [docs](https://github.com/CryptOS-PKI/docs) | This site. Docusaurus 3, with the pages under `docs/` and the sidebar in `sidebars.ts`. |
 | 🏠 [.github](https://github.com/CryptOS-PKI/.github) | The organization profile README shown on the CryptOS-PKI GitHub page. |
 
 The `api` repo, which held both protos before they moved to the services that serve them, is archived. `cryptos-release`, which carried an earlier, unsupported Fleet Manager chart, is retired; the supported chart is `chart/fleet-manager` in `cryptos-manager`.
@@ -135,6 +135,6 @@ The `api` repo, which held both protos before they moved to the services that se
 | Change the Fleet Manager web UI | `cryptos-web` |
 | See what a release pins | `cryptos-appliance` (`release/pins.yaml`) |
 | Test CryptOS on ESXi | `cryptos-lab` |
-| Fix or add to these docs | `website` |
+| Fix or add to these docs | `docs` |
 
 Report a problem in the repo that holds the code.
