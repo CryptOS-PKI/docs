@@ -38,7 +38,7 @@ etcd:            OK
 ...
 ```
 
-`Identity: ESTABLISHED` means the ceremony already ran; there is nothing to do here. `Role: INTERMEDIATE` or `ISSUING` means this is a subordinate, which never runs this ceremony: its parent signs it instead (see [Subordinate nodes](../install-deploy/reboot-ceremony.md)). `TPM: UNAVAILABLE` is expected on a `nodeid` image, where the CA key is kept in software instead of a TPM. The other lines are explained in [Check status](./status.md).
+`Identity: ESTABLISHED` means the ceremony already ran; there is nothing to do here. `Role: INTERMEDIATE` or `ISSUING` means this is a subordinate, which never runs this ceremony: its parent signs it instead (see [Subordinate nodes](../install-deploy/subordinate-nodes.md)). `TPM: UNAVAILABLE` is expected on a `nodeid` image, where the CA key is kept in software instead of a TPM. The other lines are explained in [Check status](./status.md).
 :::
 
 ## 2. Check the config you will send

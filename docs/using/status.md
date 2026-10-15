@@ -55,7 +55,7 @@ Whether the node has its CA identity yet.
 |---|---|---|
 | `NONE` | a Root with no CA yet | [start the ceremony](./ceremony-start.md) |
 | `CEREMONY_IN_PROGRESS` | the ceremony has started and has not finished | wait for it; if it failed, run it again |
-| `AWAITING_CERT` | a subordinate that has made its key and CSR and waits for its parent to sign them | carry the CSR to the parent (see [Subordinate nodes](../install-deploy/reboot-ceremony.md)) |
+| `AWAITING_CERT` | a subordinate that has made its key and CSR and waits for its parent to sign them | carry the CSR to the parent (see [Subordinate nodes](../install-deploy/subordinate-nodes.md)) |
 | `ESTABLISHED` | the node has its CA identity and can sign | nothing; [check it](./identity.md) |
 
 ### TPM

@@ -77,6 +77,8 @@ const sidebars: SidebarsConfig = {
         'install-deploy/bootstrap-apply',
         'install-deploy/install-to-disk',
         'install-deploy/reboot-ceremony',
+        'install-deploy/run-the-ceremony',
+        'install-deploy/subordinate-nodes',
         'install-deploy/secure-boot',
         'install-deploy/upgrade-in-place',
       ],
