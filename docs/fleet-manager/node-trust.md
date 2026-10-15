@@ -257,7 +257,7 @@ A request with no `ca_pem` is refused with error 1107. A node whose certificate 
 
 The node then proves it holds its CA identity key, and the approval is refused if that key changed in between.
 
-On approval the node joins the inventory. Its name comes from its CA's common name, in lowercase with other characters turned into hyphens (`Example Root CA G1` becomes `example-root-ca-g1`); [rename it](./web-ui.md#renaming-a-node) afterwards if you want another. The manager saves the admin certificate and key in the node's credentials folder, and `ca_pem` next to them as `ca.crt`, the recorded CA chain, or as `server.crt` when it is the node's own certificate. Every later connection verifies the node with them. A node already in the inventory at the same address keeps its entry. The approval is refused with error 1102 when another node already has the name.
+On approval the node joins the inventory. Its name comes from its CA's common name, in lowercase with other characters turned into hyphens (`Example Root CA G1` becomes `example-root-ca-g1`); [rename it](./web-node-detail.md#renaming-a-node) afterwards if you want another. The manager saves the admin certificate and key in the node's credentials folder, and `ca_pem` next to them as `ca.crt`, the recorded CA chain, or as `server.crt` when it is the node's own certificate. Every later connection verifies the node with them. A node already in the inventory at the same address keeps its entry. The approval is refused with error 1102 when another node already has the name.
 
 ## Where to go next
 

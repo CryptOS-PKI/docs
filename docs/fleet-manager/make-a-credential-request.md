@@ -60,5 +60,5 @@ Install the `.p12` file in your browser's certificate store and log in, as in [L
 
 ## Where to go next
 
-- [The web UI](./web-ui.md): logging in and every page.
+- [The web UI](./web-ui.md): logging in and finding your way around.
 - [Adding operators in the web UI](./web-operator-credentials.md): what your admin does with your CSR.

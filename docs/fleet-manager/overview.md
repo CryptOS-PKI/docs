@@ -151,7 +151,7 @@ A `SUBORDINATE` enrollment gives an adopted Intermediate or Issuing node its CA 
 
 ## Switching an enrolment protocol on a node
 
-The manager can switch ACME or EST on or off on one node through the Fleet API call `SetNodeProtocol` (`admin` only). The web UI's Protocols page calls it per node (see [The web UI](./web-ui.md#protocols)).
+The manager can switch ACME or EST on or off on one node through the Fleet API call `SetNodeProtocol` (`admin` only). The web UI's Protocols page calls it per node (see [Certificates, enrollment and protocols](./web-catalogs.md#protocols)).
 
 1. **The manager reads the node's config** and changes one thing: the `enabled` flag of that protocol's block (`pki.acme` or `pki.est`). The block's other settings go back as the node stored them. EAB keys and EST password digests are write-only, so the node returns them blank, the manager sends them back blank, and the node keeps the values it has. The other protocol's block is left out, so the node keeps it as it is.
 2. **The node checks and stores it.** The node keeps a switched-off protocol's settings, so switching it off and back on needs nothing re-entered. Switching on still needs the block the node holds to be complete (for ACME a `base_url`, a `profile` and an External Account Binding key unless anonymous accounts are allowed; for EST `hostnames` and a `profile`), because the manager does not fill in settings: a protocol that was never set up on the node, or whose block was removed, is refused until you add its settings with `cryptosctl config apply`. A Root refuses to switch either protocol on. A refusal comes back with the node's reason, and nothing is audited: an invalid config is error 1500 and any other refusal 1108, with the node's own message on the `x-cryptos-node-reason` error metadata. The same applies to `GetNodeConfig` and `ApplyNodeConfig`. A node whose management certificate the manager refuses is error 1106, and one it can't reach 1100.
@@ -162,7 +162,7 @@ The manager can switch ACME or EST on or off on one node through the Fleet API c
 A protocol that is already in the state you asked for is left alone: nothing is applied or audited.
 
 :::warning[A switch needs a reboot in a maintenance window]
-Turning a protocol on or off takes effect only at the node's next boot, and rebooting an Issuing CA stops issuance until it is back. Plan the reboot for a maintenance window, then trigger it from the node's page in the web UI (see [Rebooting a node](./web-ui.md#rebooting-a-node)) instead of a hypervisor hard reset.
+Turning a protocol on or off takes effect only at the node's next boot, and rebooting an Issuing CA stops issuance until it is back. Plan the reboot for a maintenance window, then trigger it from the node's page in the web UI (see [Rebooting a node](./web-node-detail.md#rebooting-a-node)) instead of a hypervisor hard reset.
 :::
 
 ## Removing a node that is gone
@@ -187,7 +187,7 @@ A removed node that is still running keeps its management block and still trusts
 
 ## Where to go next
 
-- [The web UI](./web-ui.md): the pages and what you can do on each.
+- [The web UI](./web-ui.md): logging in, finding your way around, and where each page lives.
 - [Deploy with Helm](./helm.md): the supported chart, and what to use today.
 - [Machine config](../reference/machine-config.md): the node config the adopt wizard fills in.
 - [cryptosctl](../reference/cryptosctl.md): managing a node without the Fleet Manager.

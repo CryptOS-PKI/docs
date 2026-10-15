@@ -229,4 +229,4 @@ Every deployment needs an operator certificate before anyone can log in. The man
 ## Where to go next
 
 - [Fleet Manager overview](./overview.md): what the Fleet Manager holds and how nodes join it.
-- [The web UI](./web-ui.md): what you can do once you are logged in.
+- [The web UI](./web-ui.md): logging in and finding your way around.
