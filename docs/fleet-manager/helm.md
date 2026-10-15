@@ -6,8 +6,8 @@ import Pre10Notice from '@site/docs/_partials/pre-1-0-notice.mdx';
 
 # ☸️ Deploy with Helm
 
-:::info[No published chart or image]
-No chart or container image is published. Render the chart from the [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) repo and install it with an image you built yourself, or use one of the paths in [What to use today](#what-to-use-today).
+:::info[Published on a release tag]
+A release tag publishes both the image (`ghcr.io/cryptos-pki/cryptos-manager`) and the chart (`oci://ghcr.io/cryptos-pki/charts/fleet-manager`) to GHCR. Install straight from the OCI registry below, or render the chart from a checkout of the [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) repo for an unreleased commit or a local edit. Kubernetes is one of three ways to run the manager; see [What to use today](#what-to-use-today) for the other two.
 :::
 
 <Pre10Notice />
@@ -44,7 +44,7 @@ The chart creates no secrets. Before an install you need these in the release na
 
 - **A Postgres database** the cluster can reach, and a Secret holding its connection string, such as `postgres://manager:<password>@db:5432/manager`, under the key `database-url` (or the key you set in `database.secretKey`). Name it in `database.existingSecret`. The chart passes it to the manager as the `MANAGER_DATABASE_URL` environment variable, so the password never appears in the ConfigMap.
 - **Storage for the node credentials.** The default claim asks the cluster's default storage class for `1Gi`, `ReadWriteOnce`.
-- **The manager image.** Until a release publishes it, build it and push it to a registry your cluster can pull from, then set `image.repository` and `image.tag`. The manager README covers [building the image yourself](https://github.com/CryptOS-PKI/cryptos-manager#building-the-image-yourself).
+- **Nothing, by default.** A release tag publishes `ghcr.io/cryptos-pki/cryptos-manager`, which `image.repository` already points at. Build and push your own instead to track an unreleased commit or a local edit, then set `image.repository` and `image.tag`; the manager README covers [building the image yourself](https://github.com/CryptOS-PKI/cryptos-manager#building-the-image-yourself).
 
 With `authBypass: false`, the default, the chart refuses to render without `database.existingSecret`.
 
@@ -55,7 +55,13 @@ Two more are optional. Leave both out for day zero:
 
 ## Day zero
 
-Install with only the database Secret:
+Install straight from the published chart, with only the database Secret:
+
+```bash
+helm install fm oci://ghcr.io/cryptos-pki/charts/fleet-manager --version X.Y.Z --set database.existingSecret=fm-postgres
+```
+
+Or, from a checkout, for an unreleased commit or a local edit:
 
 ```bash
 helm install fm manager/chart/fleet-manager --set database.existingSecret=fm-postgres
@@ -212,12 +218,13 @@ You can render the chart without a cluster and read what it would create. `git` 
 
 ## What to use today
 
-No image or chart is published, so the manager's own docs cover the two deployments that run without a registry:
+FleetOS Manager deploys three ways:
 
-- **Docker Compose on one host**, with the manager and its own Postgres: [Single host with `docker compose`](https://github.com/CryptOS-PKI/cryptos-manager#single-host-with-docker-compose). The compose file starts for day zero with only `config.yaml` and the Postgres password: its `tls`, `operator-ca` and `operator-crl` read-only mounts are commented out until you uncomment each one with its key in `config.yaml`.
-- **A plain Linux host with systemd** and a local Postgres: [Deploying the Fleet Manager standalone](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/deploying-standalone.md).
+- **Kubernetes**, above -- the published chart, or a checkout for an unreleased commit or a local edit.
+- **A container** (Docker or a Docker-compatible runtime) on a bare-metal host, with PostgreSQL alongside it on the same host for easy upgrades: [Single host with `docker compose`](https://github.com/CryptOS-PKI/cryptos-manager#single-host-with-docker-compose). The compose file starts for day zero with only `config.yaml` and the Postgres password: its `tls`, `operator-ca` and `operator-crl` read-only mounts are commented out until you uncomment each one with its key in `config.yaml`. PostgreSQL is always yours to provide -- the compose file's `postgres` service is a worked example you run and own, not something the manager ships or manages.
+- **A plain Linux host with systemd**, no container runtime, and a Postgres you provide: [Deploying FleetOS Manager standalone](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/deploying-standalone.md).
 
-Every deployment needs an operator certificate before anyone can log in. The manager's [Operator PKI guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/operator-pki.md) shows how to mint one.
+Every deployment needs an operator certificate before anyone can log in. The manager's [Operator credentials guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/operator-credentials.md) shows how to mint one.
 
 ## Where to go next
 
