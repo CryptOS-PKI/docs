@@ -32,7 +32,7 @@ The core of a certificate authority is built, tested, and running on real hardwa
 - **Phase 3** — high-availability pairs, many independent Roots, signed add-on extensions, and disaster recovery.
 
 :::info[Release candidates: 0.x]
-Every CryptOS release before `1.0.0` is a `0.x` release candidate. `1.0.0` will be the first GA release, once the whole system lands. It isn't out yet.
+Every CryptOS release before `1.0.0` is a `0.x` release: `v0.1.0` is the first, and each one is preceded by release candidates (`v0.1.0-rc.1`, `rc.2` and so on) that are tested the same way. `1.0.0` will be the first GA release, once the whole system lands. It isn't out yet.
 :::
 
 ## One thing to know today

@@ -12,7 +12,7 @@ The tools to run CryptOS on your own machine: Linux, QEMU, swtpm, OVMF, and Go.
 
 This section walks you from an empty machine to a running CryptOS Root CA inside a virtual machine. You build the image from source, boot it in QEMU with a software TPM, and run the first-boot ceremony with `cryptosctl`. Nothing here touches real hardware or your network, and you can throw the whole thing away when you are done.
 
-Starting with `v0.1.0-rc.1`, a [release](https://github.com/CryptOS-PKI/cryptos-node/releases) also publishes the image for you, unsigned. If you would rather skip the build, download a release image, sign it with your own Secure Boot key (see [Secure Boot enrollment](../install-deploy/secure-boot.md)), and go straight to [Install & Deploy](../install-deploy/build-bootable-image.md). Secure Boot stays off in QEMU, so the walkthrough on these pages still builds from source rather than signing anything.
+Starting with `v0.1.0-rc.1`, a [release](https://github.com/CryptOS-PKI/cryptos-appliance/releases) also publishes the image for you, unsigned. If you would rather skip the build, download a release image, sign it with your own Secure Boot key (see [Secure Boot enrollment](../install-deploy/secure-boot.md)), and go straight to [Install & Deploy](../install-deploy/build-bootable-image.md). Secure Boot stays off in QEMU, so the walkthrough on these pages still builds from source rather than signing anything.
 
 ## The stages
 
