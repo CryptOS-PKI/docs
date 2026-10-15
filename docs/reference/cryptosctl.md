@@ -136,7 +136,7 @@ The `ca` commands marked **child** run on the subordinate being set up, and **pa
 :::
 
 :::danger[The backup file holds the CA key]
-Anyone with the file from `ca export-key` and its passphrase has the CA key. Keep the file offline and the passphrase apart from it.
+Anyone with the file from `ca export-key` and its passphrase has the CA key. Keep the file offline and the passphrase in a privileged access management (PAM) solution, apart from it.
 :::
 
 Notes:

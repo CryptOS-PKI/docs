@@ -1,8 +1,8 @@
 ---
-title: "🪪 Adding operators in the web UI"
+title: "🪪 Adding operators"
 ---
 
-# 🪪 Adding operators in the web UI
+# 🪪 Adding operators
 
 :::info[In flight]
 These screens are new in the web UI and need a Fleet Manager that serves operator credential requests. An older manager refuses them.
@@ -42,7 +42,7 @@ The **Pending requests** tab lists the requests waiting for a signed certificate
 4. With **Make the key here**, the next screen shows a generated passphrase and **Download key backup**. The key backup is the private key, encrypted with that passphrase, saved as `fleetos-<level>-<email>.key.pem`.
 
    :::danger[The passphrase is shown once]
-   The passphrase appears only on this screen, and the manager never sees it or the key. Download the key backup and store the passphrase in a password manager before you go on. Without both the key is lost, and the request has to start again. **Continue** stays disabled until you have downloaded the backup and ticked **I have saved the passphrase**.
+   The passphrase appears only on this screen, and the manager never sees it or the key. Download the key backup and store the passphrase in a privileged access management (PAM) solution before you go on. Without both the key is lost, and the request has to start again. **Continue** stays disabled until you have downloaded the backup and ticked **I have saved the passphrase**.
    :::
 
    Hand the key backup and the passphrase to the holder over separate channels, or keep them until you complete the request.
@@ -82,7 +82,7 @@ The web UI first checks that the passphrase opens the backup and that the certif
 
 If the manager refuses the certificate, the dialog says why and quotes the code, for example `Certificate refused: The level extension is marked critical. It must be non-critical, or browsers can't sign in with it. (error 1610 LEVEL_EXT_CRITICAL)`. The certificate must chain to the active operator CA and must not be recorded already.
 
-Give the holder the `.p12` file and its passphrase. They install it as in [Logging in](./web-ui.md#logging-in), then keep the key backup somewhere safe or delete it.
+Give the holder the `.p12` file and its passphrase. They install it as in [Logging in](./web-ui.md#logging-in), then keep the key backup in a privileged access management (PAM) solution or delete it.
 
 To record a certificate made entirely at the CA, with no request, select **Record certificate…** on **Operators**, enter the **Holder's full name** and paste the certificate.
 

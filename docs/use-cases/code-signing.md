@@ -36,7 +36,7 @@ Give code signing its own profile, separate from any TLS profile. Then a code-si
 `cryptosctl` runs on Linux and macOS. `openssl` works the same on every system.
 
 :::danger[The signing key is the whole point]
-Anyone with the private key can sign software that every machine trusting your root will accept. Make the key on the machine that will sign, and never send it anywhere, including to the CA. Keep it in a hardware token or the build system's secret store where you can, not in a file in a repository.
+Anyone with the private key can sign software that every machine trusting your root will accept. Make the key on the machine that will sign, and never send it anywhere, including to the CA. Keep it in a hardware token, a privileged access management (PAM) solution, or the build system's secret store where you can, not in a file in a repository.
 :::
 
 :::caution[Use a P-384 or RSA 3072+ key]

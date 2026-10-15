@@ -1,8 +1,10 @@
 ---
-title: "🚢 Fleet Manager overview"
+title: "Fleet Manager overview"
 ---
 
-# 🚢 Fleet Manager overview
+import ThemedImage from '@theme/ThemedImage';
+
+# <ThemedImage sources={{light: '/img/brand/fleetos-mark-light.svg', dark: '/img/brand/fleetos-mark-dark.svg'}} alt="FleetOS" className="integration-logo" /> Fleet Manager overview
 
 :::tip[Works today]
 The Fleet Manager and its web UI are part of the alpha. They have run a two-tier hierarchy (a Root and an Intermediate) on VMware, with both nodes reported as established and healthy. A release tag publishes the container image and chart; see [Deploy with Helm](./helm.md) for where each install path stands.
