@@ -61,7 +61,7 @@ The node checks your certificate like any other: once `--validity` (365 days by 
 :::
 
 :::danger[identity.key is the key to the node]
-Whoever holds `identity.key` administers every node that trusts this certificate: they can apply config, sign subordinate CAs, revoke certificates, export the CA key where that is allowed, and reset the node. Keep it on a machine you control, back it up somewhere safe, and never copy it to the node or share it.
+Whoever holds `identity.key` administers every node that trusts this certificate: they can apply config, sign subordinate CAs, revoke certificates, export the CA key where that is allowed, and reset the node. Keep it on a machine you control, back it up in a privileged access management (PAM) solution, and never copy it to the node or share it.
 :::
 
 ## 2. Put the certificate in the machine config

@@ -23,7 +23,7 @@ You need the Fleet Manager's address, and the access level your admin agreed to 
 3. Select **Make my key and CSR**. The browser makes a P-384 key and a CSR, then shows a generated passphrase and **Download key backup**.
 
    :::danger[The passphrase is shown once]
-   The passphrase appears only on this screen. Download the key backup (`fleetos-<level>-<email>.key.pem`, your private key encrypted with that passphrase) and store the passphrase in a password manager before you go on. Without both, your key is lost and you have to start again. **Continue** stays disabled until you have downloaded the backup and ticked **I have saved the passphrase**.
+   The passphrase appears only on this screen. Download the key backup (`fleetos-<level>-<email>.key.pem`, your private key encrypted with that passphrase) and store the passphrase in a privileged access management (PAM) solution before you go on. Without both, your key is lost and you have to start again. **Continue** stays disabled until you have downloaded the backup and ticked **I have saved the passphrase**.
    :::
 
 4. Select **Continue**. The page shows your **CSR**. Copy it, or download it as `fleetos-<level>-<email>.csr`.
@@ -56,7 +56,7 @@ openssl pkcs12 -export -inkey fleetos-<level>-<email>.key.pem -in <certificate>.
 
 ## Install it
 
-Install the `.p12` file in your browser's certificate store and log in, as in [Logging in](./web-ui.md#logging-in). Then keep the key backup somewhere safe, or delete it once the certificate is installed.
+Install the `.p12` file in your browser's certificate store and log in, as in [Logging in](./web-ui.md#logging-in). Then keep the key backup in a privileged access management (PAM) solution, or delete it once the certificate is installed.
 
 ## Where to go next
 
