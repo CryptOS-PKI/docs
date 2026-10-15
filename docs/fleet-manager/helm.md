@@ -78,13 +78,13 @@ Until first run closes, anyone who can run `kubectl logs` on the manager can sta
 Once you have a real server certificate, set `tls.certSecret` in an upgrade. The pod rolls and the manager drops the stored self-signed certificate.
 
 :::danger[The node credentials claim is not replaceable]
-When the manager adopts a node, it writes that node's admin key to the claim, and the installed node trusts only that key. If the claim is deleted, the manager can no longer manage any node it adopted. The only way back is a reset from each node's console, which erases the node's key material. `helm uninstall` leaves the claim in place on purpose (`helm.sh/resource-policy: keep`). Back it up along with the database, and don't delete it by hand. See [Re-adopting a node](./overview.md#re-adopting-a-node).
+When the manager adopts a node, it writes that node's admin key to the claim, and the installed node trusts only that key. If the claim is deleted, the manager can no longer manage any node it adopted. The only way back is a reset from each node's console, which erases the node's key material. `helm uninstall` leaves the claim in place on purpose (`helm.sh/resource-policy: keep`). Back it up along with the database, and don't delete it by hand. See [Re-adopting a node](./node-lifecycle.md#re-adopting-a-node).
 :::
 
 ## Before you upgrade
 
 :::warning[Unpinned nodes are refused after the upgrade]
-Before upgrading to this version, make sure every node is either pinned (`server.crt`, or the fingerprint recorded at adoption) or has a recorded CA chain. Unpinned nodes are refused after the upgrade. [Before you upgrade](./node-trust.md#before-you-upgrade) lists the nodes that would be refused and how to pin each one.
+Before upgrading to this version, make sure every node is either pinned (`server.crt`, or the fingerprint recorded at adoption) or has a recorded CA chain. Unpinned nodes are refused after the upgrade. [Check node trust before you upgrade](./upgrade-node-trust.md) lists the nodes that would be refused and how to pin each one.
 :::
 
 A `helm upgrade` that only changes values in the config still restarts the manager: the pod carries a checksum of its ConfigMap, so the new config is read straight away.
@@ -158,7 +158,7 @@ The chart fails the render if a node sets `adminCredsSecret` together with `admi
 :::
 
 :::caution[The list only reaches an empty database]
-With Postgres, the manager copies `nodes` into the database on its first start only. A node you add to the list later does not appear. See [Listed in the config file](./overview.md#listed-in-the-config-file).
+With Postgres, the manager copies `nodes` into the database on its first start only. A node you add to the list later does not appear. See [Listed in the config file](./node-lifecycle.md#listed-in-the-config-file).
 :::
 
 This is for nodes you list yourself. Nodes the manager adopts keep the admin key it makes for them on the node credentials claim.
@@ -231,4 +231,4 @@ Every deployment needs an operator certificate before anyone can log in. The man
 ## Where to go next
 
 - [Fleet Manager overview](./overview.md): what the Fleet Manager holds and how nodes join it.
-- [The web UI](./web-ui.md): what you can do once you are logged in.
+- [The web UI](./web-ui.md): logging in and finding your way around.

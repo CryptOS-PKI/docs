@@ -61,6 +61,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'try-it-locally/requirements',
         'try-it-locally/build-image',
+        'try-it-locally/prepare-the-node',
         'try-it-locally/boot-qemu',
         'try-it-locally/install-cryptosctl',
         'try-it-locally/first-boot-ceremony',
@@ -76,6 +77,8 @@ const sidebars: SidebarsConfig = {
         'install-deploy/bootstrap-apply',
         'install-deploy/install-to-disk',
         'install-deploy/reboot-ceremony',
+        'install-deploy/run-the-ceremony',
+        'install-deploy/subordinate-nodes',
         'install-deploy/secure-boot',
         'install-deploy/upgrade-in-place',
       ],
@@ -102,7 +105,9 @@ const sidebars: SidebarsConfig = {
       label: 'Fleet Manager',
       items: [
         'fleet-manager/overview',
+        'fleet-manager/node-lifecycle',
         'fleet-manager/node-trust',
+        'fleet-manager/upgrade-node-trust',
         {
           type: 'category',
           label: 'First run',
@@ -122,6 +127,10 @@ const sidebars: SidebarsConfig = {
         'fleet-manager/migrating-from-operator-ca-node',
         'fleet-manager/helm',
         'fleet-manager/web-ui',
+        'fleet-manager/web-fleet-and-nodes',
+        'fleet-manager/web-node-detail',
+        'fleet-manager/web-catalogs',
+        'fleet-manager/web-operators-audit',
         'fleet-manager/web-operator-credentials',
         'fleet-manager/make-a-credential-request',
         'fleet-manager/approvals',
@@ -176,6 +185,7 @@ const sidebars: SidebarsConfig = {
         'deep-dives/keys-never-leave-tpm',
         'deep-dives/ceremony-walkthrough',
         'deep-dives/audit-integrity',
+        'deep-dives/clock-safety',
       ],
     },
     {

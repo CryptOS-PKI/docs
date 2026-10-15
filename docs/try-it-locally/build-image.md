@@ -88,4 +88,4 @@ The node seals its disk key to TPM measurements that include the UKI itself. A n
 
 ## Next step
 
-Boot the image: [Boot it in QEMU](./boot-qemu.md).
+Prepare the node's identity and config: [Prepare the node](./prepare-the-node.md).

@@ -119,7 +119,7 @@ Use the root certificate you already hold with `--trust`:
 cryptosctl --endpoint 192.0.2.10:443 --trust ~/.cryptos/root.pem status
 ```
 
-For a new Root, [Switch to your root after the ceremony](../install-deploy/reboot-ceremony.md#switch-to-your-root-after-the-ceremony) shows how to read the root off the node and check it against the ceremony output.
+For a new Root, [Switch to your root after the ceremony](../install-deploy/run-the-ceremony.md#switch-to-your-root-after-the-ceremony) shows how to read the root off the node and check it against the ceremony output.
 
 :::caution[Don't keep a CA-signed certificate as a pin]
 `trust fetch` still saves whatever certificate the node presents, including a CA-signed one, and that pin goes stale at the next reboot like any other. Use the root.

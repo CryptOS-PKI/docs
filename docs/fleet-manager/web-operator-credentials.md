@@ -105,4 +105,4 @@ Denying needs `database_url`. Without it the dialog shows `Not available here` w
 
 - [Make a credential request](./make-a-credential-request.md): the page a future operator uses to make their own key and CSR.
 - [The operator CA and revocation](./operator-ca.md): the CA, the CRL and the denylist.
-- [The web UI](./web-ui.md): every other page.
+- [Operators, agent keys and audit](./web-operators-audit.md): the rest of the Operators page.
