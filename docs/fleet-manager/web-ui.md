@@ -89,7 +89,7 @@ What you can do depends on the access level in your certificate: `viewer`, `oper
 
 ## A node's page
 
-A node's page shows its identity, issuer, TPM, Fleet Manager link, boot count, uptime and its CRL and OCSP addresses, the trust chain up to its Root, and the certificates it has issued. The buttons:
+A node's page shows its identity, issuer, TPM, Fleet Manager link, boot count, uptime and its CRL and OCSP addresses, the trust chain up to its Root, the certificates it has issued, its own audit log, its TSA certificates (once its time-stamp authority is on) and a form to validate a certificate chain against its CA. The buttons:
 
 | Button | Level | What it does |
 |---|---|---|
@@ -167,6 +167,43 @@ Rebooting an Issuing CA interrupts everything that depends on it until it restar
 :::
 
 To confirm, type the node's CA common name exactly. A refusal, such as the node being in maintenance mode, shows with the node's own reason.
+
+### The node's own audit log
+
+:::info[Not the Fleet Manager's audit log]
+This is the node's own record of calls to its API, distinct from the Fleet Manager's own actions (approving an enrolment, issuing, revoking and so on), which are on the [Audit](#audit) page instead.
+:::
+
+Every managed node keeps a signed, hash-chained audit log of every call to its API. The panel lists it oldest entry first, with the same sequence, time, actor and summary as [`cryptosctl audit list`](../using/audit-log.md#1-list-the-entries), plus the call itself under **Action** and whether it was allowed under **Outcome**. **Load more** fetches the next page.
+
+{/* screenshot: fleet-manager/node-audit-log.png: a node's audit log panel with a few entries and the Verify chain button */}
+
+**Verify chain** asks the node to walk its whole log the same way [`cryptosctl audit verify`](../using/audit-log.md#2-verify-the-chain) does — every entry's signature and its link to the one before it — and reports the result:
+
+| Result | What it means |
+|---|---|
+| `Chain intact across N entries.` | Nothing between the first entry and entry N was changed, removed or reordered. |
+| `Chain broken at sequence N: <reason>` | An entry was altered after it was written. The node keeps adding new entries after the break; nothing is repaired automatically. |
+
+:::caution[A broken chain means the log was changed]
+Leave the node as it is and read [Verify the chain](../using/audit-log.md#2-verify-the-chain) before you change anything. Don't reset the node: a reset destroys the log.
+:::
+
+See [Audit log format](../reference/audit-log.md) for what each entry holds and what a node does and doesn't record.
+
+### TSA certificates
+
+Shown only once [the node's time-stamp authority](../using/serve-timestamps-tsa.md) is switched on; while it isn't, the panel says so instead of listing nothing. Lists every certificate the node has issued to sign timestamp tokens, each with its serial, SHA-256 fingerprint and validity window: **Current** for the one actually signing tokens now, **Past** for a retired one the node keeps so it can still verify tokens it signed earlier.
+
+{/* screenshot: fleet-manager/node-tsa-certificates.png: a node's TSA certificates list with one current and one past certificate */}
+
+### Validate a certificate chain
+
+Paste a certificate's PEM and check whether it chains to this node's CA, without leaving the console or running `openssl verify` by hand. Needs `operator` level or above — a `viewer` sees the field disabled and why.
+
+{/* screenshot: fleet-manager/node-chain-validate.png: the chain validation form with a result showing Chains to the node's CA */}
+
+**Validate** reports whether the certificate chains to the node's CA and, when it doesn't, why — for example, that the certificate's issuer does not match the node's CA — alongside the submitted certificate's subject and issuer and the node's own CA subject, so you can compare them directly.
 
 ## Adopt
 
