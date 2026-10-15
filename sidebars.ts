@@ -107,6 +107,7 @@ const sidebars: SidebarsConfig = {
         'fleet-manager/overview',
         'fleet-manager/node-lifecycle',
         'fleet-manager/node-trust',
+        'fleet-manager/upgrade-node-trust',
         {
           type: 'category',
           label: 'First run',

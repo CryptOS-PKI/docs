@@ -82,7 +82,7 @@ When the manager adopts a node, it writes that node's admin key to the claim, an
 ## Before you upgrade
 
 :::warning[Unpinned nodes are refused after the upgrade]
-Before upgrading to this version, make sure every node is either pinned (`server.crt`, or the fingerprint recorded at adoption) or has a recorded CA chain. Unpinned nodes are refused after the upgrade. [Before you upgrade](./node-trust.md#before-you-upgrade) lists the nodes that would be refused and how to pin each one.
+Before upgrading to this version, make sure every node is either pinned (`server.crt`, or the fingerprint recorded at adoption) or has a recorded CA chain. Unpinned nodes are refused after the upgrade. [Check node trust before you upgrade](./upgrade-node-trust.md) lists the nodes that would be refused and how to pin each one.
 :::
 
 A `helm upgrade` that only changes values in the config still restarts the manager: the pod carries a checksum of its ConfigMap, so the new config is read straight away.
