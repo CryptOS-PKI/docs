@@ -3,10 +3,18 @@
   flex: 1;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 3rem;
+  padding: 0 1.5rem 4rem;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 1rem;
-  padding: 6rem 1.5rem;
+  padding: 4rem 0 1rem;
   text-align: center;
+  width: 100%;
 }
 
 .wordmark {
@@ -28,6 +36,11 @@
   color: var(--cryptos-muted-foreground);
 }
 
+.lede {
+  max-width: 48rem;
+  margin: 0;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -36,12 +49,49 @@
   margin-top: 1rem;
 }
 
+.section {
+  width: 100%;
+  max-width: 48rem;
+}
+
+.docLinkGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.docLinkCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--cryptos-border);
+  border-radius: var(--cryptos-radius);
+  color: inherit;
+  text-decoration: none;
+}
+
+.docLinkCard:hover {
+  border-color: var(--cryptos-primary);
+  text-decoration: none;
+  color: inherit;
+}
+
+.docLinkCard span {
+  color: var(--cryptos-muted-foreground);
+  font-size: 0.9rem;
+}
+
 @media screen and (max-width: 996px) {
-  .landing {
-    padding: 3rem 1rem;
+  .hero {
+    padding: 3rem 0 1rem;
   }
 
   .wordmark {
     font-size: 2.5rem;
+  }
+
+  .docLinkGrid {
+    grid-template-columns: 1fr;
   }
 }

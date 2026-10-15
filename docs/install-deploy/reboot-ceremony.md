@@ -238,3 +238,9 @@ cryptosctl --endpoint 192.0.2.10:443 --trust root.pem reboot --confirm "Example 
 ```
 
 `--confirm` must be the node's CA common name. The node stops its listeners, closes its database and audit log, and locks the encrypted volume before it restarts. Add `--power-off` to turn it off instead.
+
+## Where to go next
+
+- 🔑 A Root signs subordinate CAs, not end-entity certificates. Install an Intermediate or Issuing node to actually issue one: see [CA roles](../concepts/ca-roles.md) and [Internal TLS and mTLS](../use-cases/internal-tls.md) for `ca issue-leaf`.
+- 🚢 Managing one node at a time doesn't scale past a handful: the [Fleet Manager overview](../fleet-manager/overview.md) covers the web UI and the fleet API.
+- 🛡️ Sign your own images before you rely on this node: [Secure Boot enrollment](./secure-boot.md).
