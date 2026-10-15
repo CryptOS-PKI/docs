@@ -105,6 +105,7 @@ const sidebars: SidebarsConfig = {
       label: 'Fleet Manager',
       items: [
         'fleet-manager/overview',
+        'fleet-manager/node-lifecycle',
         'fleet-manager/node-trust',
         {
           type: 'category',

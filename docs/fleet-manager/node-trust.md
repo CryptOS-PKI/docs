@@ -101,7 +101,7 @@ An adopted node's pin lives on the node credentials claim, which you can only re
 
 ## What adoption records
 
-When you [adopt a node](./overview.md#adopting-a-new-node), the manager records what it needs to verify the node afterwards:
+When you [adopt a node](./node-lifecycle.md#adopting-a-new-node), the manager records what it needs to verify the node afterwards:
 
 1. The fingerprint you confirm in the wizard pins the node's maintenance-mode certificate for the install steps.
 2. The installed node boots with a new management certificate. Nothing links it to the maintenance certificate you confirmed, so the adoption pauses on `awaiting-fingerprint-confirmation` and shows the fingerprint the node presents:
@@ -246,7 +246,7 @@ With it set, the manager logs a warning for the node at startup and on every con
 
 ## Linking a running node
 
-A [`LINK` enrollment](./overview.md#linking-a-node-that-is-already-running) verifies the node's management certificate before it sends anything, at request and again at approval, with the same check as every other connection. The request's `ca_pem` is what the node is checked against. It can be either:
+A [`LINK` enrollment](./node-lifecycle.md#linking-a-node-that-is-already-running) verifies the node's management certificate before it sends anything, at request and again at approval, with the same check as every other connection. The request's `ca_pem` is what the node is checked against. It can be either:
 
 - the CA certificate that signed the node's management certificate, such as the node's root CA certificate from `cryptosctl identity show -o pem`. The certificate the node presents must chain to it and name the address you gave;
 - the node's exact management certificate, for a node still on a self-signed one. It is accepted as an exact copy, like a pin.

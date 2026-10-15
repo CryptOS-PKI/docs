@@ -33,7 +33,7 @@ The catalog of certificate templates: key algorithm, validity, subject, CA or no
 
 What each managed node actually reports serving, not a fleet-wide setting. The list page counts, per protocol, how many ESTABLISHED Issuing nodes are running it and how many are waiting on a reboot; its detail page lists every node with its role, identity state, and an **Enable** or **Disable** switch (`admin`) for that node.
 
-ACME (RFC 8555) and EST (RFC 7030) are served by the nodes themselves, set per node under `pki.acme` and `pki.est`; the switch calls `SetNodeProtocol` (see [Switching an enrolment protocol on a node](./overview.md#switching-an-enrolment-protocol-on-a-node)) and takes effect at that node's next reboot. A node that cannot serve the protocol -- a Root or Intermediate, or an Issuing node that is not yet ESTABLISHED -- shows why instead of a switch.
+ACME (RFC 8555) and EST (RFC 7030) are served by the nodes themselves, set per node under `pki.acme` and `pki.est`; the switch calls `SetNodeProtocol` (see [Switching an enrolment protocol on a node](./node-lifecycle.md#switching-an-enrolment-protocol-on-a-node)) and takes effect at that node's next reboot. A node that cannot serve the protocol -- a Root or Intermediate, or an Issuing node that is not yet ESTABLISHED -- shows why instead of a switch.
 
 :::info[SCEP and Windows autoenrollment are not wired up]
 Neither protocol has a config block on the node yet, so this page has nothing to read or switch for them and says so instead of showing an empty table.

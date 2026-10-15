@@ -21,7 +21,7 @@ Once you are [logged in](./web-ui.md#logging-in), this is where you see the flee
 
 ## Adopt
 
-The Adopt page (`admin` only) turns a node in maintenance mode into a working CA. The [overview](./overview.md#adopting-a-new-node) explains what happens; this is what you fill in.
+The Adopt page (`admin` only) turns a node in maintenance mode into a working CA. The [node lifecycle](./node-lifecycle.md#adopting-a-new-node) page explains what happens; this is what you fill in.
 
 1. **Step 1 — maintenance endpoint.** Enter the node's `host:port` and select **Preview**. Check the `sha256` against the `Mgmt SHA-256` line on the node's maintenance console (the `subject` is `localhost`), then select **Confirm fingerprint**.
 2. **Step 2 — initial config.** Enter the node name and choose the role (root, intermediate or issuing). A subordinate needs a parent: pick an established CA under **Parent CA (signs this node)**. Then fill in the CA's common name, the network (interface, address, gateway, DNS), the **Install disk** from the list the node reports, and the key protection tier.
@@ -36,7 +36,7 @@ The Adopt page (`admin` only) turns a node in maintenance mode into a working CA
 A Root ends with `{name} is established and linked to the fleet.` A subordinate ends with `{name} is provisioned and awaiting a parent-signed certificate.`, and you finish it with a subordinate enrollment on the Enrollment page.
 :::
 
-If the adoption stops, the manager's message shows in red and **Adopt node** comes back. Run it again: see [Re-adopting a node](./overview.md#re-adopting-a-node).
+If the adoption stops, the manager's message shows in red and **Adopt node** comes back. Run it again: see [Re-adopting a node](./node-lifecycle.md#re-adopting-a-node).
 
 ## Where to go next
 
