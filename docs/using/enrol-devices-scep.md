@@ -4,8 +4,8 @@ title: "🛰️ Enrol devices with SCEP"
 
 # 🛰️ Enrol devices with SCEP
 
-:::info[Arrives with cryptos#288]
-This page describes SCEP as [CryptOS-PKI/cryptos-node#288](https://github.com/CryptOS-PKI/cryptos-node/pull/288) adds it. It is true once that change is in the image you run.
+:::tip[Works today]
+SCEP is built and tested.
 :::
 
 Get a certificate onto a network device that cannot run ACME, such as a Cisco IOS or IOS-XE switch, over SCEP (RFC 8894).
@@ -58,7 +58,7 @@ cryptosctl --endpoint 192.0.2.10:443 config apply -f node.yaml
 cryptosctl --endpoint 192.0.2.10:443 reboot --confirm "Example Issuing CA G1"
 ```
 
-SCEP answers at `http://<node>/cgi-bin/pkiclient.exe`. By default it shares the port of the node's CRL and OCSP listener (80 unless `pki.revocation_http_port` moves it); `pki.scep.http_port` gives it a port of its own.
+SCEP answers at `http://<node>/cgi-bin/pkiclient.exe`. That is not a Windows program: it is the path Cisco IOS and many other SCEP clients append on their own, so the node serves it. The node also answers the short form, `http://<node>/scep`, for a client that lets you set the enrolment path yourself. By default it shares the port of the node's CRL and OCSP listener (80 unless `pki.revocation_http_port` moves it); `pki.scep.http_port` gives it a port of its own.
 
 :::tip[Expected output]
 After the reboot, `cryptosctl status -o json` lists SCEP under `protocols`, switched on and running:
@@ -93,7 +93,7 @@ The challenge is shown once and works for one enrolment. The node cannot show it
 Whoever holds an unused challenge can enrol a device of their own with it, within its names and profile. Give it to the device and nobody else. If it leaks or you lose it, withdraw it with `cryptosctl scep challenge revoke --id <id>` and mint a new one.
 :::
 
-`cryptosctl scep challenge list` shows the challenges that are still usable, never the challenge itself. The Fleet Manager's web console covers minting, listing and revoking too: see [SCEP challenge passwords](../fleet-manager/web-ui.md#scep-challenge-passwords).
+`cryptosctl scep challenge list` shows the challenges that are still usable, never the challenge itself. The Fleet Manager's web console covers minting, listing and revoking too: see [SCEP challenge passwords](../fleet-manager/web-node-detail.md#scep-challenge-passwords).
 
 ## 3. Check the CA fingerprint
 
@@ -124,6 +124,7 @@ crypto pki trustpoint CRYPTOS
  exit
 ```
 
+- `enrollment url` ends in `/cgi-bin/pkiclient.exe` because that is the path Cisco IOS and IOS-XE always append; there is no way to change it on a Cisco trustpoint. A SCEP client that lets you choose the enrolment path can use `http://ca.example.com/scep` instead.
 - `modulus 2048` is the largest key the trustpoint takes, and it matches the profile's `min_rsa_key_bits: 2048`.
 - `enrollment mode ra` is required. The node answers with its CA certificate and an RA certificate, and the device encrypts its request to the RA.
 - `serial-number none` and `ip-address none` stop the switch from putting its serial number and an IP address into the subject. SCEP here issues DNS names only, and a request with an IP address in its subject alternative names is refused.
@@ -172,7 +173,7 @@ cryptosctl --endpoint 192.0.2.10:443 scep enrollments approve --id <id>
 cryptosctl --endpoint 192.0.2.10:443 scep enrollments reject --id <id> --reason "not one of ours"
 ```
 
-After `approve`, the switch picks the certificate up at its next poll. Renewals are never held. The Fleet Manager's web console covers the same queue: see [SCEP enrolment queue](../fleet-manager/web-ui.md#scep-enrolment-queue).
+After `approve`, the switch picks the certificate up at its next poll. Renewals are never held. The Fleet Manager's web console covers the same queue: see [SCEP enrolment queue](../fleet-manager/web-node-detail.md#scep-enrolment-queue).
 
 ## When enrolment fails
 

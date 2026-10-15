@@ -42,7 +42,7 @@ In `tpm` mode the Root key never leaves the TPM, by design. `cryptosctl ca expor
 :::
 
 :::warning[A software Root key is only as safe as its backup]
-In `nodeid` or `kms` mode, `cryptosctl ca export-key --out <file>` writes the CA key and chain to a file sealed with a passphrase you type. On a Root it asks you to type the Root CA's common name first. Anyone with that file and the passphrase holds your Root. Store the file offline, apart from the passphrase, and never on the machine you run `cryptosctl` from. `ca import-key --backup <file>` restores it onto a fresh node.
+In `nodeid` or `kms` mode, `cryptosctl ca export-key --out <file>` writes the CA key and chain to a file sealed with a passphrase you type. On a Root it asks you to type the Root CA's common name first. Anyone with that file and the passphrase holds your Root. Store the file offline, the passphrase in a privileged access management (PAM) solution apart from it, and never on the machine you run `cryptosctl` from. `ca import-key --backup <file>` restores it onto a fresh node.
 :::
 
 ## The shape of a two-tier hierarchy

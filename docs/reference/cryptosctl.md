@@ -136,7 +136,7 @@ The `ca` commands marked **child** run on the subordinate being set up, and **pa
 :::
 
 :::danger[The backup file holds the CA key]
-Anyone with the file from `ca export-key` and its passphrase has the CA key. Keep the file offline and the passphrase apart from it.
+Anyone with the file from `ca export-key` and its passphrase has the CA key. Keep the file offline and the passphrase in a privileged access management (PAM) solution, apart from it.
 :::
 
 Notes:
@@ -189,7 +189,7 @@ These replace the node's CryptOS image without reinstalling it. The encrypted st
 | `image activate` | `--confirm` (the CA common name) | reboot into the staged image |
 | `image rollback` | | put the retained previous image back on the boot path; run `image activate` to boot it |
 
-The full procedure is the [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos-appliance/blob/main/docs/image-upgrade.md). The Fleet Manager's web console covers the same ground for a managed node: see [OS image lifecycle](../fleet-manager/web-ui.md#os-image-lifecycle).
+The full procedure is the [in-place upgrade guide](https://github.com/CryptOS-PKI/cryptos-appliance/blob/main/docs/image-upgrade.md). The Fleet Manager's web console covers the same ground for a managed node: see [OS image lifecycle](../fleet-manager/web-node-detail.md#os-image-lifecycle).
 
 ## Power and reset
 

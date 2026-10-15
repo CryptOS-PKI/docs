@@ -8,14 +8,12 @@ title: "💻 Boot it in QEMU"
 This describes CryptOS as it works right now.
 :::
 
-Start the image in a local virtual machine with a software TPM.
-
-A real node gets its machine config from the installer: you boot the ISO, send the config, and the installer lays out the disk and stages the config on it. On your laptop you skip the installer and build that installed disk by hand, the same way the `cryptos-appliance` QEMU integration test does. Then you boot it.
+Put the UKI, the machine config and an admin identity onto a disk the way the installer would, then start the node in a local virtual machine with a software TPM.
 
 :::info[Before you start]
 You need:
 
-- the debug UKI from [Build the image](./build-image.md), at `build/out/cryptos-amd64.uki.unsigned` in your `cryptos-appliance` checkout;
+- the lab folder, the admin identity and `$LAB/machine.yaml` from [Prepare the node](./prepare-the-node.md);
 - QEMU, swtpm, OVMF, `sgdisk` and mtools from [What you need](./requirements.md).
 
 Run the commands from the root of the `cryptos-appliance` checkout.
@@ -25,96 +23,7 @@ Run the commands from the root of the `cryptos-appliance` checkout.
 The Taskfile has a `task qemu:run` target, but it does not get you through this walkthrough. It boots the image with an empty state disk and no machine config, so the node waits in re-provision maintenance mode on the address DHCP gave it, and its port forward points at `10.0.0.10`, an address the node only takes once it has a config. The steps below stage the config first, the way the integration test does.
 :::
 
-## 1. Make a lab folder
-
-Everything for this node lives in one folder. Set `LAB` in every terminal you use on these pages:
-
-```bash
-export LAB="$HOME/cryptos-lab"
-mkdir -p "$LAB/esp/EFI/BOOT" "$LAB/swtpm"
-cp build/out/cryptos-amd64.uki.unsigned "$LAB/esp/EFI/BOOT/BOOTX64.EFI"
-cp /usr/share/OVMF/OVMF_VARS_4M.fd "$LAB/OVMF_VARS.fd"
-```
-
-`esp/` is a small boot partition that QEMU serves to the firmware. The firmware starts whatever sits at `EFI/BOOT/BOOTX64.EFI`, so that is where the UKI goes. `OVMF_VARS.fd` is your own writable copy of the firmware settings. Use the OVMF paths for your distribution if they differ.
-
-## 2. Make your admin identity
-
-The node trusts exactly one client on first boot: the **bootstrap admin** named in its machine config. Make that identity now with `cryptosctl bootstrap`. You install `cryptosctl` properly on a later page; for now run it straight from the source:
-
-```bash
-go run ./cmd/cryptosctl bootstrap
-```
-
-:::tip[Expected output]
-Two files in `~/.cryptos/` and the certificate to put in the machine config:
-
-```text
-wrote /home/you/.cryptos/identity.crt
-wrote /home/you/.cryptos/identity.key
-SHA-256: <64 hex digits>
-
-Stamp into machine config under bootstrap.admin_cert_pem (or admin_cert_sha256):
------BEGIN CERTIFICATE-----
-...
------END CERTIFICATE-----
-```
-:::
-
-The key is an ECDSA P-256 key and the certificate is self-signed, valid for one year, for client authentication only.
-
-:::danger[The admin certificate expires, and an expired one locks you out]
-The certificate lasts for its `--validity`, 365 days by default (`8760h`). Renew it before then, while it still works; [Make your admin identity](../using/bootstrap.md) covers the limits on that today. Once it expires the node refuses it, and the only way back in today is the console reset (**Ctrl-R**), which wipes the node's CA identity. The CA key survives a reset only if you exported it beforehand with `cryptosctl ca export-key`, and a node that keeps its key in the TPM refuses that export.
-:::
-
-:::caution[identity.key is the only key to this node]
-Whoever holds `~/.cryptos/identity.key` can manage the node, and it is the only credential the node accepts. `cryptosctl bootstrap` overwrites both files if you run it again, so run it once. If you lose the key, you start again from a fresh disk.
-:::
-
-## 3. Write the machine config
-
-The machine config says what the node is. This one makes a Root CA with an ECDSA P-384 key, on the address QEMU forwards to. The block below writes it to `$LAB/machine.yaml` and pastes in your certificate from step 2:
-
-```bash
-{
-cat <<'EOF'
-apiVersion: cryptos.dev/v1alpha1
-kind: MachineConfig
-metadata: {name: local-root}
-role: {kind: root}
-network: {interface: eth0, address: 10.0.0.10/24, gateway: 10.0.0.1}
-bootstrap:
-  admin_cert_pem: |
-EOF
-sed 's/^/    /' "$HOME/.cryptos/identity.crt"
-cat <<'EOF'
-pki:
-  root_key_alg: ECDSA-P384
-  root_subject: {common_name: "CryptOS Local Root", organization: "Local Lab", country: "US"}
-  root_validity_years: 20
-EOF
-} > "$LAB/machine.yaml"
-```
-
-What each part means:
-
-| Field | Value here | Meaning |
-|---|---|---|
-| `metadata.name` | `local-root` | the node's hostname |
-| `role.kind` | `root` | a self-signed Root CA; the first-boot ceremony only runs for a Root |
-| `network` | `eth0`, `10.0.0.10/24`, gateway `10.0.0.1` | the node's static address inside QEMU's private network |
-| `bootstrap.admin_cert_pem` | your certificate | the one client the node trusts |
-| `pki.root_key_alg` | `ECDSA-P384` | the Root key type. `RSA-3072` and `RSA-4096` also exist |
-| `pki.root_subject` | CN, O, C | the name on the Root certificate |
-| `pki.root_validity_years` | `20` | the Root certificate's lifetime, 1 to 30 years |
-
-The [machine config reference](../reference/machine-config.md) covers every field.
-
-:::caution[Keep the network block as shown]
-QEMU forwards `127.0.0.1:4443` on your machine to `10.0.0.10:443` inside the VM, with `10.0.0.1` as the VM's gateway. If you change the address, the forward reaches nothing. Keep `admin_cert_pem` as the full certificate too: the node's mutual-TLS listener needs the whole certificate, and it refuses to start with only `admin_cert_sha256`.
-:::
-
-## 4. Build the installed disk
+## 1. Build the installed disk
 
 Make a 2 GiB disk image with the two partitions the installer would create: a 512 MiB EFI partition named `EFI`, and the rest as `cryptos-state`, which the node encrypts on first boot. Then copy the machine config onto the EFI partition at `EFI/cryptos/machine.yaml`, where the node looks for it.
 
@@ -149,7 +58,7 @@ mdir -i "$ESP" ::/EFI/cryptos
 The last command lists `machine.yaml` on the EFI partition. If `mformat` fails, the offset is probably wrong: check the first sector again.
 :::
 
-## 5. Start the software TPM
+## 2. Start the software TPM
 
 ```bash
 swtpm socket --tpm2 --tpmstate dir="$LAB/swtpm" --ctrl type=unixio,path="$LAB/swtpm/sock" &
@@ -161,7 +70,7 @@ swtpm keeps the TPM's state in `$LAB/swtpm` and waits for QEMU on the socket.
 On first boot the node seals its disk key to this software TPM and creates the Root key inside it. Keep `$LAB/swtpm` with `installed.img`. If you delete or swap the TPM folder, the node can never unlock its disk again, and the Root key is gone with it. The same happens if you boot this disk with a rebuilt UKI.
 :::
 
-## 6. Boot the node
+## 3. Boot the node
 
 ```bash
 qemu-system-x86_64 \
@@ -185,7 +94,7 @@ This terminal is now the node's serial console. The flags are the ones the integ
 - 🌐 **Network:** QEMU's private network is `10.0.0.0/24` with the host side at `10.0.0.1`. Only port 443 of the node is reachable, as `127.0.0.1:4443` on your machine.
 - ⚡ **Speed:** `accel=kvm:tcg` uses KVM when it can and falls back to software emulation when it cannot.
 
-## 7. Watch the first boot
+## 4. Watch the first boot
 
 The console shows the CryptOS mark and the version, then each boot stage as it finishes. The debug image also prints the detailed kernel and init log in between.
 

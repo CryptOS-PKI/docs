@@ -10,7 +10,7 @@ This page is new in the web UI. Your admin needs a Fleet Manager that serves ope
 
 This page covers one task: making your own Fleet Manager operator key and certificate signing request (CSR), then building your `.p12` file once your admin sends back the signed certificate. It is for someone who doesn't have an operator certificate yet.
 
-The **Make a credential request** page runs entirely in your browser. It needs no login and sends nothing anywhere: the key, its backup and the passphrase stay on your machine. Only the CSR goes to your admin, who files it as described in [Adding operators in the web UI](./web-operator-credentials.md).
+The **Make a credential request** page runs entirely in your browser. It needs no login and sends nothing anywhere: the key, its backup and the passphrase stay on your machine. Only the CSR goes to your admin, who files it as described in [Adding operators](./web-operator-credentials.md).
 
 :::caution[Before you start]
 You need the Fleet Manager's address, and the access level your admin agreed to give you: `viewer`, `operator` or `admin`.
@@ -23,7 +23,7 @@ You need the Fleet Manager's address, and the access level your admin agreed to 
 3. Select **Make my key and CSR**. The browser makes a P-384 key and a CSR, then shows a generated passphrase and **Download key backup**.
 
    :::danger[The passphrase is shown once]
-   The passphrase appears only on this screen. Download the key backup (`fleetos-<level>-<email>.key.pem`, your private key encrypted with that passphrase) and store the passphrase in a password manager before you go on. Without both, your key is lost and you have to start again. **Continue** stays disabled until you have downloaded the backup and ticked **I have saved the passphrase**.
+   The passphrase appears only on this screen. Download the key backup (`fleetos-<level>-<email>.key.pem`, your private key encrypted with that passphrase) and store the passphrase in a privileged access management (PAM) solution before you go on. Without both, your key is lost and you have to start again. **Continue** stays disabled until you have downloaded the backup and ticked **I have saved the passphrase**.
    :::
 
 4. Select **Continue**. The page shows your **CSR**. Copy it, or download it as `fleetos-<level>-<email>.csr`.
@@ -56,9 +56,9 @@ openssl pkcs12 -export -inkey fleetos-<level>-<email>.key.pem -in <certificate>.
 
 ## Install it
 
-Install the `.p12` file in your browser's certificate store and log in, as in [Logging in](./web-ui.md#logging-in). Then keep the key backup somewhere safe, or delete it once the certificate is installed.
+Install the `.p12` file in your browser's certificate store and log in, as in [Logging in](./web-ui.md#logging-in). Then keep the key backup in a privileged access management (PAM) solution, or delete it once the certificate is installed.
 
 ## Where to go next
 
 - [The web UI](./web-ui.md): logging in and every page.
-- [Adding operators in the web UI](./web-operator-credentials.md): what your admin does with your CSR.
+- [Adding operators](./web-operator-credentials.md): what your admin does with your CSR.

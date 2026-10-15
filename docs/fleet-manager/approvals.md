@@ -8,7 +8,7 @@ title: "✋ Approving agent requests"
 Step-up approvals are part of the alpha. The manager raises them for the MCP tools that change the fleet, and the web UI's **Approvals** page is where a person decides them.
 :::
 
-This page covers one task: deciding a request an AI agent raised through the Fleet Manager's MCP endpoint. How agents get a key and sign in is in [The web UI](./web-ui.md#agent-keys-and-mcp-sign-in) and the manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md).
+This page covers one task: deciding a request an AI agent raised through the Fleet Manager's MCP endpoint. How agents get a key and sign in is in [Operators, agent keys and audit](./web-operators-audit.md#agent-keys-and-mcp-sign-in) and the manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md).
 
 ## What a step-up approval is
 
@@ -79,9 +79,9 @@ Each request expires 15 minutes after the agent raised it, whether it is pending
 
 An approval runs exactly one call. It is marked `used` as the call starts, so a call that fails still uses it. The second call must come from the same agent key, for the same tool, with the same arguments. The manager compares the SHA-256 digest of the arguments, so an agent can't get one call approved and then run a different one.
 
-Every decision and every approved call is written to the [Audit](./web-ui.md#audit) log with the approval ID, the tool, the request digest and the approver.
+Every decision and every approved call is written to the [Audit](./web-operators-audit.md#audit) log with the approval ID, the tool, the request digest and the approver.
 
 ## Where to go next
 
-- [The web UI](./web-ui.md): the other pages, including Agent keys.
+- [Operators, agent keys and audit](./web-operators-audit.md): making and revoking agent keys, and the audit log.
 - The manager's [MCP guide](https://github.com/CryptOS-PKI/cryptos-manager/blob/main/docs/mcp.md): which tools need an approval, and the error codes an agent sees.

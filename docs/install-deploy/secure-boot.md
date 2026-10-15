@@ -230,4 +230,4 @@ An image signed by any other key is refused before anything is written. [Upgrade
 
 - 💥 **Losing it means reinstalling.** Nothing on a node can replace its anchor. Without the key you cannot sign an image the node will accept, and a reinstall reformats the disk and destroys the CA key.
 - 🚨 **A leaked key is serious.** Anyone with admin access to a node could install an image of their choosing, and with Secure Boot on it would boot on any machine that trusts your certificate. Treat it like a CA key.
-- 🗄️ **Keep it offline** when you are not building: an encrypted backup in at least two places, never committed, and never stored in CI secrets for a public repository.
+- 🗄️ **Keep it offline** when you are not building: a privileged access management (PAM) solution or an encrypted backup in at least two places, never committed, and never stored in CI secrets for a public repository.
