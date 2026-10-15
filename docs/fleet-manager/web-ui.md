@@ -205,6 +205,42 @@ Paste a certificate's PEM and check whether it chains to this node's CA, without
 
 **Validate** reports whether the certificate chains to the node's CA and, when it doesn't, why — for example, that the certificate's issuer does not match the node's CA — alongside the submitted certificate's subject and issuer and the node's own CA subject, so you can compare them directly.
 
+### OS image lifecycle
+
+The web equivalent of [`cryptosctl image status/stage/rollback/activate`](../reference/cryptosctl.md#image-upgrades). The **OS image** panel shows the node's running, active (next boot) and previous image digests, with a **Reboot pending** badge when the active image differs from the one currently running. Reading it needs no particular level and isn't audited.
+
+- **Stage image…** (`admin`) takes an image URL and the detached release signature file; the manager fetches the image itself and streams it into the node, so a gigabyte-sized image never has to pass through your browser. An optional SHA-256 is checked against what the node received.
+- **Activate image…** (`admin`, only once a staged image makes it **Reboot pending**) reboots the node into the staged image, with the same type-the-CA-common-name confirmation as **Reboot…**, because activating is itself a reboot.
+- **Roll back…** (`admin`, only once there is a previous image) puts the retained previous image back on the boot path. The node keeps running its current image until you activate or reboot.
+
+Staging, activating and rolling back are all audited; a refusal the node makes itself, such as a bad signature or another upgrade already running, shows inline.
+
+{/* screenshot: fleet-manager/node-os-image.png: the OS image panel with running, active and previous digests and the three buttons */}
+
+### SCEP challenge passwords
+
+The web equivalent of [`cryptosctl scep challenge mint/list/revoke`](../using/enrol-devices-scep.md#2-mint-a-challenge-for-the-device). The **SCEP challenges** panel lists the node's usable challenges, each with its profile, bound names, expiry and who minted it. A `viewer` sees the list only; minting and revoking need `operator` level or above.
+
+- **Mint challenge…** takes a profile, a TTL and optional bound names, and mints a one-time challenge password for a device to enrol with. The password is shown once, the same way an agent key is: the manager keeps only the challenge's metadata, never the password, so if you close the dialog without copying it there is no way to get it back.
+- **Revoke** on a challenge's row withdraws it before it is used.
+
+Both actions are audited by the challenge's id and profile, never the password itself.
+
+{/* screenshot: fleet-manager/node-scep-challenges.png: the SCEP challenges list with the Mint challenge button and one row */}
+
+### SCEP enrolment queue
+
+The web equivalent of [`cryptosctl scep enrollments list/approve/reject`](../using/enrol-devices-scep.md#holding-enrolments-for-approval). The **SCEP enrolment queue** panel proxies the node's own queue of pending device enrolments, each with its subject, profile, SANs, key algorithm and when it arrived. A `viewer` sees the queue only; approving and rejecting need `operator` level or above.
+
+- **Approve** issues the device a certificate under the request's profile and shows the issued serial, so you can find it again under Certificates.
+- **Reject** takes a reason, recorded in the node's own audit log. The device itself is only ever told a SCEP failure code, never the reason text.
+
+{/* screenshot: fleet-manager/node-scep-enrollments.png: the SCEP enrolment queue with one pending request and the Approve and Reject buttons */}
+
+:::info[Not available to AI agents yet]
+The OS image, SCEP challenge and SCEP enrolment RPCs behind these three panels are not exposed as MCP tools yet, so an agent can't stage an image, mint a challenge or decide an enrolment on your behalf.
+:::
+
 ## Adopt
 
 The Adopt page (`admin` only) turns a node in maintenance mode into a working CA. The [overview](./overview.md#adopting-a-new-node) explains what happens; this is what you fill in.

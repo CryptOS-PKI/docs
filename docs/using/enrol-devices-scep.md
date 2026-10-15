@@ -93,7 +93,7 @@ The challenge is shown once and works for one enrolment. The node cannot show it
 Whoever holds an unused challenge can enrol a device of their own with it, within its names and profile. Give it to the device and nobody else. If it leaks or you lose it, withdraw it with `cryptosctl scep challenge revoke --id <id>` and mint a new one.
 :::
 
-`cryptosctl scep challenge list` shows the challenges that are still usable, never the challenge itself.
+`cryptosctl scep challenge list` shows the challenges that are still usable, never the challenge itself. The Fleet Manager's web console covers minting, listing and revoking too: see [SCEP challenge passwords](../fleet-manager/web-ui.md#scep-challenge-passwords).
 
 ## 3. Check the CA fingerprint
 
@@ -172,7 +172,7 @@ cryptosctl --endpoint 192.0.2.10:443 scep enrollments approve --id <id>
 cryptosctl --endpoint 192.0.2.10:443 scep enrollments reject --id <id> --reason "not one of ours"
 ```
 
-After `approve`, the switch picks the certificate up at its next poll. Renewals are never held.
+After `approve`, the switch picks the certificate up at its next poll. Renewals are never held. The Fleet Manager's web console covers the same queue: see [SCEP enrolment queue](../fleet-manager/web-ui.md#scep-enrolment-queue).
 
 ## When enrolment fails
 
