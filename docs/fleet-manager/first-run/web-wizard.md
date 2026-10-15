@@ -87,7 +87,7 @@ If a CA is already registered from an earlier session, the wizard shows it inste
 1. Enter your **Full name** and **Email** (the certificate's CN), then select **Make my admin key and CSR**.
 
    :::danger[The passphrase is shown once]
-   Download the key backup (`fleetos-admin-<email>.key.pem`, your key encrypted with the passphrase) and store the passphrase in a password manager. The passphrase appears only on this screen and also protects the PKCS#12. **Continue** stays disabled, and the CSR isn't shown, until the backup is downloaded and you tick **I have saved the passphrase**.
+   Download the key backup (`fleetos-admin-<email>.key.pem`, your key encrypted with the passphrase) and store the passphrase in a privileged access management (PAM) solution. The passphrase appears only on this screen and also protects the PKCS#12. **Continue** stays disabled, and the CSR isn't shown, until the backup is downloaded and you tick **I have saved the passphrase**.
    :::
 
 2. Select **Continue**. Take the **CSR** (`fleetos-admin-<email>.csr`) to the CA and sign it with the **Admin extension section** and **Signing command** shown, as in [stage 4](./first-admin-certificate.md).
@@ -112,7 +112,7 @@ The wizard shows how to import the `.p12` on Windows, macOS, Linux and Firefox, 
 The Dashboard opens with your email at the top right. Your first sign-in as admin closes first run, and from then on the start page shows the normal sign-in.
 :::
 
-Keep the key backup somewhere safe, or delete it once the certificate is installed.
+Keep the key backup in a privileged access management (PAM) solution, or delete it once the certificate is installed.
 
 ## Where to go next
 
