@@ -210,10 +210,6 @@ You can render the chart without a cluster and read what it would create. `git` 
    ```
    :::
 
-## The `cryptos-release` repo's chart is not supported
-
-The [`cryptos-release`](https://github.com/CryptOS-PKI/cryptos-release) repo also carries a chart, `charts/manager`. It is not a supported install. It sets environment variables the manager doesn't read and never gives it the `config.yaml` it needs, so its pod exits at startup. Use `chart/fleet-manager` from the `cryptos-manager` repo instead.
-
 ## What to use today
 
 No image or chart is published, so the manager's own docs cover the two deployments that run without a registry:

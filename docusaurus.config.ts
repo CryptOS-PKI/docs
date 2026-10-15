@@ -169,7 +169,6 @@ const config: Config = {
           items: [
             {label: 'cryptos-node (OS/engine)', href: 'https://github.com/CryptOS-PKI/cryptos-node'},
             {label: 'cryptos-manager (Fleet Manager)', href: 'https://github.com/CryptOS-PKI/cryptos-manager'},
-            {label: 'cryptos-release (release)', href: 'https://github.com/CryptOS-PKI/cryptos-release'},
           ],
         },
       ],

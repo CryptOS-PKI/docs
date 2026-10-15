@@ -68,7 +68,6 @@ The build phases (project-wide):
 - 🧠 [`cryptos-node`](https://github.com/CryptOS-PKI/cryptos-node) — the OS / CA engine (UKI; bare metal or VM), and the node API protos.
 - 🛰️ [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) — Fleet Manager backend, and the fleet API protos.
 - 🎨 [`cryptos-web`](https://github.com/CryptOS-PKI/cryptos-web) — Fleet Manager web frontend.
-- ⚓ [`cryptos-release`](https://github.com/CryptOS-PKI/cryptos-release) — a deprecated Helm chart for the control plane.
 
 ## 🙏 Acknowledgements
 

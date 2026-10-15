@@ -4,7 +4,7 @@ title: "🗂️ The repos"
 
 # 🗂️ The repos
 
-CryptOS is built in the open in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization on GitHub. Four repos make up the system itself: `cryptos-node`, `cryptos-appliance`, `cryptos-manager` and `cryptos-web`. A few more hold the things around it: a deprecated Helm chart, test tooling, this site and the organization profile. Every repo on this page is public.
+CryptOS is built in the open in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization on GitHub. Four repos make up the system itself: `cryptos-node`, `cryptos-appliance`, `cryptos-manager` and `cryptos-web`. A few more hold the things around it: test tooling, this site and the organization profile. Every repo on this page is public.
 
 ## How they fit together
 
@@ -116,16 +116,11 @@ See [The web UI](../fleet-manager/web-ui.md).
 
 | Repo | What it holds |
 |---|---|
-| ⚓ [cryptos-release](https://github.com/CryptOS-PKI/cryptos-release) | A deprecated Helm chart, `charts/manager`. See [Deploy with Helm](../fleet-manager/helm.md). |
 | 🧪 [cryptos-lab](https://github.com/CryptOS-PKI/cryptos-lab) | Scripts for testing CryptOS on real and virtual hardware. `esxi/` boots CryptOS on VMware ESXi with `govc`: upload an ISO, create a UEFI VM, boot it and capture the serial console. Bare metal is planned. |
 | 📚 [website](https://github.com/CryptOS-PKI/website) | This site. Docusaurus 3, with the pages under `docs/` and the sidebar in `sidebars.ts`. |
 | 🏠 [.github](https://github.com/CryptOS-PKI/.github) | The organization profile README shown on the CryptOS-PKI GitHub page. |
 
-The `api` repo, which held both protos before they moved to the services that serve them, is archived.
-
-:::info[Two Fleet Manager charts]
-There are two Helm charts for the Fleet Manager today: `charts/manager` in the `cryptos-release` repo, and `chart/fleet-manager` in the `cryptos-manager` repo. `chart/fleet-manager` is the one its release tags publish, to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`.
-:::
+The `api` repo, which held both protos before they moved to the services that serve them, is archived. `cryptos-release`, which carried an earlier, unsupported Fleet Manager chart, is retired; the supported chart is `chart/fleet-manager` in `cryptos-manager`.
 
 ## Which repo do I need?
 
@@ -138,7 +133,7 @@ There are two Helm charts for the Fleet Manager today: `charts/manager` in the `
 | Run the Fleet Manager with Docker | `cryptos-manager` |
 | Run the Fleet Manager on Kubernetes | `cryptos-manager` |
 | Change the Fleet Manager web UI | `cryptos-web` |
-| See what a release pins | `cryptos-release` |
+| See what a release pins | `cryptos-appliance` (`release/pins.yaml`) |
 | Test CryptOS on ESXi | `cryptos-lab` |
 | Fix or add to these docs | `website` |
 
