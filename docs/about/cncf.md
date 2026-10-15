@@ -40,10 +40,8 @@ A CryptOS image built from `cryptos` includes third-party components built from 
 
 ## Get involved
 
-The code and the source of this site are public on GitHub in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization. See [The repos](./repos.md) for what each repo holds.
+The code and the source of this site are public on GitHub in the [CryptOS-PKI](https://github.com/CryptOS-PKI) organization. Every repo is open to the public today: anyone can open an issue or a pull request, or leave a comment. See [The repos](./repos.md) for what each repo holds.
 
-:::note[Issues and pull requests are limited to collaborators today]
-Today, opening issues and pull requests and commenting on every CryptOS-PKI repo are limited to the project's collaborators. They will open to the public.
-:::
+A change starts as an issue from one of the repo's templates, and every commit in a pull request is signed off. [`CONTRIBUTING.md`](https://github.com/CryptOS-PKI/.github/blob/main/CONTRIBUTING.md) has the whole workflow. Security problems are never reported in public; follow [`SECURITY.md`](https://github.com/CryptOS-PKI/.github/blob/main/SECURITY.md) instead.
 
-When they open, a change starts as an issue from one of the repo's templates, and every commit in a pull request is signed off. [`CONTRIBUTING.md`](https://github.com/CryptOS-PKI/.github/blob/main/CONTRIBUTING.md) has the whole workflow. Security problems are never reported in public; follow [`SECURITY.md`](https://github.com/CryptOS-PKI/.github/blob/main/SECURITY.md) instead.
+The CNCF Sandbox application is still waiting; the project is not a CNCF project yet.

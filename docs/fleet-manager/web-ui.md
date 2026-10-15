@@ -257,7 +257,7 @@ Neither protocol has a config block on the node yet, so this page has nothing to
 
 The operator certificates the manager knows about: recorded ones and ones it has only seen logging in, with their holder, level, kind, operator CA, serial, expiry, whether they are denylisted or CRL-revoked, and when they were last seen. A **Pending requests** tab lists the credential requests waiting for a signed certificate. The page needs an operator CA (see [The operator CA and revocation](./operator-ca.md)). Without one it says no operator CA is configured.
 
-`admin` gets **Request credential…**, **Record certificate…**, **Complete…** and **Cancel** on a request, and **Deny…** on a credential. Each is a step in [Adding operators in the web UI](./web-operator-credentials.md). **Deny…** puts a certificate on the manager's denylist: the manager refuses it from its next request. It needs `database_url`.
+`admin` gets **Request credential…**, **Record certificate…**, **Complete…** and **Cancel** on a request, and **Deny…** on a credential. Each is a step in [Adding operators](./web-operator-credentials.md). **Deny…** puts a certificate on the manager's denylist: the manager refuses it from its next request. It needs `database_url`.
 
 :::warning[Denying here doesn't revoke at your CA]
 The denylist stops the certificate at the Fleet Manager only. Revoke it at your operator CA as well and publish a new CRL.
@@ -302,4 +302,4 @@ Some screens still read the web app's built-in demo data instead of the manager:
 - [Fleet Manager overview](./overview.md): what the manager holds and how nodes join.
 - [Deploy with Helm](./helm.md): where each install path stands.
 - [Approving agent requests](./approvals.md): deciding an agent's step-up request.
-- [Adding operators in the web UI](./web-operator-credentials.md): requesting, completing and denying operator certificates.
+- [Adding operators](./web-operator-credentials.md): requesting, completing and denying operator certificates.

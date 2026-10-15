@@ -101,4 +101,4 @@ Every certificate the CA issued is refused from its next request, and MCP keys b
 ## Where to go next
 
 - [The operator CA and revocation](./operator-ca.md): the CA, the CRL, the denylist and the config keys.
-- [Adding operators in the web UI](./web-operator-credentials.md): requesting and denying operator certificates.
+- [Adding operators](./web-operator-credentials.md): requesting and denying operator certificates.

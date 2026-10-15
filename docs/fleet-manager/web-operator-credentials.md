@@ -1,8 +1,8 @@
 ---
-title: "🪪 Adding operators in the web UI"
+title: "🪪 Adding operators"
 ---
 
-# 🪪 Adding operators in the web UI
+# 🪪 Adding operators
 
 :::info[In flight]
 These screens are new in the web UI and need a Fleet Manager that serves operator credential requests. An older manager refuses them.

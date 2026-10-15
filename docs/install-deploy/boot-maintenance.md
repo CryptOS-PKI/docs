@@ -19,7 +19,7 @@ The first time a machine boots the CryptOS ISO, nothing is installed yet. The no
 - **Secure Boot.** Turn it off for an unsigned image. For a signed image, enroll your certificate first ([Secure Boot enrollment](./secure-boot.md)).
 - **A TPM**, for a TPM-backed image. On vSphere, add a vTPM to the VM (this needs a key provider). If you cannot, use the `STATEKEY=nodeid` image instead ([Build a bootable image](./build-bootable-image.md)).
 - **A disk to install to.** The install erases it completely.
-- **A network with DHCP.** In maintenance mode the node takes its address from DHCP.
+- **A network with DHCP.** In maintenance mode the node takes its address from DHCP. There is no fallback yet if nothing answers: the console's **Address** line stays blank, and there is nothing to connect to ([CryptOS-PKI/cryptos-node#381](https://github.com/CryptOS-PKI/cryptos-node/issues/381) tracks a link-local fallback for a network with no DHCP server).
 
 :::danger[Decide on Secure Boot before the install]
 On a TPM node, changing Secure Boot afterwards locks the node out of its own disk. Set it on or off now and leave it that way.
