@@ -52,11 +52,11 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://cryptos-pki.github.io',
+  url: 'https://docs.cryptos-pki.com',
   baseUrl: '/',
 
   organizationName: 'CryptOS-PKI',
-  projectName: 'website',
+  projectName: 'docs',
 
   // Skeleton phase: keep the build resilient while pages are stubs.
   // Restore 'throw' once the content workstream fills the cross-links in.
@@ -122,6 +122,13 @@ const config: Config = {
     navbar: {
       // theme.css appends the "OS" in the primary colour, as in the web wordmark.
       title: 'Crypt',
+      logo: {
+        alt: 'CryptOS',
+        src: 'img/brand/cryptos-mark-light.svg',
+        srcDark: 'img/brand/cryptos-mark-dark.svg',
+        width: 28,
+        height: 28,
+      },
       items: [
         // Every page shares one sidebar, so doc-type items would all mark
         // themselves active; match each item on its own section path instead.
@@ -147,6 +154,11 @@ const config: Config = {
           activeBasePath: '/docs/reference',
         },
         {
+          href: 'https://www.cryptos-pki.com',
+          label: 'cryptos-pki.com',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/CryptOS-PKI',
           label: 'GitHub',
           position: 'right',
@@ -167,6 +179,7 @@ const config: Config = {
         {
           title: 'Project',
           items: [
+            {label: 'Product overview', href: 'https://www.cryptos-pki.com'},
             {label: 'cryptos-node (OS/engine)', href: 'https://github.com/CryptOS-PKI/cryptos-node'},
             {label: 'cryptos-manager (Fleet Manager)', href: 'https://github.com/CryptOS-PKI/cryptos-manager'},
           ],
@@ -177,7 +190,7 @@ const config: Config = {
       // from the CNCF website guidelines apply only once the project is accepted.
       copyright:
         'Copyright © The CryptOS Authors<br />' +
-        'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/website/blob/main/LICENSE">Apache License 2.0</a>',
+        'Documentation licensed under the <a href="https://github.com/CryptOS-PKI/docs/blob/main/LICENSE">Apache License 2.0</a>',
     },
     prism: {
       theme: prismLight,
