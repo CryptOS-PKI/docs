@@ -1,47 +1,85 @@
-.landing {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.entryPoints {
+  padding: 3.5rem 1.5rem;
+}
+
+.entryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: 1rem;
-  padding: 6rem 1.5rem;
-  text-align: center;
+  max-width: var(--ifm-container-width, 1140px);
+  margin: 0 auto;
 }
 
-.wordmark {
-  margin: 0;
-  font-family: var(--cryptos-font-mono);
-  font-size: 3.5rem;
+.entryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid var(--cryptos-border);
+  border-radius: var(--cryptos-radius);
+  background: var(--cryptos-card);
+  color: var(--cryptos-foreground);
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.entryCard:hover,
+.entryCard:focus-visible {
+  border-color: var(--cryptos-primary);
+  color: var(--cryptos-foreground);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entryCard {
+    transition: none;
+  }
+
+  .entryCard:hover,
+  .entryCard:focus-visible {
+    transform: none;
+  }
+}
+
+.entryLabel {
   font-weight: 700;
-  letter-spacing: -0.025em;
+  font-size: 1.05rem;
 }
 
-.accent {
-  color: var(--cryptos-primary);
-}
-
-.tagline {
-  max-width: 40rem;
-  margin: 0;
-  font-size: 1.25rem;
+.entryDescription {
+  font-size: 0.9rem;
   color: var(--cryptos-muted-foreground);
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
+.notice {
+  padding: 0 1.5rem 3rem;
 }
 
-@media screen and (max-width: 996px) {
-  .landing {
-    padding: 3rem 1rem;
-  }
+.noticeCard {
+  max-width: var(--ifm-container-width, 1140px);
+  margin: 0 auto;
+  padding: 1.1rem 1.4rem;
+  border: 1px solid var(--cryptos-warning);
+  border-left: 0.3rem solid var(--cryptos-warning);
+  border-radius: var(--cryptos-radius);
+  background: rgba(var(--cryptos-warning-rgb), 0.1);
+}
 
-  .wordmark {
-    font-size: 2.5rem;
-  }
+.noticeTitle {
+  margin: 0 0 0.35rem;
+  font-weight: 700;
+  color: var(--cryptos-foreground);
+}
+
+.noticeBody {
+  margin: 0;
+  color: var(--cryptos-foreground);
+  line-height: 1.6;
+}
+
+.productLink {
+  padding: 0 1.5rem 3.5rem;
+  text-align: center;
+  color: var(--cryptos-muted-foreground);
 }
