@@ -8,7 +8,7 @@ CryptOS ships source only: a release is a tag, its notes and the source archive 
 
 ## 1. Check the tag's commit
 
-Every release names the commit it was cut from, in the release notes and in the pins that reference it (for example `cryptos-appliance`'s pin of `cryptos-node`, or `cryptos-release`'s notes on a `cryptos-manager` version). Compare that SHA with the one you have checked out:
+Every release names the commit it was cut from, in the release notes and in the pins that reference it (for example `cryptos-appliance`'s pin of `cryptos-node`, or `cryptos-manager`'s release pin of a `cryptos-web` commit). Compare that SHA with the one you have checked out:
 
 ```bash
 git fetch --tags
