@@ -10,7 +10,7 @@ This page is new in the web UI. Your admin needs a Fleet Manager that serves ope
 
 This page covers one task: making your own Fleet Manager operator key and certificate signing request (CSR), then building your `.p12` file once your admin sends back the signed certificate. It is for someone who doesn't have an operator certificate yet.
 
-The **Make a credential request** page runs entirely in your browser. It needs no login and sends nothing anywhere: the key, its backup and the passphrase stay on your machine. Only the CSR goes to your admin, who files it as described in [Adding operators in the web UI](./web-operator-credentials.md).
+The **Make a credential request** page runs entirely in your browser. It needs no login and sends nothing anywhere: the key, its backup and the passphrase stay on your machine. Only the CSR goes to your admin, who files it as described in [Adding operators](./web-operator-credentials.md).
 
 :::caution[Before you start]
 You need the Fleet Manager's address, and the access level your admin agreed to give you: `viewer`, `operator` or `admin`.
@@ -61,4 +61,4 @@ Install the `.p12` file in your browser's certificate store and log in, as in [L
 ## Where to go next
 
 - [The web UI](./web-ui.md): logging in and every page.
-- [Adding operators in the web UI](./web-operator-credentials.md): what your admin does with your CSR.
+- [Adding operators](./web-operator-credentials.md): what your admin does with your CSR.

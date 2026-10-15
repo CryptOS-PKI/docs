@@ -20,7 +20,7 @@ You need an admin certificate from the operator CA, and the manager needs `datab
 :::
 
 :::tip[In the web UI]
-The web UI's **Operators** page does each step below: see [Adding operators in the web UI](./web-operator-credentials.md). This page names the `FleetService` RPCs behind it, for scripting.
+The web UI's **Operators** page does each step below: see [Adding operators](./web-operator-credentials.md). This page names the `FleetService` RPCs behind it, for scripting.
 :::
 
 ## 1. Request a credential

@@ -43,6 +43,8 @@ The probes:
 The chart creates no secrets. Before an install you need these in the release namespace:
 
 - **A Postgres database** the cluster can reach, and a Secret holding its connection string, such as `postgres://manager:<password>@db:5432/manager`, under the key `database-url` (or the key you set in `database.secretKey`). Name it in `database.existingSecret`. The chart passes it to the manager as the `MANAGER_DATABASE_URL` environment variable, so the password never appears in the ConfigMap.
+
+  A Redis-protocol storage mode (Valkey or Redis, with persistence required) is coming in `rc.2` as an alternative to Postgres: see [CryptOS-PKI/cryptos-manager#197](https://github.com/CryptOS-PKI/cryptos-manager/issues/197).
 - **Storage for the node credentials.** The default claim asks the cluster's default storage class for `1Gi`, `ReadWriteOnce`.
 - **Nothing, by default.** A release tag publishes `ghcr.io/cryptos-pki/cryptos-manager`, which `image.repository` already points at. Build and push your own instead to track an unreleased commit or a local edit, then set `image.repository` and `image.tag`; the manager README covers [building the image yourself](https://github.com/CryptOS-PKI/cryptos-manager#building-the-image-yourself).
 
