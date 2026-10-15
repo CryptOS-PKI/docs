@@ -20,10 +20,11 @@ Work through the pages in order. Each one starts with what it needs from the pag
 |---|---|---|
 | 1 | What you need (this page) | a Linux machine with the build and VM tools |
 | 2 | [Build the image](./build-image.md) | a debug UKI in `build/out/` |
-| 3 | [Boot it in QEMU](./boot-qemu.md) | a node running in QEMU, waiting for its ceremony |
-| 4 | [Install cryptosctl](./install-cryptosctl.md) | the CLI on your `PATH` |
-| 5 | [Run the first-boot ceremony](./first-boot-ceremony.md) | a Root CA whose key was made inside the TPM |
-| 6 | [Check identity and status](./check-status.md) | proof the Root certificate is valid and the node is healthy |
+| 3 | [Prepare the node](./prepare-the-node.md) | an admin identity and a machine config |
+| 4 | [Boot it in QEMU](./boot-qemu.md) | a node running in QEMU, waiting for its ceremony |
+| 5 | [Install cryptosctl](./install-cryptosctl.md) | the CLI on your `PATH` |
+| 6 | [Run the first-boot ceremony](./first-boot-ceremony.md) | a Root CA whose key was made inside the TPM |
+| 7 | [Check identity and status](./check-status.md) | proof the Root certificate is valid and the node is healthy |
 
 ## A Linux machine
 

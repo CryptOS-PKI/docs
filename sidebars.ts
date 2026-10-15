@@ -61,6 +61,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'try-it-locally/requirements',
         'try-it-locally/build-image',
+        'try-it-locally/prepare-the-node',
         'try-it-locally/boot-qemu',
         'try-it-locally/install-cryptosctl',
         'try-it-locally/first-boot-ceremony',

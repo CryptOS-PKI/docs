@@ -17,9 +17,9 @@ You need:
 
 - the node running in QEMU, with **management API** marked `[ok]` on its console ([Boot it in QEMU](./boot-qemu.md));
 - `cryptosctl` on your `PATH` ([Install cryptosctl](./install-cryptosctl.md));
-- your admin identity in `~/.cryptos/` and the machine config at `$LAB/machine.yaml`, both from the boot page.
+- your admin identity in `~/.cryptos/` and the machine config at `$LAB/machine.yaml`, both from [Prepare the node](./prepare-the-node.md).
 
-Use a second terminal, with `LAB` set as on the boot page.
+Use a second terminal, with `LAB` set as on the prepare and boot pages.
 :::
 
 ## 1. Pin the node's management certificate

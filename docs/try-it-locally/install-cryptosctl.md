@@ -15,7 +15,7 @@ Get the command-line tool that talks to the node.
 `cryptosctl` runs on Linux and macOS.
 
 :::info[Before you start]
-You need the `cryptos-node` checkout and Go from [What you need](./requirements.md). If you followed [Boot it in QEMU](./boot-qemu.md), your admin identity is already in `~/.cryptos/`, and the node is running in another terminal.
+You need the `cryptos-node` checkout and Go from [What you need](./requirements.md). If you followed [Prepare the node](./prepare-the-node.md), your admin identity is already in `~/.cryptos/`, and the node is running in another terminal from [Boot it in QEMU](./boot-qemu.md).
 :::
 
 ## 1. Build it
@@ -73,7 +73,7 @@ By default `cryptosctl` reads three files from `~/.cryptos/`. Each has a flag to
 | `identity.key` | `--identity-key` | your admin private key | `cryptosctl bootstrap` |
 | `trust.crt` | `--trust` | the node's management certificate, pinned | `cryptosctl trust fetch` |
 
-You made the identity pair on [Boot it in QEMU](./boot-qemu.md), with the same code you just installed. You fetch `trust.crt` on the next page.
+You made the identity pair on [Prepare the node](./prepare-the-node.md), with the same code you just installed. You fetch `trust.crt` on the next page.
 
 :::caution[Keep ~/.cryptos private]
 `identity.key` is the admin key for your node, and `cryptosctl bootstrap` writes it readable only by you. Do not copy it into shared folders, backups you do not control, or chat. Anyone with it can run every command on these pages against your node.
