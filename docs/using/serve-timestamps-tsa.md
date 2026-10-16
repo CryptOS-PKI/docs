@@ -7,10 +7,6 @@ import TabItem from '@theme/TabItem';
 
 # ⏱️ Serve RFC 3161 timestamps
 
-:::info[Arrives with cryptos-node#354]
-This page describes the time-stamp authority as [CryptOS-PKI/cryptos-node#354](https://github.com/CryptOS-PKI/cryptos-node/pull/354) adds it. It is true once that change is in the image you run.
-:::
-
 Switch on the RFC 3161 time-stamp authority (TSA) on an intermediate or issuing node, so code signed with a CryptOS certificate keeps verifying after the certificate expires.
 
 A signing tool sends the TSA a hash of the signature, and gets back a signed token saying when it saw it. The token is stored in the signature. Later, a verifier checks the token instead of today's date against the signing certificate.

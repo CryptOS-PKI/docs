@@ -86,7 +86,7 @@ The node refuses a CSR for any other key, with `subject RSA key must be at least
 
 A signature is only as good as the certificate behind it, and the certificate expires. A signing tool that adds an RFC 3161 **timestamp** records that the signature was made while the certificate was still valid, so the signature keeps validating afterwards.
 
-An intermediate or issuing node can serve those timestamps itself, as an RFC 3161 time-stamp authority, once [CryptOS-PKI/cryptos-node#354](https://github.com/CryptOS-PKI/cryptos-node/pull/354) is in the image you run: [Serve RFC 3161 timestamps](../using/serve-timestamps-tsa.md). Point the signing tool at it, for example `signtool sign /tr http://pki-issuing.example.org:318/ /td sha256`. On an image without it, use another RFC 3161 timestamp service, or plan for signatures to stop validating on platforms that check expiry once the certificate runs out.
+An intermediate or issuing node can serve those timestamps itself, as an RFC 3161 time-stamp authority: [Serve RFC 3161 timestamps](../using/serve-timestamps-tsa.md). Point the signing tool at it, for example `signtool sign /tr http://pki-issuing.example.org:318/ /td sha256`. Until it is set up, use another RFC 3161 timestamp service, or plan for signatures to stop validating on platforms that check expiry once the certificate runs out.
 
 ## If a signing key leaks
 
