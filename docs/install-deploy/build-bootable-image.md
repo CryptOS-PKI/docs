@@ -114,12 +114,28 @@ the tagged source and diffing the hash is an equally valid check.
 
 From there you have two paths:
 
-- **Sign it with your own key**, with `cryptosctl image sign` -- see
-  [Signing an image with your own key](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/image-sign.md)
-  in the `cryptos-node` repository. It stamps your certificate in as the image's upgrade
-  anchor and Authenticode-signs it for Secure Boot in one step; a node installed from the
-  result boots with Secure Boot on and takes signed in-place upgrades from any later image
-  you sign with the same key.
+- **Sign it with your own key**, with `cryptosctl image sign`:
+
+  ```bash
+  cryptosctl image sign \
+    --image cryptos-amd64-vmware-unsigned-<build>.iso \
+    --key sb.key --cert sb.crt
+  ```
+
+  With no `--out`, this writes three files next to the input:
+
+  | File | What it is |
+  |---|---|
+  | `cryptos-amd64-vmware-<build>.iso` | the signed, installable ISO (the input name without `-unsigned`) |
+  | `cryptos-amd64-vmware-<build>.uki` | the signed UKI beside it |
+  | `cryptos-amd64-vmware-<build>.uki.sig` | that UKI's detached signature |
+
+  Keep the `.uki` and `.sig`: that pair is what `cryptosctl image stage` sends, so any
+  later image you sign with the same key upgrades a node installed from this one. It
+  needs no root, no `xorriso` and no rebuild, and the same command signs a standalone
+  unsigned UKI, with `.unsigned` dropped from the output name instead.
+  See [Signing an image with your own key](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/image-sign.md)
+  in the `cryptos-node` repository for the full command reference.
 - **Build from source** instead (above), with `SB_KEY` and `SB_CERT` set, for the same
   result without downloading a release asset. See [Secure Boot](./secure-boot.md).
 
