@@ -82,8 +82,8 @@ The files land in `build/out/`:
 
 To try CryptOS with Secure Boot turned off, you can skip the key:
 
-:::danger[An unsigned image can never be upgraded]
-An unsigned image carries **no upgrade anchor**, even if `SB_KEY` and `SB_CERT` are set in your shell, so a node installed from it can never be upgraded in place. Replacing its image means installing again, which destroys its CA key. For a node you plan to keep, build a signed ISO instead.
+:::danger[An unsigned image has no upgrade anchor until you sign it]
+An unsigned image carries **no upgrade anchor** as built, even if `SB_KEY` and `SB_CERT` are set in your shell, so a node installed from it as-is can never be upgraded in place. Replacing its image means installing again, which destroys its CA key. For a node you plan to keep, build a signed ISO instead, or sign this unsigned image afterwards with `cryptosctl image sign` (see [Download the unsigned image](#download-the-unsigned-image)).
 :::
 
 ```bash
@@ -114,14 +114,26 @@ the tagged source and diffing the hash is an equally valid check.
 
 From there you have two paths:
 
-- **Sign it with your own Secure Boot key** so it boots with Secure Boot on; see
-  [Secure Boot](./secure-boot.md).
-- **Build from source** instead (above). This is also the only way to get an in-place
-  upgrade: an image signed after the fact carries no upgrade anchor, so a node installed
-  from the downloaded image can't be upgraded in place until a later release adds signing
-  with the upgrade anchor built in.
+- **Sign it with your own key**, with `cryptosctl image sign` -- see
+  [Signing an image with your own key](https://github.com/CryptOS-PKI/cryptos-node/blob/main/docs/image-sign.md)
+  in the `cryptos-node` repository. It stamps your certificate in as the image's upgrade
+  anchor and Authenticode-signs it for Secure Boot in one step; a node installed from the
+  result boots with Secure Boot on and takes signed in-place upgrades from any later image
+  you sign with the same key.
+- **Build from source** instead (above), with `SB_KEY` and `SB_CERT` set, for the same
+  result without downloading a release asset. See [Secure Boot](./secure-boot.md).
 
 Either way, see [Check the source you built](../about/verify-source.md).
+
+:::danger[A v0.1.0-rc.1 node has no upgrade anchor and can't move forward in place]
+The first `v0.1.0-rc.1` release assets (now withdrawn) were published before `cryptosctl
+image sign` existed, so a node installed from one of them carries no upgrade anchor at all
+-- signing or building a later image changes nothing for a node already running that
+asset. Moving it to a newer release means reinstalling, which wipes its state, including
+the CA key. CryptOS is pre-1.0 and makes no compatibility promise across releases. A node
+installed from a build-from-source image with your own key stamped in, or from an asset
+you ran through `cryptosctl image sign`, keeps its anchor and upgrades in place normally.
+:::
 
 ## Next step
 

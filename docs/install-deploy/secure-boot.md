@@ -222,7 +222,11 @@ A node accepts a new image only if the image's `.sig` verifies against the ancho
 cryptosctl --endpoint 192.0.2.10:443 --trust node-trust.pem image stage --image build/out/cryptos-amd64.uki
 ```
 
-An image signed by any other key is refused before anything is written. [Upgrade a node in place](./upgrade-in-place.md) covers staging, activating and rolling back.
+An image signed by any other key is refused before anything is written. [Upgrade a node in place](./upgrade-in-place.md) covers staging, activating and rolling back. The same anchor and signature, done after the fact instead of at build time, is what `cryptosctl image sign` adds to a downloaded release asset; see [Download the unsigned image](./build-bootable-image.md#download-the-unsigned-image).
+
+:::danger[A v0.1.0-rc.1 node has no anchor to upgrade from]
+The first `v0.1.0-rc.1` release assets (now withdrawn) predate `cryptosctl image sign` and carry no upgrade anchor at all, however they are later signed. A node installed from one of them can only move to a newer release by reinstalling, which wipes its state, including the CA key -- CryptOS is pre-1.0 and makes no compatibility promise across releases. Build from source with your own key stamped in, or sign a downloaded asset with `cryptosctl image sign`, and the resulting node upgrades in place normally.
+:::
 
 `cryptosctl` runs on Linux and macOS.
 
