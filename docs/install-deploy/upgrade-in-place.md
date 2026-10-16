@@ -22,6 +22,10 @@ The root filesystem is an immutable SquashFS carried inside a Unified Kernel Ima
 
 A node accepts a new image only if its detached signature verifies against the anchor compiled into the image it is **running** -- the same key you signed that image with. Build every later image with that key; see [Secure Boot enrollment](./secure-boot.md).
 
+:::danger[A node with no upgrade anchor can't take this path]
+This only works on a node installed from an image that carries an upgrade anchor: one you built from source with `SB_KEY`/`SB_CERT` set, or signed afterwards with `cryptosctl image sign`. A node installed from the withdrawn `v0.1.0-rc.1` release assets, which predate `image sign`, has no anchor at all. Moving such a node to a newer release means reinstalling it, which wipes its state, including the CA key -- CryptOS is pre-1.0 and makes no compatibility promise across releases.
+:::
+
 ## What you need
 
 - A new signed image, built the same way as the running one: `cryptos-amd64.uki` and its detached signature, `cryptos-amd64.uki.sig`, from [Build a bootable image](./build-bootable-image.md).
@@ -92,4 +96,4 @@ The previous image is retained on the ESP and stays bootable, so a failed upgrad
 
 - **An upgrade is not a re-key.** The CA key, the issued inventory and the node's configuration all survive untouched.
 - **Only one previous image is retained.** Two upgrades in a row leave you able to roll back one.
-- **An unsigned build has no anchor.** It serves the upgrade RPCs as `Unimplemented`; such a node is upgraded by reinstalling it. See [Build an unsigned ISO](./build-bootable-image.md#build-an-unsigned-iso-for-evaluation).
+- **An unsigned build has no anchor until you sign it.** As built, it serves the upgrade RPCs as `Unimplemented`; sign it with `cryptosctl image sign` before installing it if you want the node to take in-place upgrades later. A node already installed from such an image, with no anchor, is upgraded by reinstalling it. See [Build an unsigned ISO](./build-bootable-image.md#build-an-unsigned-iso-for-evaluation).
