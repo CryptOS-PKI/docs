@@ -108,6 +108,7 @@ const sidebars: SidebarsConfig = {
         'fleet-manager/node-lifecycle',
         'fleet-manager/node-trust',
         'fleet-manager/upgrade-node-trust',
+        'fleet-manager/cutover-cryptos-node-v1',
         {
           type: 'category',
           label: 'First run',
