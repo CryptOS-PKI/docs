@@ -4,10 +4,6 @@ title: "🪪 Get a TSA policy OID"
 
 # 🪪 Get a TSA policy OID
 
-:::info[Arrives with cryptos-node#354]
-This page prepares for the time-stamp authority as [CryptOS-PKI/cryptos-node#354](https://github.com/CryptOS-PKI/cryptos-node/pull/354) adds it.
-:::
-
 Pick the policy object identifier (OID) your time-stamp authority names in every token, before you [serve timestamps](./serve-timestamps-tsa.md).
 
 Every RFC 3161 token carries a **TSA policy**: an OID that says under which rules the timestamp was issued. CryptOS has no default policy. Each deployment sets its own, so no two deployments share one by accident, and the TSA stays off until `pki.tsa.policy_oid` is set.
