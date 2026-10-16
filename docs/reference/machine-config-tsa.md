@@ -4,10 +4,6 @@ title: "📄 Machine config: TSA"
 
 # 📄 Machine config: TSA
 
-:::info[Arrives with cryptos-node#354]
-This page describes the `pki.tsa` block as [CryptOS-PKI/cryptos-node#354](https://github.com/CryptOS-PKI/cryptos-node/pull/354) adds it. The clock limits (`max_sync_age_seconds`, `max_drift_ppm`, `max_clock_error_ms`) arrive with [CryptOS-PKI/cryptos-node#357](https://github.com/CryptOS-PKI/cryptos-node/pull/357).
-:::
-
 The `pki.tsa` block of the [machine config](./machine-config.md): the node's RFC 3161 time-stamp authority. The how-to is [Serve RFC 3161 timestamps](../using/serve-timestamps-tsa.md).
 
 The TSA is off unless the block is present, and it follows the same switching rules as ACME and EST: [Switching a protocol on or off](./machine-config-enrollment.md#-switching-a-protocol-on-or-off). `enabled: false` switches it off and keeps the settings, an `ApplyConfig` that leaves the block out keeps what the node has, and every change takes effect at the next reboot.
