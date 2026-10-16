@@ -19,7 +19,7 @@ The first time a machine boots the CryptOS ISO, nothing is installed yet. The no
 - **Secure Boot.** Turn it off for an unsigned image. For a signed image, enroll your certificate first ([Secure Boot enrollment](./secure-boot.md)).
 - **A TPM**, for a TPM-backed image. On vSphere, add a vTPM to the VM (this needs a key provider). If you cannot, use the `STATEKEY=nodeid` image instead ([Build a bootable image](./build-bootable-image.md)).
 - **A disk to install to.** The install erases it completely.
-- **A network with DHCP.** In maintenance mode the node takes its address from DHCP. There is no fallback yet if nothing answers: the console's **Address** line stays blank, and there is nothing to connect to ([CryptOS-PKI/cryptos-node#381](https://github.com/CryptOS-PKI/cryptos-node/issues/381) tracks a link-local fallback for a network with no DHCP server).
+- **A network, with or without DHCP.** In maintenance mode the node takes its address from DHCP. If nothing answers, it gives itself a link-local address in 169.254.0.0/16 instead, so you can also plug a laptop straight into it ([Plug a laptop in directly](#plug-a-laptop-in-directly)).
 
 :::danger[Decide on Secure Boot before the install]
 On a TPM node, changing Secure Boot afterwards locks the node out of its own disk. Set it on or off now and leave it that way.
@@ -32,7 +32,7 @@ Maintenance mode accepts connections **without any authentication**. Whoever rea
 ## What happens at boot
 
 1. The node looks for a disk partition named `cryptos-state`. On a brand-new machine there is none, so it goes into maintenance mode. This check runs before the TPM is touched, so a machine without a TPM still reaches maintenance mode cleanly.
-2. The kernel has already asked DHCP for an address (the image boots with `ip=dhcp`).
+2. The kernel has already asked DHCP for an address (the image boots with `ip=dhcp`). If no DHCP server answered, the node gives the first network port with a cable in a self-assigned link-local address (RFC 3927) in 169.254.0.0/16. It keeps checking, so a cable you plug in later still gets one.
 3. The node opens its management API on **port 443**. It uses a fresh, self-signed certificate that names only `localhost`, and it does **not** ask the client for a certificate.
 4. The console shows **Awaiting configuration** and **MAINTENANCE MODE**, the node's address under **Address**, and the SHA-256 of the certificate it presents under **Mgmt SHA-256**:
 
@@ -47,13 +47,27 @@ Maintenance mode accepts connections **without any authentication**. Whoever rea
                   check 1/2: compare with the web console
    ```
 
-   The address and the fingerprint appear once DHCP has answered and the management API is up. A node with more than one address lists each one on its own line. **check 1/2** marks the first of the two fingerprint checks in a Fleet Manager adoption; the second is on the installed node's console after it reboots.
+   The address and the fingerprint appear once the node has an address and the management API is up. A node with more than one address lists each one on its own line. With no DHCP server, the **Address** line shows the node's 169.254.x.x address instead; it only appears when the node has no other address. **check 1/2** marks the first of the two fingerprint checks in a Fleet Manager adoption; the second is on the installed node's console after it reboots.
 
 There is no TPM, no encrypted disk, no database and no CA key yet. The only useful things the node can do in this state are report its status and accept a config.
 
 ## Find the node's address
 
 Read it off the console's **Address** line. Without console access, look it up where the address came from: your DHCP server's lease list, or the VM's network summary in your hypervisor.
+
+### Plug a laptop in directly
+
+You don't need a DHCP server. Connect a laptop to the node's network port with a cable, with nothing else on that link:
+
+1. Give the laptop's wired port a 169.254.x.x address. On macOS and Windows, leave the port set to get its address automatically: when no DHCP server answers, they assign one on their own. On Linux, NetworkManager doesn't do this by default; set the wired connection to link-local (`nmcli connection modify "Wired connection 1" ipv4.method link-local`, then bring it up again), or add an address yourself (`sudo ip addr add 169.254.10.10/16 dev eth0`, with your port's name).
+2. Read the node's 169.254.x.x address off the console's **Address** line. The node works it out from its network card, so it is the same at every boot.
+3. Check the certificate fingerprint as below, then reach the node at that address:
+
+   ```bash
+   cryptosctl --insecure --endpoint 169.254.x.x:443 status
+   ```
+
+Use the same address for `config apply` in the next step. A 169.254.x.x address only works on that one cable: nothing routes it, so the laptop has to stay plugged into the node.
 
 ## Check the node's certificate
 
