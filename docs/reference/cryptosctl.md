@@ -122,7 +122,7 @@ The `ca` commands marked **child** run on the subordinate being set up, and **pa
 | `ca get-renewal-csr` | | **child:** print a CSR for the current CA key, to get a fresh certificate without a new key |
 | `ca submit-renewed-cert` | `--chain` (PEM, leaf first, required) | **child:** install the re-issued certificate for the current key |
 | `ca rotate-key` | | **child:** start a CA key rotation and print the CSR for the new key |
-| `ca submit-rotation` | `--chain` (PEM, leaf first, required) | **child:** install the parent-signed chain for the rotated key |
+| `ca submit-rotation` | `--chain` (PEM, leaf first, required) | **child:** install the parent-signed chain for the rotated key; the node re-mints its OCSP responder certificate under the new key within 30 seconds |
 | `ca issue-leaf` | `--csr` (PEM or DER, required), `--profile` (required), `--dns` (repeatable) | issue an end-entity certificate from a CSR |
 | `ca list-issued` | | list the certificates this node has issued |
 | `ca revoke` | `--serial` (hex, required; case, leading zeros, a `0x` prefix and colons are ignored, so `openssl x509 -serial` output works as it is), `--reason` (RFC 5280 reason code, default `0`) | revoke a certificate this node issued |
