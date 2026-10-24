@@ -80,6 +80,8 @@ The randomness for each ECDSA signature, and each PSS salt, comes from the TPM, 
 
 :::info[Other keys are software keys by design]
 Only the CA key is in the TPM. The delegated OCSP responder key and the EST server TLS key are generated in software and certified by the CA key. The per-boot management TLS key is generated in software, self-signed, and pinned by fingerprint. The OCSP responder key is stored in etcd at `/cryptos/pki/ocsp-responder/key-blob`, so OCSP responses are signed without loading the CA key per request.
+
+The node re-mints the responder certificate when it reaches the halfway point of its one-week life, and whenever the stored one isn't signed by the current CA certificate. After a CA key rotation (`ca submit-rotation`) that happens within 30 seconds, or on the first OCSP request if that comes sooner, so responses are signed by a responder the new key certified.
 :::
 
 ## What keeps the wrapped blob safe: the sealed state volume
